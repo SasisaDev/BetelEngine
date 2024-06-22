@@ -8,5 +8,5 @@ class Shader
 {
     VkPipeline pipeline;
 public:
-    Shader(VkRenderPass renderPass, std::vector<unsigned char> vertexData, std::vector<unsigned char> fragmentData);
+    Shader(VkDevice device, VkRenderPass renderPass, std::vector<unsigned char> vertexData, std::vector<unsigned char> fragmentData);
 };
