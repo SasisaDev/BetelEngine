@@ -51,9 +51,17 @@ public:
     template <typename LayerType>
     uint32_t CreateLayer();
     IRenderLayer* GetLayer(uint32_t id);
+    std::vector<IRenderLayer*> GetLayers() const {return Layers;}
 
     uint32_t CreateComposition();
     IRenderComposition* GetComposition(uint32_t id);
 
     void Render();
 };
+
+template <typename LayerType>
+inline uint32_t IRenderEngine::CreateLayer()
+{
+    Layers.push_back(new LayerType);
+    return Layers.size()-1;
+}

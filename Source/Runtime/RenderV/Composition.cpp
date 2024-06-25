@@ -45,3 +45,22 @@ std::pair<uint32_t, uint32_t> IRenderComposition::AddLayerRefs(std::vector<IRend
     return std::pair<uint32_t, uint32_t>(firstID, Layers.size() - 1);
 }
 
+void IRenderComposition::Render(float DeltaTime)
+{
+    IRenderLayerRef* previousLayer = nullptr;
+
+    for(int layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
+    {
+        Layers[layerRefId]->GetParentLayer()->Prepare(previousLayer);
+
+        previousLayer = Layers[layerRefId];
+    }
+
+    previousLayer = nullptr;
+    for(int layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
+    {
+        Layers[layerRefId]->GetParentLayer()->Render(previousLayer, 0);
+
+        previousLayer = Layers[layerRefId];
+    }
+}

@@ -24,7 +24,7 @@ Application::Application()
 	window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1, 1, SDL_WINDOW_VULKAN);
 
 	// Create Render Engine object
-    Render = IRenderFactory::Get().CreateEngine();
+    Render = IRenderFactory::CreateEngine();
 
 	// Get vulkan instance extensions from SDL
 	unsigned int pExtCount = 0;

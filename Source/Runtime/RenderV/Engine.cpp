@@ -1,5 +1,7 @@
 #include "Engine.h"
 
+#include <cassert>
+
 #include <Log/Logger.h>
 
 VkPhysicalDevice IRenderEngine::InternalPickPhysDevice(std::vector<VkPhysicalDevice> &PhysicalDevices)
@@ -54,6 +56,11 @@ bool IRenderEngine::Initialize(std::vector<const char*> extensions, std::vector<
     return true;
 }
 
+IRenderLayer* IRenderEngine::GetLayer(uint32_t id)
+{
+    return Layers[id];
+}
+
 uint32_t IRenderEngine::CreateComposition()
 {
     Compositions.push_back(new IRenderComposition());
@@ -67,5 +74,8 @@ IRenderComposition* IRenderEngine::GetComposition(uint32_t id)
 
 void IRenderEngine::Render()
 {
-
+    for(int compositionId = 0; compositionId < Compositions.size(); compositionId++)
+    {
+        Compositions[compositionId]->Render(0);
+    }
 }

@@ -47,6 +47,8 @@ protected:
 
     bool bIsPresentable = false;
 
+    uint32_t targetImageId = 0;
+
     std::vector<IRenderLayerRef*> Layers;
     RenderLayerDependency DependencyList;
 public:
@@ -61,6 +63,7 @@ public:
     uint32_t AddLayerRef(IRenderLayerRef* ref);
     std::pair<uint32_t, uint32_t> AddLayerRefs(std::vector<IRenderLayerRef*> &ref);
     IRenderLayerRef* GetLayer(uint32_t idx);
+    inline const std::vector<IRenderLayerRef*>& GetLayerRefs() const { return Layers; }
 
     void StartFrame();
     void Render(float DeltaTime);

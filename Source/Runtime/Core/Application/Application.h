@@ -18,6 +18,8 @@ public:
     Application();
     ~Application();
 
+    inline IRenderEngine* GetRender() const {return Render;}
+
     inline bool ShouldTerminate() const {return bShouldTerminate;}
 
     window_t CreateWindow(WindowCreateInfo& createInfo);

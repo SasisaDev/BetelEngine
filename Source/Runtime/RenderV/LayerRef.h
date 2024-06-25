@@ -17,11 +17,11 @@ public:
     }
     inline IRenderLayer* GetParentLayer() const {return parentLayer;}
 
-    virtual bool Initialize(RenderLayerDependency& DependencyList);
+    virtual bool Initialize(RenderLayerDependency& DependencyList){return false;}
 
-    virtual void Prepare(IRenderLayerRef* previousLayer);
+    virtual void Prepare(IRenderLayerRef* previousLayer){}
 
-    virtual void Render(float DeltaTime);
+    virtual void Render(float DeltaTime){}
 
-    bool Deinitialize();
+    bool Deinitialize() {return false;}
 };
