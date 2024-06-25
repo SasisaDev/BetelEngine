@@ -2,10 +2,9 @@
 
 #include <memory>
 
-#include <Assets/Asset.h>
-#include <RenderV/Render.h>
+#include "ShaderAsset.h"
 
-class ShaderAsset : public Asset
+class MaterialAsset : public Asset
 {
 protected:
     std::shared_ptr<IShader> pShader;

@@ -5,25 +5,32 @@
 #include "LayerRef.h"
 #include "Layer.h"
 
-class IRenderCompositionInitializer
+enum class ERenderCompositionType : uint8_t
 {
+    RENDER_COMPOSITION_TYPE_NONE = 0,
+    RENDER_COMPOSITION_TYPE_SURFACE = 1,
+    RENDER_COMPOSITION_TYPE_IMAGE = 2
+};
+
+struct IRenderCompositionInitializer
+{
+    virtual ERenderCompositionType GetType() const {return ERenderCompositionType::RENDER_COMPOSITION_TYPE_NONE;}
 
 };
 
-class RenderCompositionInitializerSurface : public IRenderCompositionInitializer
+struct RenderCompositionInitializerSurface : public IRenderCompositionInitializer
 {
+    VkSurfaceKHR surface;
+    
+    // Functions
+
+    virtual ERenderCompositionType GetType() const override {return ERenderCompositionType::RENDER_COMPOSITION_TYPE_SURFACE;}
 
 };
 
-class RenderCompositionInitializerImage : public IRenderCompositionInitializer
+struct RenderCompositionInitializerImage : public IRenderCompositionInitializer
 {
-
-};
-
-enum ERenderCompositionType
-{
-    RENDER_COMPOSITION_TYPE_SURFACE = 0,
-    RENDER_COMPOSITION_TYPE_IMAGE = 1
+    virtual ERenderCompositionType GetType() const override {return ERenderCompositionType::RENDER_COMPOSITION_TYPE_IMAGE;}
 };
 
 class IRenderComposition
@@ -43,13 +50,16 @@ protected:
     std::vector<IRenderLayerRef*> Layers;
     RenderLayerDependency DependencyList;
 public:
+    IRenderComposition();
 
     bool Initialize(IRenderCompositionInitializer* initializer);
+    bool InitializeWithSurface(RenderCompositionInitializerSurface* initializer);
+    bool InitializeWithImage(RenderCompositionInitializerImage* initializer);
     
     bool Recreate(IRenderCompositionInitializer* initializer);
 
-    template <typename LayerType>
-    uint32_t AddLayerRef();
+    uint32_t AddLayerRef(IRenderLayerRef* ref);
+    std::pair<uint32_t, uint32_t> AddLayerRefs(std::vector<IRenderLayerRef*> &ref);
     IRenderLayerRef* GetLayer(uint32_t idx);
 
     void StartFrame();
@@ -58,11 +68,3 @@ public:
 
     bool Deinitialize();
 };
-
-template <typename LayerType>
-inline uint32_t IRenderComposition::AddLayerRef()
-{
-    IRenderLayerRef* layerRef = LayerType::CreateRef();
-    
-    Layers.push_back(layerRef);
-}

@@ -41,11 +41,6 @@ void Logger::LogFormat(const char* Namespace, const char* message, ...)
 	va_end(varg_ptr);
 }
 
-void Logger::LogFormat(const char* Namespace, std::string message, ...)
-{
-	Logger::LogFormat(Namespace, message.c_str());
-}
-
 void Logger::Warning(const char* Namespace, const char* message)
 {
 	OnLogMessage.Broadcast("Warning", Namespace, message);
@@ -58,11 +53,6 @@ void Logger::WarningFormat(const char* Namespace, const char* message, ...)
 	OnLogMessage.Broadcast("Warning", Namespace, message);
 }
 
-void Logger::WarningFormat(const char* Namespace, std::string message, ...)
-{
-
-}
-
 void Logger::Error(const char* Namespace, const char* message)
 {
 }
@@ -70,11 +60,6 @@ void Logger::Error(const char* Namespace, const char* message)
 void Logger::ErrorFormat(const char* Namespace, const char* message, ...)
 {
 	OnLogMessage.Broadcast("Error", Namespace, message);
-}
-
-void Logger::ErrorFormat(const char* Namespace, std::string message, ...)
-{
-	
 }
 
 void Logger::Fatal(const char* Namespace, const char* message)
@@ -90,8 +75,4 @@ void Logger::FatalFormat(const char* Namespace, const char* message, ...)
 {
 	OnLogMessage.Broadcast("Fatal", Namespace, message);
 	
-}
-
-void Logger::FatalFormat(const char* Namespace, std::string message, ...)
-{
 }

@@ -1,10 +1,12 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 template <class... Args>
 class TSingleDelegateNoReturn {
 protected:
+	std::unique_ptr<void(Args...args)> delegatefunc;
 	void (*DelegateFunction)(Args... args) = nullptr;
 public:
 	void Bind(void (*func)(Args... args));

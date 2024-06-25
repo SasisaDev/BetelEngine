@@ -1,9 +1,12 @@
 #pragma once
 
+#include <string>
 #include <cstdint>
 
 #include <SDL.h>
 #include <SDL_Vulkan.h>
+
+#include <RenderV/LayerRef.h>
 
 #define DEIRI_MAX_WINDOWS 256
 
@@ -19,7 +22,10 @@
 
 struct WindowCreateInfo
 {
+    std::string title;
+    unsigned int width, height;
 
+    std::vector<IRenderLayerRef*> layerRefs;
 };
 
 class Window
@@ -27,9 +33,20 @@ class Window
     SDL_Window* window;
 	SDL_Surface* surface;
 	SDL_Event event;
+
+    std::string title;
+    unsigned int width, height;
+
+    bool bShouldClose = false;
 protected:
     uint32_t RendererCompositionID;
     window_t WindowID;
+
+    friend class Application;
 public:
-    Window(WindowCreateInfo createInfo);
+    Window(WindowCreateInfo& createInfo);
+
+    void CreateSurface(VkInstance instance, VkSurfaceKHR* vksurface);
+
+    void Update();
 };

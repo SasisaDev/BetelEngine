@@ -11,24 +11,16 @@ public:
 	static TMulticastDelegate<const char*, const char*, const char*> OnLogFatal;
 
 	static void Log(const char* Namespace, const char* message);
-	static void Log(const char* Namespace, std::string message);
 	static void LogFormat(const char* Namespace, const char* message, ...);
-	static void LogFormat(const char* Namespace, std::string message, ...);
 
 	static void Warning(const char* Namespace, const char* message);
-	static void Warning(const char* Namespace, std::string message);
 	static void WarningFormat(const char* Namespace, const char* message, ...);
-	static void WarningFormat(const char* Namespace, std::string message, ...);
 
 	static void Error(const char* Namespace, const char* message);
-	static void Error(const char* Namespace, std::string message);
 	static void ErrorFormat(const char* Namespace, const char* message, ...);
-	static void ErrorFormat(const char* Namespace, std::string message, ...);
 
 	static void Fatal(const char* Namespace, const char* message);
-	static void Fatal(const char* Namespace, std::string message);
 	static void FatalFormat(const char* Namespace, const char* message, ...);
-	static void FatalFormat(const char* Namespace, std::string message, ...);
 };
 
 /* 
