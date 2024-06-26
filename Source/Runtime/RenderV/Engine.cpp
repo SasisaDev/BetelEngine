@@ -6,7 +6,16 @@
 
 VkPhysicalDevice IRenderEngine::InternalPickPhysDevice(std::vector<VkPhysicalDevice> &PhysicalDevices)
 {
-    return VK_NULL_HANDLE;
+    for(int i = 0; i < PhysicalDevices.size(); i++)
+    {
+        if(IRenderUtility::FindQueueFamilies(PhysicalDevices[i]).graphicsFamily.has_value())
+        {
+            return PhysicalDevices[i];
+        }
+    }
+
+    LOG(Fatal, LogVulkan, "Found no physical devices supporting Vulkan on current system.");
+    return nullptr;
 }
 
 bool IRenderEngine::Initialize(std::vector<const char*> extensions, std::vector<const char*> layers)
@@ -53,6 +62,19 @@ bool IRenderEngine::Initialize(std::vector<const char*> extensions, std::vector<
         return false;
     }
 
+    // Pick Physical Device
+    uint32_t deviceCount = 0;
+
+    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+    if (deviceCount == 0) {
+        LOG(Fatal, LogVulkan, "failed to find GPUs with Vulkan support!");
+    }
+
+    std::vector<VkPhysicalDevice> devices(deviceCount);
+    vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+    physDevice = DelegatePickPhysDevice(devices);
+
     return true;
 }
 
@@ -79,3 +101,18 @@ void IRenderEngine::Render()
         Compositions[compositionId]->Render(0);
     }
 }
+
+// Debug implementations
+#if !defined(NDEBUG)
+void IRenderEngine::CreateDebugMessenger(PFN_vkDebugUtilsMessengerCallbackEXT callback, void* userData)
+{
+    VkDebugUtilsMessengerCreateInfoEXT createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+    createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    createInfo.pfnUserCallback = callback;
+    createInfo.pUserData = userData;
+
+    vkCreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &debugMessenger);
+}
+#endif

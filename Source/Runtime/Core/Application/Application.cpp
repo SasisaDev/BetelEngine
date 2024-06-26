@@ -4,8 +4,21 @@
 #include <chrono>
 
 #include <Log/Logger.h>
+#include <Platform/Platform.h>
 
 Application* GApplication = nullptr;
+
+#if !defined(NDEBUG)
+VkBool32 DebugMessageCallback(
+    VkDebugUtilsMessageSeverityFlagBitsEXT           messageSeverity,
+    VkDebugUtilsMessageTypeFlagsEXT                  messageTypes,
+    const VkDebugUtilsMessengerCallbackDataEXT*      pCallbackData,
+    void*                                            pUserData)
+{
+	IPlatform::Get()->DebugPrint((std::string(pCallbackData->pMessage) + "\n").c_str());
+	return VK_FALSE;
+}
+#endif
 
 Application::Application()
 {
@@ -39,8 +52,18 @@ Application::Application()
 	}
 
 	SDL_DestroyWindow(window);
+
+	std::vector<const char*> InstanceLayers;
+#	if !defined(NDEBUG)
+	InstanceLayers.push_back("VK_LAYER_KHRONOS_validation");
+	SDLExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+#	endif
 	
-	Render->Initialize(SDLExtensions);
+	Render->Initialize(SDLExtensions, InstanceLayers);
+
+#	if !defined(NDEBUG)
+	Render->CreateDebugMessenger(DebugMessageCallback, 0);
+#	endif
 	
 }
 

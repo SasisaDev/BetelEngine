@@ -18,7 +18,9 @@ protected:
     VkPhysicalDevice physDevice;
     VkDevice device;
 
+#   if !defined(NDEBUG)
     VkDebugUtilsMessengerEXT debugMessenger;
+#   endif
 
     VkQueue graphicsQueue;
     VkQueue presentQueue;
@@ -57,6 +59,11 @@ public:
     IRenderComposition* GetComposition(uint32_t id);
 
     void Render();
+public:
+// Debug Functions
+#   if !defined(NDEBUG)
+    void CreateDebugMessenger(PFN_vkDebugUtilsMessengerCallbackEXT callback, void* userData);
+#endif
 };
 
 template <typename LayerType>

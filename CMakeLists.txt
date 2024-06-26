@@ -32,7 +32,7 @@ FetchContent_MakeAvailable(vulkan sdl glm lua)
 
 # Modules Sources
 set(SrcRenderV "Source/Runtime/RenderV/Vulkan/vkloader.cpp" "Source/Runtime/RenderV/Render.cpp" "Source/Runtime/RenderV/Engine.cpp" 
-    "Source/Runtime/RenderV/Composition.cpp" "Source/Runtime/RenderV/Layer.cpp")
+    "Source/Runtime/RenderV/Composition.cpp" "Source/Runtime/RenderV/Layer.cpp" "Source/Runtime/RenderV/Utility.cpp")
 
 set(Sources ${SrcRenderV} "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Platform/Platform.cpp" "Source/Runtime/Log/Logger.cpp" 

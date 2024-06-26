@@ -1,6 +1,6 @@
 #include "Utility.h"
 
-RenderQueueFamilyIndices IRenderUtility::FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface = 0)
+RenderQueueFamilyIndices IRenderUtility::FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
     RenderQueueFamilyIndices indices;
     
