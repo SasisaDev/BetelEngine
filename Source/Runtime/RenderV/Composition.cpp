@@ -1,5 +1,15 @@
 #include "Composition.h"
 
+void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composition) 
+{
+    composition->surface = surface;
+}
+
+void RenderCompositionInitializerImage::Initialize(IRenderComposition* composition) 
+{
+    
+}
+
 IRenderComposition::IRenderComposition()
     : Layers()
 {
@@ -8,28 +18,11 @@ IRenderComposition::IRenderComposition()
 
 bool IRenderComposition::Initialize(IRenderCompositionInitializer* initializer)
 {
-    switch(initializer->GetType())
-    {
-        case ERenderCompositionType::RENDER_COMPOSITION_TYPE_SURFACE:
-            return InitializeWithSurface(static_cast<RenderCompositionInitializerSurface*>(initializer));
-        break;
-        case ERenderCompositionType::RENDER_COMPOSITION_TYPE_IMAGE:
-            return InitializeWithImage(static_cast<RenderCompositionInitializerImage*>(initializer));
-        break;
-        default:
-            return false;
-        break;
-    }
-}
+    compositionType = initializer->GetType();
 
-bool IRenderComposition::InitializeWithSurface(RenderCompositionInitializerSurface* initializer)
-{
-    return false;
-}
+    initializer->Initialize(this);
 
-bool IRenderComposition::InitializeWithImage(RenderCompositionInitializerImage* initializer)
-{
-    return false;
+    return true;
 }
 
 uint32_t IRenderComposition::AddLayerRef(IRenderLayerRef* ref)

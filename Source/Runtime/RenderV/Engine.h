@@ -24,6 +24,7 @@ protected:
 
     VkQueue graphicsQueue;
     VkQueue presentQueue;
+    VkQueue computeQueue;
 
     VkSemaphore aquireSemaphore;
     VkSemaphore submitSemaphore;
@@ -47,6 +48,7 @@ protected:
 public:
 
     bool Initialize(std::vector<const char*> extensions = {}, std::vector<const char*> layers = {});
+    void CreateDevice(std::vector<const char*> devExtensions = {}, std::vector<const char*> devLayers = {});
 
     inline VkInstance GetInstance() const {return instance;}
     
@@ -55,7 +57,7 @@ public:
     IRenderLayer* GetLayer(uint32_t id);
     std::vector<IRenderLayer*> GetLayers() const {return Layers;}
 
-    uint32_t CreateComposition();
+    uint32_t CreateComposition(IRenderCompositionInitializer* initializer);
     IRenderComposition* GetComposition(uint32_t id);
 
     void Render();

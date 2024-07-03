@@ -1,6 +1,7 @@
 #include "Engine.h"
 
 #include <cassert>
+#include <set>
 
 #include <Log/Logger.h>
 
@@ -29,7 +30,7 @@ bool IRenderEngine::Initialize(std::vector<const char*> extensions, std::vector<
     }
 
     // Create Vulkan Instance
-    VkApplicationInfo appInfo;
+    VkApplicationInfo appInfo = {};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     appInfo.pNext = 0;
     appInfo.pEngineName = "Deiri";
@@ -38,7 +39,7 @@ bool IRenderEngine::Initialize(std::vector<const char*> extensions, std::vector<
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
     appInfo.apiVersion = VK_API_VERSION_1_3;
 
-    VkInstanceCreateInfo instanceInfo;
+    VkInstanceCreateInfo instanceInfo = {};
     instanceInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     instanceInfo.pNext = 0;
     instanceInfo.pApplicationInfo = &appInfo;
@@ -75,7 +76,73 @@ bool IRenderEngine::Initialize(std::vector<const char*> extensions, std::vector<
 
     physDevice = DelegatePickPhysDevice(devices);
 
+
+
     return true;
+}
+
+void IRenderEngine::CreateDevice(std::vector<const char*> devExtensions, std::vector<const char*> devLayers)
+{
+    // Ensure all family indices are picked
+    if(!queueFamilyIndices.presentFamily.has_value())
+    {
+        LOG(Warning, LogVulkan, "Presentation family index was not picked before device creation. Presentation may be unavailable. Are there any Surface Compositions?");
+        queueFamilyIndices.presentFamily = queueFamilyIndices.graphicsFamily;
+    }
+
+    if(!queueFamilyIndices.computeFamily.has_value())
+    {
+        LOG(Warning, LogVulkan, "Presentation family index was not picked before device creation. Compute shaders would not be unavailable.");
+    }
+
+    // Create Device Queue
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+    std::set<uint32_t> uniqueQueueFamilies = { queueFamilyIndices.graphicsFamily.value(), queueFamilyIndices.presentFamily.value(), queueFamilyIndices.computeFamily.value() };
+
+    float queuePriority = 1.0f;
+    for (uint32_t queueFamily : uniqueQueueFamilies) {
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.pNext = nullptr;
+        queueCreateInfo.queueFamilyIndex = queueFamily;
+        queueCreateInfo.queueCount = 1;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+        queueCreateInfos.push_back(queueCreateInfo);
+    }
+
+    // Create Device
+    VkPhysicalDeviceFeatures deviceFeatures{};
+
+    VkDeviceCreateInfo deviceCreateInfo{};
+    deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    deviceCreateInfo.pQueueCreateInfos = queueCreateInfos.data();
+    deviceCreateInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+
+    deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
+
+    std::vector<const char*> extensions/* = InternalAssembleDeviceExtensions()*/;
+    extensions.insert(extensions.end(), devExtensions.begin(), devExtensions.end());
+    deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
+    deviceCreateInfo.ppEnabledExtensionNames = extensions.data();
+
+    std::vector<const char*> layers = {};
+    layers.insert(layers.end(), devLayers.begin(), devLayers.end());
+    deviceCreateInfo.enabledLayerCount = static_cast<uint32_t>(layers.size());
+    deviceCreateInfo.ppEnabledLayerNames = layers.data();
+
+    if (vkloader::vkCreateDevice(physDevice, &deviceCreateInfo, nullptr, &device) != VK_SUCCESS) {
+        LOG(Fatal, LogVulkan, "Failed creating device");
+    }
+
+    vkGetDeviceQueue(device, queueFamilyIndices.graphicsFamily.value(), 0, &graphicsQueue);
+    if(queueFamilyIndices.presentFamily.has_value()) 
+    {   
+        vkGetDeviceQueue(device, queueFamilyIndices.presentFamily.value(), 0, &presentQueue);
+    }
+    if(queueFamilyIndices.computeFamily.has_value()) 
+    {   
+        vkGetDeviceQueue(device, queueFamilyIndices.computeFamily.value(), 0, &computeQueue);
+    }
 }
 
 IRenderLayer* IRenderEngine::GetLayer(uint32_t id)
@@ -83,9 +150,17 @@ IRenderLayer* IRenderEngine::GetLayer(uint32_t id)
     return Layers[id];
 }
 
-uint32_t IRenderEngine::CreateComposition()
+uint32_t IRenderEngine::CreateComposition(IRenderCompositionInitializer* initializer)
 {
-    Compositions.push_back(new IRenderComposition());
+    IRenderComposition* composition = new IRenderComposition();
+    composition->Initialize(initializer);
+    
+    if(!queueFamilyIndices.IsComplete())
+    {
+        queueFamilyIndices = IRenderUtility::FindQueueFamilies(physDevice, composition->GetSurface());
+    }
+
+    Compositions.push_back(composition);
     return Compositions.size()-1;
 }
 

@@ -4,15 +4,15 @@
 #include <string>
 #include <map>
 
-class IRenderLayer;
+class IRenderLayerRef;
 
 class RenderLayerDependency
 {
 protected:
-    std::map<IRenderLayer*, std::vector<std::string>> DependencyList;
+    std::map<IRenderLayerRef*, std::vector<std::string>> DependencyList;
 public:
 
-    inline const std::map<IRenderLayer*, std::vector<std::string>>& GetDependencyList() const { return DependencyList; }
+    inline const std::map<IRenderLayerRef*, std::vector<std::string>>& GetDependencyList() const { return DependencyList; }
 
-    void AddDependency(IRenderLayer* Source, std::string Dependency);
+    void AddDependency(IRenderLayerRef* Source, std::string Dependency);
 };

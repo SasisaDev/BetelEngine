@@ -29,6 +29,8 @@ int GuardedMain()
 	};
 	app.CreateWindow(wininfo);
 
+	render->CreateDevice();
+
 	app.ApplicationLoop();
 
 	return 0;

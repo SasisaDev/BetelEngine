@@ -54,6 +54,8 @@ Application::Application()
 	SDL_DestroyWindow(window);
 
 	std::vector<const char*> InstanceLayers;
+
+	// TO DO: Refactor extensions
 #	if !defined(NDEBUG)
 	InstanceLayers.push_back("VK_LAYER_KHRONOS_validation");
 	SDLExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
@@ -77,15 +79,13 @@ window_t Application::CreateWindow(WindowCreateInfo& createInfo)
 {
 	Window* window = new Window(createInfo);
 
-	// Register Composition
-	window->RendererCompositionID = Render->CreateComposition();
-	IRenderComposition* composition = Render->GetComposition(window->RendererCompositionID);
-
+	// Register Composition and
 	// Initialize Composition with Surface
 	RenderCompositionInitializerSurface surfaceInitializer;
 	window->CreateSurface(Render->GetInstance(), &surfaceInitializer.surface);
 
-	composition->Initialize(&surfaceInitializer);
+	window->RendererCompositionID = Render->CreateComposition(&surfaceInitializer);
+	IRenderComposition* composition = Render->GetComposition(window->RendererCompositionID);
 
 	// Add requested Layer Refs to Composition
 	composition->AddLayerRefs(createInfo.layerRefs);
@@ -110,6 +110,29 @@ void Application::ApplicationLoop()
 		}
 
 		Render->Render();
+
+		// Check windows state
+		for(int i = 0; i < Windows.size(); i++)
+		{
+			if(Windows[i]->bShouldClose)
+			{
+				DestroyPendingWindows.push(i);
+			}
+		}
+
+		// Destroy windows that should close
+		for(; !DestroyPendingWindows.empty(); DestroyPendingWindows.pop())
+		{
+			// Kill window
+			delete Windows[DestroyPendingWindows.front()];
+			Windows.erase(Windows.begin() += DestroyPendingWindows.front());
+
+			// If we're out of windows, close application
+			if(Windows.size() <= 0)
+			{
+				bShouldTerminate = true;
+			}
+		}
 
 		frame_lifetime_end = std::chrono::high_resolution_clock::now();
 	}

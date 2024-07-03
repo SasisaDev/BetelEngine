@@ -7,7 +7,7 @@
 class RenderLayer
 {
 protected:
-
+    
 public:
 
     virtual bool Initialize(RenderLayerDependency& DependencyList);
