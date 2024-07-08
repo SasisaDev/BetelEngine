@@ -6,6 +6,7 @@
 
 #include "../Window/Window.h"
 #include <RenderV/Render.h>
+#include <Engine/Engine.h>
 
 class Application
 {
@@ -15,6 +16,7 @@ protected:
     std::vector<Window*> Windows;
     
     IRenderEngine* Render;
+    Engine* GameEngine;
 
     bool bShouldTerminate = false;
 public:

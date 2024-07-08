@@ -22,11 +22,17 @@ VkBool32 DebugMessageCallback(
 
 Application::Application()
 {
-	if(GApplication == nullptr)
+	if(GApplication != nullptr)
 	{
-		GApplication = this;
+		return;
 	}
+	
+	GApplication = this;
 
+	// Create Engine object
+	GameEngine = new Engine();
+
+	// Initialize SDL framework
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 	{
 		LOG(Fatal, SDL, "SDL Initialization failed");
@@ -104,11 +110,16 @@ void Application::ApplicationLoop()
 		frame_lifetime_start = std::chrono::high_resolution_clock::now();
 
 		//LOGF(Log, LogTime, "%f", deltaTime);
+		// Update all windows, may require compositions recreation
 		for (int i = 0; i < Windows.size(); i++)
 		{
 			Windows[i]->Update();
 		}
 
+		// Tick Game Engine
+		GameEngine->Tick(deltaTime);
+
+		// Perform rendering
 		Render->Render();
 
 		// Check windows state

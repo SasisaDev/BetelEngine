@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LayerDependency.h"
+#include "DependencyList.h"
 #include <cassert>
 
 class IRenderLayer;
@@ -17,7 +17,7 @@ public:
     }
     inline IRenderLayer* GetParentLayer() const {return parentLayer;}
 
-    virtual bool Initialize(RenderLayerDependency& DependencyList){return false;}
+    virtual bool Initialize(RenderDependencyList<IRenderLayerRef>& DependencyList){return false;}
 
     virtual void Prepare(IRenderLayerRef* previousLayer){}
 

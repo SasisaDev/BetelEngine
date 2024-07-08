@@ -171,7 +171,7 @@ IRenderComposition* IRenderEngine::GetComposition(uint32_t id)
 
 void IRenderEngine::Render()
 {
-    for(int compositionId = 0; compositionId < Compositions.size(); compositionId++)
+    for(size_t compositionId = 0; compositionId < Compositions.size(); compositionId++)
     {
         Compositions[compositionId]->Render(0);
     }

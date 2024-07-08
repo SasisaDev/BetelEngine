@@ -61,7 +61,7 @@ protected:
     uint32_t targetImageId = 0;
 
     std::vector<IRenderLayerRef*> Layers;
-    RenderLayerDependency DependencyList;
+    RenderDependencyList<IRenderLayerRef> DependencyList;
 
     ERenderCompositionType compositionType;
 public:

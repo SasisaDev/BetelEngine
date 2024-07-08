@@ -13,6 +13,7 @@ class IRenderEngine
 protected:
     std::vector<IRenderLayer*> Layers;
     std::vector<IRenderComposition*> Compositions;
+    RenderDependencyList<IRenderComposition> DependencyList;
 
     VkInstance instance;
     VkPhysicalDevice physDevice;
