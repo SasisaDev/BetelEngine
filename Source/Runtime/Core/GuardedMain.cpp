@@ -6,7 +6,7 @@
 
 int GuardedMain()
 {
-	LOG(Log, LogStartup, "DEIRI Frameworks");
+	LOG(Log, LogStartup, "ArteriaFrameworks::GuardedMain()");
 
 	Application app;
 
@@ -29,6 +29,7 @@ int GuardedMain()
 	};
 	app.CreateWindow(wininfo);
 
+	// Creating device after creation of Window to include present queue checks
 	render->CreateDevice();
 
 	app.ApplicationLoop();

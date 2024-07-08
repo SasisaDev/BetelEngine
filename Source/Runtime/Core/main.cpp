@@ -1,6 +1,8 @@
 extern int GuardedMain();
 
-#ifdef _WIN32
+#include <Platform/platformdefs.h>
+
+#ifdef PLATFORM_WINDOWS
 
 #include <Windows.h>
 
