@@ -10,8 +10,8 @@ class IRenderFactory
 public:
     static IRenderEngine* CreateEngine();
 
-    template <typename LayerType>
-    static IRenderLayerRef* CreateLayerRef(IRenderEngine* engine)
+    template <typename LayerType, typename LayerRefType = IRenderLayerRef>
+    static LayerRefType* CreateLayerRef(IRenderEngine* engine)
     {
         assert(engine != nullptr && "engine == nullptr");
 
@@ -21,12 +21,12 @@ public:
             if(typeid(*layer) == typeid(LayerType))
             {
                 ref->SetParentLayer(layer);
-                return ref;
+                return dynamic_cast<LayerRefType*>(ref);
             }
         }
         
         assert(!"IRenderFactory::CreateLayerRef(IRenderEngine) points to non-registered layer type, which should never happen.");
-        return ref;
+        return dynamic_cast<LayerRefType*>(ref);
     }
 
     static std::shared_ptr<IShader> CreateShader(IRenderEngine* engine, IRenderLayer* layer, std::vector<unsigned char> vertCode, std::vector<unsigned char> fragCode);

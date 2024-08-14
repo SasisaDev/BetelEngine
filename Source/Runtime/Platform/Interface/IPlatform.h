@@ -1,6 +1,6 @@
 #pragma once
 
-class IFile;
+#include "Files/IFile.h"
 
 class IPlatform
 {
@@ -11,5 +11,5 @@ public:
 	virtual const char* PlatformName() const { return "Unknown"; }
 	virtual void DebugPrint(const char* string) const {}
 
-	virtual IFile* OpenFile(const char* path, const char* access) { return nullptr; }
+	virtual IFile* OpenFile(const char* path, EFileAccessFlags accessFlags) { return nullptr; }
 };

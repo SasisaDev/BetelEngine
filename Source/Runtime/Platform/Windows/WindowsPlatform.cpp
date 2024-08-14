@@ -13,6 +13,8 @@
 #include <fstream>
 #include <fcntl.h>
 
+#include "Files/WindowsFile.h"
+
 bool WindowsPlatform::Win32RedirectConsole()
 {
 	/*FILE* fp;
@@ -72,4 +74,9 @@ void WindowsPlatform::DebugPrint(const char* string) const
 	//std::printf(string);
 	//OutputDebugStringW(std::wstring(string, string+strlen(string)).c_str());
 	OutputDebugStringA(string);
+}
+
+IFile* WindowsPlatform::OpenFile(const char* path, EFileAccessFlags accessFlags)
+{
+	return new WindowsFile(path, accessFlags);
 }

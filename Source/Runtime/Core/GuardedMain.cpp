@@ -18,7 +18,7 @@ int GuardedMain()
 
 	// Create game window
 	std::vector<IRenderLayerRef*> gameCompositionLayerRefs = {
-		IRenderFactory::CreateLayerRef<WorldRenderLayer>(render)
+		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
 	};
 
 	WindowCreateInfo wininfo = {

@@ -24,7 +24,7 @@ FetchContent_Declare(
 
 FetchContent_Declare(
   sdl
-  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git 
   GIT_TAG        release-2.30.3 # release-2.30.3
 )
 
@@ -32,11 +32,13 @@ FetchContent_MakeAvailable(vulkan sdl glm lua)
 
 # Modules Sources
 set(SrcRenderV "Source/Runtime/RenderV/Vulkan/vkloader.cpp" "Source/Runtime/RenderV/Render.cpp" "Source/Runtime/RenderV/Engine.cpp" 
-    "Source/Runtime/RenderV/Composition.cpp" "Source/Runtime/RenderV/Layer.cpp" "Source/Runtime/RenderV/Utility.cpp")
+    "Source/Runtime/RenderV/Composition.cpp" "Source/Runtime/RenderV/Layer.cpp" "Source/Runtime/RenderV/Utility.cpp" "Source/Runtime/RenderV/Objects/Shader.cpp")
 
-set(SrcEngine "Source/Runtime/Engine/Engine.cpp" "Source/Runtime/Engine/Tickable.cpp") 
+set(SrcEngine "Source/Runtime/Engine/Engine.cpp" "Source/Runtime/Engine/EngineDelegates.cpp" "Source/Runtime/Engine/Tickable.cpp") 
 
-set(Sources ${SrcRenderV} ${SrcEngine} "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
+set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp") 
+
+set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Platform/Platform.cpp" "Source/Runtime/Log/Logger.cpp" 
     "Source/Runtime/Delegate/Delegate.cpp" "Source/Runtime/Core/Window/Window.cpp")
 
@@ -44,7 +46,7 @@ if(WIN32)
     set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp")
 endif()
 
-set(EditorSources "")
+set(EditorSources "") 
 
 # Game
 

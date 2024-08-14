@@ -9,7 +9,7 @@
 Application* GApplication = nullptr;
 
 #if !defined(NDEBUG)
-VkBool32 DebugMessageCallback(
+VkBool32 __stdcall DebugMessageCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT           messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT                  messageTypes,
     const VkDebugUtilsMessengerCallbackDataEXT*      pCallbackData,
@@ -79,6 +79,9 @@ Application::~Application()
 {
 	delete Render;
 	Render = nullptr;
+
+	delete GameEngine;
+	GameEngine = nullptr;
 }
 
 window_t Application::CreateWindow(WindowCreateInfo& createInfo)

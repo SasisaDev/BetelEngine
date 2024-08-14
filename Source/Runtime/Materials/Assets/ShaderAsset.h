@@ -9,5 +9,8 @@ class ShaderAsset : public Asset
 {
 protected:
     std::shared_ptr<IShader> pShader;
+    
 public:
+    std::string ShaderLayerType = "WorldRenderLayer";
+    
 };

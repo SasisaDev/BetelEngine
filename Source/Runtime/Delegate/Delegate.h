@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <functional>
 
 template <class... Args>
 class TSingleDelegateNoReturn {
@@ -25,28 +26,30 @@ public:
 template <class... Args>
 class TMulticastDelegate {
 protected:
-	struct _DelegateContainer
-	{
-		void (*Function)(Args... args) = nullptr;
-		_DelegateContainer(void (*func)(Args... args))
-		{
-			Function = func;
-		}
-	};
-
-	std::vector<_DelegateContainer> DelegateFunctions;
+	std::vector<std::function<void(Args...)>> DelegateFunctions;
 public:
+
+	// Deprecated, should never call
+	void AddBind(std::function<void(Args...)> bind)
+	{
+		DelegateFunctions.push_back(bind);
+	}
 
 	void Add(void(*func)(Args... args))
 	{
-		DelegateFunctions.push_back(_DelegateContainer(func));
+		DelegateFunctions.push_back(std::bind(func));
+	}
+
+	void AddDynamic(void(*func)(Args... args), std::nullptr_t* This)
+	{
+		DelegateFunctions.push_back(std::bind(func, This));
 	}
 
 	void Broadcast(Args... args)
 	{
 		for (auto delegate : DelegateFunctions)
 		{
-			delegate.Function(args...);
+			delegate(args...);
 		}
 	}
 };

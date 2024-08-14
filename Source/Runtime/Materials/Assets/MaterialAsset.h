@@ -2,11 +2,13 @@
 
 #include <memory>
 
+#include <Assets/AssetSmartPointers.h>
+
 #include "ShaderAsset.h"
 
 class MaterialAsset : public Asset
 {
 protected:
-    std::shared_ptr<IShader> pShader;
+    AssetPtr<ShaderAsset> Shader;
 public:
 };

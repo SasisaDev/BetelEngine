@@ -25,6 +25,8 @@ public:
 
     inline IRenderEngine* GetRender() const {return Render;}
 
+    inline Engine* GetEngine() const {return GameEngine;}
+
     inline bool ShouldTerminate() const {return bShouldTerminate;}
 
     window_t CreateWindow(WindowCreateInfo& createInfo);
