@@ -13,8 +13,8 @@ enum class EFileAccessFlags : uint8_t
 class IFile
 {
 public:
-	IFile() = delete;
-	IFile(std::string path, EFileAccessFlags accessFlags) = delete;
+	IFile() = default;
+	IFile(std::string path, EFileAccessFlags accessFlags) {};
 
 	virtual const char* Fetch(size_t count) { return nullptr; }
 	virtual std::string FetchAll() { return 0; }

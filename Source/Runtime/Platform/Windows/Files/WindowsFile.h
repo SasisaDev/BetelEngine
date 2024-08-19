@@ -5,7 +5,7 @@
 class WindowsFile : public IFile
 {
 public:
-	WindowsFile() = delete;
+	WindowsFile() = default;
 	WindowsFile(std::string path, EFileAccessFlags accessFlags);
 
 	virtual const char* Fetch(size_t count) override { return nullptr; }

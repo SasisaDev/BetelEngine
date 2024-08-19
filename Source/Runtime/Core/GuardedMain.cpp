@@ -2,6 +2,7 @@
 
 #include <Core/Application/Application.h>
 #include <World/RenderLayer/WorldRenderLayer.h>
+#include <UI/RenderLayer/WidgetRenderLayer.h>
 #include <Log/Logger.h>
 
 int GuardedMain()
@@ -15,10 +16,16 @@ int GuardedMain()
 	// Add render layers
 
 	render->CreateLayer<WorldRenderLayer>();
+	render->CreateLayer<UIRenderLayer>();
 
 	// Create game window
 	std::vector<IRenderLayerRef*> gameCompositionLayerRefs = {
-		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
+#		ifdef EDITOR
+		// Editor UI
+		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetEditorCanvasWidget()),
+#		endif
+		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render),
+		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
 	};
 
 	WindowCreateInfo wininfo = {

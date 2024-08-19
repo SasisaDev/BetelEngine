@@ -78,6 +78,8 @@ public:
 
     VkSurfaceKHR GetSurface() const {return surface;}
 
+    VkImage GetCurrentImage() const {return images[targetImageId];}
+
     void StartFrame();
     void Render(float DeltaTime);
     void EndFrame();

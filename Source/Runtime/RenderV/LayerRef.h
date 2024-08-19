@@ -18,6 +18,7 @@ public:
     inline IRenderLayer* GetParentLayer() const {return parentLayer;}
 
     virtual bool Initialize(RenderDependencyList<IRenderLayerRef>& DependencyList){return false;}
+    virtual bool Recreate() {return false;}
 
     virtual void Prepare(IRenderLayerRef* previousLayer){}
 

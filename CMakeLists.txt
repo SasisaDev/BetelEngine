@@ -38,12 +38,14 @@ set(SrcEngine "Source/Runtime/Engine/Engine.cpp" "Source/Runtime/Engine/EngineDe
 
 set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp") 
 
-set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
+set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp") 
+
+set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Platform/Platform.cpp" "Source/Runtime/Log/Logger.cpp" 
     "Source/Runtime/Delegate/Delegate.cpp" "Source/Runtime/Core/Window/Window.cpp")
 
 if(WIN32)
-    set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp")
+    set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp" "Source/Runtime/Platform/Windows/Files/WindowsFile.cpp")
 endif()
 
 set(EditorSources "") 

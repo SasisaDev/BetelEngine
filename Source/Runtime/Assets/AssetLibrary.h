@@ -1,8 +1,7 @@
 #pragma once
 
 #include <unordered_map>
-#include <unordered_multimap>
-#include <unordered_multiset>
+#include <unordered_set>
 #include <vector>
 #include <optional>
 #include <string>
@@ -21,7 +20,7 @@ class AssetLibrary
 {
 protected:
     std::vector<AssetType> RegisteredAssetTypes;
-    std::unordered_multiset<AssetDescriptor> AssetList;
+    std::unordered_multiset<AssetDescriptor*> AssetList;
 public:
     AssetLibrary& Get();
 
