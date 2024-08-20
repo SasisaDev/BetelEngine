@@ -41,7 +41,7 @@ set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp")
 set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp") 
 
 set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
-    "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Platform/Platform.cpp" "Source/Runtime/Log/Logger.cpp" 
+    "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Platform/Platform.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
     "Source/Runtime/Delegate/Delegate.cpp" "Source/Runtime/Core/Window/Window.cpp")
 
 if(WIN32)

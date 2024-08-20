@@ -5,6 +5,7 @@
 #include <queue>
 
 #include "../Window/Window.h"
+#include "Arguments.h"
 #include <RenderV/Render.h>
 #include <Engine/Engine.h>
 
@@ -12,6 +13,8 @@ class Application
 {
 private:
     std::queue<int> DestroyPendingWindows;
+
+    ArgumentCollection Arguments;
 protected:
     std::vector<Window*> Windows;
     
@@ -21,7 +24,10 @@ protected:
     bool bShouldTerminate = false;
 public:
     Application();
+    Application(int argc, char* argv[]);
     ~Application();
+
+    void Initialize();
 
     inline IRenderEngine* GetRender() const {return Render;}
 

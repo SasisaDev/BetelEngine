@@ -2,6 +2,7 @@
 
 #include <ctime>
 #include <chrono>
+#include <type_traits>
 
 #include <Log/Logger.h>
 #include <Platform/Platform.h>
@@ -21,6 +22,18 @@ VkBool32 __stdcall DebugMessageCallback(
 #endif
 
 Application::Application()
+{
+	Initialize();	
+}
+
+Application::Application(int argc, char* argv[])
+{
+	Arguments = ArgumentsParser::ParseArgs(argc, argv);
+
+	Initialize();
+}
+
+void Application::Initialize()
 {
 	if(GApplication != nullptr)
 	{
@@ -72,7 +85,6 @@ Application::Application()
 #	if !defined(NDEBUG)
 	Render->CreateDebugMessenger(DebugMessageCallback, 0);
 #	endif
-	
 }
 
 Application::~Application()
