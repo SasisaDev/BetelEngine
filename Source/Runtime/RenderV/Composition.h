@@ -80,9 +80,9 @@ public:
 
     VkImage GetCurrentImage() const {return images[targetImageId];}
 
-    void StartFrame();
-    void Render(float DeltaTime);
-    void EndFrame();
+    void StartFrame(VkDevice device);
+    void Render(VkDevice device);
+    void EndFrame(VkDevice device);
 
     bool Deinitialize();
 };

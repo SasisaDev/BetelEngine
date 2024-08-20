@@ -15,6 +15,7 @@ private:
     std::queue<int> DestroyPendingWindows;
 
     ArgumentCollection Arguments;
+    std::string ApplicationPath;
 protected:
     std::vector<Window*> Windows;
     

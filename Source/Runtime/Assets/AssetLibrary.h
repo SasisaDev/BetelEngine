@@ -20,7 +20,7 @@ class AssetLibrary
 {
 protected:
     std::vector<AssetType> RegisteredAssetTypes;
-    std::unordered_multiset<AssetDescriptor*> AssetList;
+    std::vector<AssetDescriptor> AssetList;
 public:
     AssetLibrary& Get();
 

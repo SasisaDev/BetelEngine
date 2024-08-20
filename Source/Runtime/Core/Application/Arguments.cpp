@@ -1,7 +1,7 @@
 #include "Arguments.h"
 
 
-ArgumentCollection ArgumentsParser::ParseArgs(int argc, char* argv[])
+ArgumentCollection ArgumentParser::ParseArgs(int argc, char* argv[])
 {
     ArgumentCollection collection;
 

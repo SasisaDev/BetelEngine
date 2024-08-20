@@ -23,12 +23,14 @@ VkBool32 __stdcall DebugMessageCallback(
 
 Application::Application()
 {
-	Initialize();	
+	Initialize();
 }
 
 Application::Application(int argc, char* argv[])
 {
-	Arguments = ArgumentsParser::ParseArgs(argc, argv);
+	// TODO: ARGV[0] may not be a path! Undefined behaviour!
+	ApplicationPath = argv[0];
+	Arguments = ArgumentParser::ParseArgs(argc - 1, argv + 1);
 
 	Initialize();
 }

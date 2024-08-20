@@ -173,7 +173,7 @@ void IRenderEngine::Render()
 {
     for(size_t compositionId = 0; compositionId < Compositions.size(); compositionId++)
     {
-        Compositions[compositionId]->Render(0);
+        Compositions[compositionId]->Render(device);
     }
 }
 

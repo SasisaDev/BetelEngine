@@ -5,9 +5,13 @@
 #include <UI/RenderLayer/WidgetRenderLayer.h>
 #include <Log/Logger.h>
 
+#include <RenderV/Objects/Buffers/Buffer.h>
+
 int GuardedMain(int argc, char* argv[])
 {
 	LOG(Log, LogStartup, "ArteriaFrameworks::GuardedMain()");
+
+	Buffer<unsigned long long[5]> buff(0);
 
 	Application app(argc, argv);
 

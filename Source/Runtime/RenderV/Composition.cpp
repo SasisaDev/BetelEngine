@@ -38,13 +38,13 @@ std::pair<uint32_t, uint32_t> IRenderComposition::AddLayerRefs(std::vector<IRend
     return std::pair<uint32_t, uint32_t>(firstID, Layers.size() - 1);
 }
 
-void IRenderComposition::Render(float DeltaTime)
+void IRenderComposition::Render(VkDevice device)
 {
     IRenderLayerRef* previousLayer = nullptr;
 
     for(int layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
     {
-        Layers[layerRefId]->GetParentLayer()->Prepare(previousLayer);
+        Layers[layerRefId]->GetParentLayer()->Prepare(device, previousLayer);
 
         previousLayer = Layers[layerRefId];
     }
@@ -52,7 +52,7 @@ void IRenderComposition::Render(float DeltaTime)
     previousLayer = nullptr;
     for(int layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
     {
-        Layers[layerRefId]->GetParentLayer()->Render(previousLayer, 0);
+        Layers[layerRefId]->GetParentLayer()->Render(device, previousLayer);
 
         previousLayer = Layers[layerRefId];
     }

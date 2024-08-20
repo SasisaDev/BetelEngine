@@ -13,11 +13,11 @@ public:
 
     virtual std::string GetName() const {return "__EmptyNull";}
 
-    virtual bool Initialize(){return false;}
+    virtual bool Initialize(VkDevice device){return false;}
 
-    virtual void Prepare(IRenderLayerRef* previousLayer){}
+    virtual void Prepare(VkDevice device, IRenderLayerRef* previousLayer){}
 
-    virtual void Render(IRenderLayerRef* layerRef, float DeltaTime){}
+    virtual void Render(VkDevice device, IRenderLayerRef* layerRef){}
 
     bool Deinitialize(){return false;}
 };

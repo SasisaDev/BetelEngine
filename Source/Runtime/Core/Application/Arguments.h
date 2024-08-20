@@ -59,7 +59,7 @@ private:
     std::vector<Argument> Arguments;
 };
 
-class ArgumentsParser
+class ArgumentParser
 {
 public:
     static ArgumentCollection ParseArgs(int argc, char* argv[]);

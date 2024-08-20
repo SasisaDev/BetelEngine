@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Vulkan/vkloader.h"
 #include "DependencyList.h"
 #include <cassert>
 
@@ -17,12 +18,12 @@ public:
     }
     inline IRenderLayer* GetParentLayer() const {return parentLayer;}
 
-    virtual bool Initialize(RenderDependencyList<IRenderLayerRef>& DependencyList){return false;}
+    virtual bool Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList){return false;}
     virtual bool Recreate() {return false;}
 
-    virtual void Prepare(IRenderLayerRef* previousLayer){}
+    virtual void Prepare(VkDevice device, IRenderLayerRef* previousLayer){}
 
-    virtual void Render(float DeltaTime){}
+    virtual void Render(VkDevice device){}
 
-    bool Deinitialize() {return false;}
+    bool Deinitialize(VkDevice device) {return false;}
 };

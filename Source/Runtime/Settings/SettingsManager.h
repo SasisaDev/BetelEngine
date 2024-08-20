@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_multiset>
+#include <unordered_set>
 
 class Settings;
 
