@@ -72,8 +72,6 @@ void Application::Initialize()
 		LOG(Fatal, LogSDL, "Failed at aquiring instance extensions for Vulkan from SDL");
 	}
 
-	SDL_DestroyWindow(window);
-
 	std::vector<const char*> InstanceLayers;
 
 	// TO DO: Refactor extensions
@@ -83,6 +81,13 @@ void Application::Initialize()
 #	endif
 	
 	Render->Initialize(SDLExtensions, InstanceLayers);
+
+	VkSurfaceKHR dummySurface;
+	SDL_Vulkan_CreateSurface(window, Render->GetInstance(), &dummySurface);
+
+	Render->InitializeWithSurface(dummySurface);
+
+	SDL_DestroyWindow(window);
 
 #	if !defined(NDEBUG)
 	Render->CreateDebugMessenger(DebugMessageCallback, 0);
@@ -105,6 +110,7 @@ window_t Application::CreateWindow(WindowCreateInfo& createInfo)
 	// Register Composition and
 	// Initialize Composition with Surface
 	RenderCompositionInitializerSurface surfaceInitializer;
+	surfaceInitializer.extent = {createInfo.width, createInfo.height};
 	window->CreateSurface(Render->GetInstance(), &surfaceInitializer.surface);
 
 	window->RendererCompositionID = Render->CreateComposition(&surfaceInitializer);

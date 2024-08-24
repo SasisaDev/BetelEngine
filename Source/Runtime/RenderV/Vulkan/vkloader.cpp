@@ -7,6 +7,7 @@ namespace vkloader {
 	bool bInitialized = false;
 	VkInstance instance = 0;
 	VkDevice device = 0;
+	VkPhysicalDevice physDevice = 0;
 	bool bIsFallback = false;
 	
 
@@ -18,6 +19,31 @@ namespace vkloader {
 	PFN_vkVoidFunction vkGetDeviceProcAddrStub(void* context, const char* name)
 	{
 		return vkGetDeviceProcAddr((VkDevice)context, name);
+	}
+
+	bool IsInitialized()
+	{
+		return bInitialized;
+	}
+
+	bool IsFallback()
+	{
+		return bIsFallback;
+	}
+
+	void SetPhysicalDevice(VkPhysicalDevice nPhysDev)
+	{
+		physDevice = nPhysDev;
+	}
+	
+	VkPhysicalDevice GetPhysicalDevice() 
+	{
+		return physDevice;
+	}
+
+	VkDevice GetLogicalDevice()
+	{
+		return device;
 	}
 
 	void LoadMinimalHandles(void* context, PFN_vkVoidFunction(*load)(void*, const char*))
@@ -1562,10 +1588,11 @@ namespace vkloader {
 	VkResult vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo,
 		const VkAllocationCallbacks* pAllocator, VkDevice* pDevice)
 	{
-		if (device != nullptr) {
+		if (device != nullptr) 
+		{
 			*pDevice = device;
 			return VK_SUCCESS;
-		}
+		} 
 
 		if (_vkCreateDevice(physicalDevice, pCreateInfo, pAllocator, pDevice) != VK_SUCCESS) {
 			return VK_ERROR_INITIALIZATION_FAILED;

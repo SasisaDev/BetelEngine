@@ -11,11 +11,11 @@ int GuardedMain(int argc, char* argv[])
 {
 	LOG(Log, LogStartup, "ArteriaFrameworks::GuardedMain()");
 
-	Buffer<unsigned long long[5]> buff(0);
-
 	Application app(argc, argv);
 
 	IRenderEngine* render = app.GetRender();
+
+	render->CreateDevice();
 
 	// Add render layers
 
@@ -54,8 +54,7 @@ int GuardedMain(int argc, char* argv[])
 	app.CreateWindow(gameWininfo);
 #endif
 
-	// Creating device after creation of Window to include present queue checks
-	render->CreateDevice();
+	volatile Buffer<unsigned long long[5]> buff(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
 
 	app.ApplicationLoop();
 

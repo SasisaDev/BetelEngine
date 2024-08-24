@@ -76,9 +76,14 @@ bool IRenderEngine::Initialize(std::vector<const char*> extensions, std::vector<
 
     physDevice = DelegatePickPhysDevice(devices);
 
-
+    vkloader::SetPhysicalDevice(physDevice);
 
     return true;
+}
+
+void IRenderEngine::InitializeWithSurface(VkSurfaceKHR surface)
+{
+    queueFamilyIndices = IRenderUtility::FindQueueFamilies(physDevice, surface);
 }
 
 void IRenderEngine::CreateDevice(std::vector<const char*> devExtensions, std::vector<const char*> devLayers)
@@ -120,7 +125,8 @@ void IRenderEngine::CreateDevice(std::vector<const char*> devExtensions, std::ve
 
     deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
 
-    std::vector<const char*> extensions/* = InternalAssembleDeviceExtensions()*/;
+    // TODO: automatic extension list generator
+    std::vector<const char*> extensions = {VK_KHR_SWAPCHAIN_EXTENSION_NAME};
     extensions.insert(extensions.end(), devExtensions.begin(), devExtensions.end());
     deviceCreateInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
     deviceCreateInfo.ppEnabledExtensionNames = extensions.data();
@@ -143,6 +149,22 @@ void IRenderEngine::CreateDevice(std::vector<const char*> devExtensions, std::ve
     {   
         vkGetDeviceQueue(device, queueFamilyIndices.computeFamily.value(), 0, &computeQueue);
     }
+
+    // Create synchronization objects
+    VkSemaphoreCreateInfo semaphoreCreateInfo;
+    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    semaphoreCreateInfo.flags = 0;
+    semaphoreCreateInfo.pNext = nullptr;
+
+    vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &aquireSemaphore);
+    vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &submitSemaphore);
+
+    // Create command pool
+    VkCommandPoolCreateInfo poolInfo = {};
+    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+    
+    vkCreateCommandPool(device, &poolInfo, nullptr, &cmdPool);
 }
 
 IRenderLayer* IRenderEngine::GetLayer(uint32_t id)
@@ -155,10 +177,10 @@ uint32_t IRenderEngine::CreateComposition(IRenderCompositionInitializer* initial
     IRenderComposition* composition = new IRenderComposition();
     composition->Initialize(initializer);
     
-    if(!queueFamilyIndices.IsComplete())
+    /*if(!queueFamilyIndices.IsComplete())
     {
         queueFamilyIndices = IRenderUtility::FindQueueFamilies(physDevice, composition->GetSurface());
-    }
+    }*/
 
     Compositions.push_back(composition);
     return Compositions.size()-1;
@@ -171,10 +193,67 @@ IRenderComposition* IRenderEngine::GetComposition(uint32_t id)
 
 void IRenderEngine::Render()
 {
-    for(size_t compositionId = 0; compositionId < Compositions.size(); compositionId++)
-    {
-        Compositions[compositionId]->Render(device);
+    VkCommandBufferAllocateInfo allocInfo = {};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandBufferCount = 1;
+    allocInfo.commandPool = cmdPool;
+    vkAllocateCommandBuffers(device, &allocInfo, &cmdBuffer);
+
+    VkCommandBufferBeginInfo beginInfo = {};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+    vkBeginCommandBuffer(cmdBuffer, &beginInfo);
+
+    std::vector<VkSwapchainKHR> swapchains;
+    std::vector<uint32_t> swapchainImageIndices;
+
+    for(size_t compositionId = 0; compositionId < Compositions.size(); ++compositionId) {
+        IRenderComposition* composition = Compositions[compositionId];
+
+        composition->StartFrame(cmdBuffer);
+        
+        if(composition->GetType() == ERenderCompositionType::RENDER_COMPOSITION_TYPE_SURFACE) {
+            swapchains.push_back(composition->GetSwapchain());
+            swapchainImageIndices.push_back(composition->GetCurrentImageIndex());
+        } else {
+
+        }
+
+        Compositions[compositionId]->Render(cmdBuffer);
+
+        composition->EndFrame(cmdBuffer);
     }
+
+    vkEndCommandBuffer(cmdBuffer);
+
+    VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+
+    VkSubmitInfo submitInfo = {};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.pWaitDstStageMask = &waitStage;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &cmdBuffer;
+    submitInfo.pSignalSemaphores = &submitSemaphore;
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = &aquireSemaphore;
+    submitInfo.waitSemaphoreCount = 1;
+
+    vkQueueSubmit(graphicsQueue, 1, &submitInfo, 0);
+    
+    VkPresentInfoKHR presentInfo = {};
+    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+    presentInfo.pSwapchains = swapchains.data();
+    presentInfo.swapchainCount = 1;
+    presentInfo.pImageIndices = swapchainImageIndices.data();
+    presentInfo.pWaitSemaphores = &submitSemaphore;
+    presentInfo.waitSemaphoreCount = 1;
+
+    vkQueuePresentKHR(presentQueue, &presentInfo);
+
+    vkDeviceWaitIdle(device);
+
+    // Frame Cleanup
+    vkFreeCommandBuffers(device, cmdPool, 1, &cmdBuffer);
 }
 
 // Debug implementations

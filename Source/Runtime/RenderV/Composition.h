@@ -67,6 +67,8 @@ protected:
 public:
     IRenderComposition();
 
+    inline ERenderCompositionType GetType() const {return compositionType;}
+
     bool Initialize(IRenderCompositionInitializer* initializer);
     
     bool Recreate(IRenderCompositionInitializer* initializer);
@@ -76,13 +78,15 @@ public:
     IRenderLayerRef* GetLayer(uint32_t idx);
     inline const std::vector<IRenderLayerRef*>& GetLayerRefs() const { return Layers; }
 
-    VkSurfaceKHR GetSurface() const {return surface;}
+    inline VkSurfaceKHR GetSurface() const {return surface;}
+    inline VkSwapchainKHR GetSwapchain() const {return swapchain;}
 
     VkImage GetCurrentImage() const {return images[targetImageId];}
+    inline uint32_t GetCurrentImageIndex() const {return targetImageId;}
 
-    void StartFrame(VkDevice device);
-    void Render(VkDevice device);
-    void EndFrame(VkDevice device);
+    void StartFrame(VkCommandBuffer cmdBuffer){}
+    void Render(VkCommandBuffer cmdBuffer);
+    void EndFrame(VkCommandBuffer cmdBuffer){}
 
     bool Deinitialize();
 };

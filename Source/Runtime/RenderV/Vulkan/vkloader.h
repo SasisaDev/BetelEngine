@@ -49,6 +49,12 @@ extern "C" __declspec(dllimport) FARPROC __stdcall GetProcAddress(HINSTANCE hMod
 #endif
 
 namespace vkloader {
+	extern bool IsInitialized();
+	extern bool IsFallback();
+
+	extern void SetPhysicalDevice(VkPhysicalDevice nPhysDev);
+	extern VkPhysicalDevice GetPhysicalDevice();
+	extern VkDevice GetLogicalDevice();
 	extern VkResult vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);
 	extern VkResult vkCreateDevice(VkPhysicalDevice physicalDevice, const VkDeviceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDevice* pDevice);
 	extern VkResult InitializeLoader(void);

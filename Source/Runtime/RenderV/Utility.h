@@ -19,4 +19,7 @@ class IRenderUtility
 {
 public:
     static RenderQueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface = 0);
+    static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
+    static VkDevice GetDevice();
+    static VkPhysicalDevice GetPhysicalDevice();
 };

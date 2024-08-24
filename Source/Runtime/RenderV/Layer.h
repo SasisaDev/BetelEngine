@@ -15,9 +15,9 @@ public:
 
     virtual bool Initialize(VkDevice device){return false;}
 
-    virtual void Prepare(VkDevice device, IRenderLayerRef* previousLayer){}
+    virtual void Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* previousLayer){}
 
-    virtual void Render(VkDevice device, IRenderLayerRef* layerRef){}
+    virtual void Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef){}
 
     bool Deinitialize(){return false;}
 };

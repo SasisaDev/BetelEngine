@@ -1,4 +1,5 @@
 #include "Utility.h"
+#include <Log/Logger.h>
 
 RenderQueueFamilyIndices IRenderUtility::FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
@@ -37,4 +38,28 @@ RenderQueueFamilyIndices IRenderUtility::FindQueueFamilies(VkPhysicalDevice devi
     }
 
     return indices;
+}
+
+uint32_t IRenderUtility::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
+{
+    VkPhysicalDeviceMemoryProperties memProperties;
+    vkGetPhysicalDeviceMemoryProperties(GetPhysicalDevice(), &memProperties);
+
+    for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+        if (typeFilter & (1 << i)) {
+            return i;
+        }
+    }
+
+    LOG(Fatal, LogRender, "Could not find memory type for buffer allocation.");
+}
+
+VkDevice IRenderUtility::GetDevice()
+{
+    return vkloader::GetLogicalDevice();
+}
+
+VkPhysicalDevice IRenderUtility::GetPhysicalDevice()
+{
+    return vkloader::GetPhysicalDevice();
 }

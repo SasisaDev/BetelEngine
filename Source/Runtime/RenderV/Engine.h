@@ -49,6 +49,7 @@ protected:
 public:
 
     bool Initialize(std::vector<const char*> extensions = {}, std::vector<const char*> layers = {});
+    void InitializeWithSurface(VkSurfaceKHR surface);
     void CreateDevice(std::vector<const char*> devExtensions = {}, std::vector<const char*> devLayers = {});
 
     inline VkInstance GetInstance() const {return instance;}
