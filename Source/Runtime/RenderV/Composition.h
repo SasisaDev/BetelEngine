@@ -16,6 +16,8 @@ class IRenderComposition;
 
 struct IRenderCompositionInitializer
 {
+    std::vector<IRenderLayerRef*> layerRefs;
+    
     virtual ERenderCompositionType GetType() const {return ERenderCompositionType::RENDER_COMPOSITION_TYPE_NONE;}
 
     virtual void Initialize(IRenderComposition* composition){}
@@ -75,14 +77,17 @@ public:
 
     uint32_t AddLayerRef(IRenderLayerRef* ref);
     std::pair<uint32_t, uint32_t> AddLayerRefs(std::vector<IRenderLayerRef*> &ref);
-    IRenderLayerRef* GetLayer(uint32_t idx);
+    IRenderLayerRef* GetLayer(uint32_t idx) {return Layers[idx];}
     inline const std::vector<IRenderLayerRef*>& GetLayerRefs() const { return Layers; }
 
     inline VkSurfaceKHR GetSurface() const {return surface;}
     inline VkSwapchainKHR GetSwapchain() const {return swapchain;}
 
-    VkImage GetCurrentImage() const {return images[targetImageId];}
+    inline VkExtent2D GetExtent() const {return extent;}
+    inline VkFramebuffer GetCurrentFramebuffer() const {return framebuffers[targetImageId];}
+    inline VkImage GetCurrentImage() const {return images[targetImageId];}
     inline uint32_t GetCurrentImageIndex() const {return targetImageId;}
+
 
     void StartFrame(VkCommandBuffer cmdBuffer){}
     void Render(VkCommandBuffer cmdBuffer);

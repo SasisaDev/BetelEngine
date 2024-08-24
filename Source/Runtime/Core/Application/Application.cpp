@@ -111,13 +111,11 @@ window_t Application::CreateWindow(WindowCreateInfo& createInfo)
 	// Initialize Composition with Surface
 	RenderCompositionInitializerSurface surfaceInitializer;
 	surfaceInitializer.extent = {createInfo.width, createInfo.height};
+	surfaceInitializer.layerRefs = createInfo.layerRefs;
 	window->CreateSurface(Render->GetInstance(), &surfaceInitializer.surface);
 
 	window->RendererCompositionID = Render->CreateComposition(&surfaceInitializer);
 	IRenderComposition* composition = Render->GetComposition(window->RendererCompositionID);
-
-	// Add requested Layer Refs to Composition
-	composition->AddLayerRefs(createInfo.layerRefs);
 
 	Windows.push_back(window);
 	return Windows.size() - 1;

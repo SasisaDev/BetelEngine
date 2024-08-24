@@ -6,6 +6,8 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
 {
     composition->surface = surface;
 
+    composition->AddLayerRefs(layerRefs);
+
     VkPhysicalDevice physDevice = IRenderUtility::GetPhysicalDevice();
     VkDevice device = IRenderUtility::GetDevice();
 
@@ -105,6 +107,41 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
             LOG(Fatal, LogRender, "failed to create image views.");
         }
     }
+
+    if(composition->GetLayerRefs().size() <= 0) {
+        return;
+    }
+
+    // Create framebuffers
+    composition->framebuffers.resize(composition->imageViews.size());
+    for (size_t i = 0; i < composition->imageViews.size(); i++) {
+        VkImageView attachments[] = {
+            composition->imageViews[i]
+        };
+
+        VkFramebufferCreateInfo framebufferInfo{};
+        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        
+        // TODO: Make more robust system
+        VkRenderPass pass;
+        for(IRenderLayerRef* ref : composition->GetLayerRefs()) {
+            if (ref->GetParentLayer()->GetRenderPass() != VK_NULL_HANDLE) {
+                pass = ref->GetParentLayer()->GetRenderPass();
+                break;
+            }
+        }
+
+        framebufferInfo.renderPass = pass;
+        framebufferInfo.attachmentCount = 1;
+        framebufferInfo.pAttachments = attachments;
+        framebufferInfo.width = composition->extent.width;
+        framebufferInfo.height = composition->extent.height;
+        framebufferInfo.layers = 1;
+
+        if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, &composition->framebuffers[i]) != VK_SUCCESS) {
+            LOG(Fatal, LogRender,  "failed to create framebuffer!");
+        }
+    }
 }
 
 void RenderCompositionInitializerImage::Initialize(IRenderComposition* composition) 
@@ -130,28 +167,33 @@ bool IRenderComposition::Initialize(IRenderCompositionInitializer* initializer)
 uint32_t IRenderComposition::AddLayerRef(IRenderLayerRef* ref)
 {  
     Layers.push_back(ref);
+    ref->SetParentComposition(this);
     return Layers.size() - 1;
 }
 
 std::pair<uint32_t, uint32_t> IRenderComposition::AddLayerRefs(std::vector<IRenderLayerRef*> &refs)
 {  
     uint32_t firstID = Layers.size();
-    Layers.insert(Layers.end(), refs.begin(), refs.end());
+    for(IRenderLayerRef* ref : refs)
+    {
+        Layers.push_back(ref);
+        ref->SetParentComposition(this);
+    }
     return std::pair<uint32_t, uint32_t>(firstID, Layers.size() - 1);
 }
 
 void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 {
     IRenderLayerRef* previousLayer = nullptr;
-    VkClearColorValue color = { 1, 1, 0, 1 };
+    /*VkClearColorValue color = { 0, 0, 0, 1 };
     VkImageSubresourceRange range = {};
     range.layerCount = 1;
     range.levelCount = 1;
     range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 
-    vkCmdClearColorImage(cmdBuffer, images[targetImageId], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, &color, 1, &range);
+    vkCmdClearColorImage(cmdBuffer, images[targetImageId], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, &color, 1, &range);*/
 
-    for(int layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
+    for(size_t layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
     {
         Layers[layerRefId]->GetParentLayer()->Prepare(cmdBuffer, previousLayer);
 
@@ -159,7 +201,7 @@ void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
     }
 
     previousLayer = nullptr;
-    for(int layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
+    for(size_t layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
     {
         Layers[layerRefId]->GetParentLayer()->Render(cmdBuffer, previousLayer);
 

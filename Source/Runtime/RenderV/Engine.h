@@ -73,6 +73,8 @@ public:
 template <typename LayerType>
 inline uint32_t IRenderEngine::CreateLayer()
 {
-    Layers.push_back(new LayerType());
+    LayerType* layer = new LayerType();
+    layer->Initialize(device);
+    Layers.push_back(layer);
     return Layers.size()-1;
 }

@@ -7,9 +7,11 @@
 class IRenderLayer
 {
 protected:
-    
+    VkRenderPass renderPass;
 public:
     static IRenderLayerRef* CreateRef();
+
+    inline VkRenderPass GetRenderPass() const {return renderPass;}
 
     virtual std::string GetName() const {return "__EmptyNull";}
 
@@ -19,5 +21,5 @@ public:
 
     virtual void Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef){}
 
-    bool Deinitialize(){return false;}
+    virtual bool Deinitialize(){return false;}
 };

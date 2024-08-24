@@ -18,8 +18,17 @@ public:
 
 class WorldRenderLayer : public IRenderLayer
 {
+    
 public:
     static IRenderLayerRef* CreateRef() {return new WorldRenderLayerRef;}
 
     virtual std::string GetName() const override {return "WorldRenderLayer";}
+
+    virtual bool Initialize(VkDevice device) override;
+
+    virtual void Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* previousLayer) override;
+
+    virtual void Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef) override;
+
+    virtual bool Deinitialize() override;
 };
