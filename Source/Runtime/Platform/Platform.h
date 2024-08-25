@@ -3,6 +3,7 @@
 #include "platformdefs.h"
 
 #include "Interface/IPlatform.h"
+#include "Interface/Files/IFile.h"
 
 #ifdef PLATFORM_WINDOWS
 #	include "Windows/WindowsPlatform.h"

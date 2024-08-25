@@ -55,12 +55,12 @@ bool WorldRenderLayer::Initialize(VkDevice device)
     return true;
 }
 
-void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* previousLayer)
+void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
 
 }
 
-void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef)
+void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
     VkRenderPassBeginInfo passInfo;
     passInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -76,6 +76,15 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
 
     // Render
+    VkViewport viewport;
+    viewport.x = 0;
+    viewport.y = 0;
+    viewport.width = layerRef->GetParentComposition()->GetExtent().width;
+    viewport.height = layerRef->GetParentComposition()->GetExtent().height;
+
+    vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+
+    // Render End
 
     vkCmdEndRenderPass(cmdBuffer);
 }

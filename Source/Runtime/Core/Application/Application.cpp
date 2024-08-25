@@ -30,6 +30,13 @@ Application::Application(int argc, char* argv[])
 {
 	// TODO: ARGV[0] may not be a path! Undefined behaviour!
 	ApplicationPath = argv[0];
+
+	std::vector<std::string> args(argc);
+	for(int i = 0; i < argc; ++i) {
+		args[i] = argv[i];
+	}
+	IPlatform::Get()->SetExecVariables(args);
+
 	Arguments = ArgumentParser::ParseArgs(argc - 1, argv + 1);
 
 	Initialize();

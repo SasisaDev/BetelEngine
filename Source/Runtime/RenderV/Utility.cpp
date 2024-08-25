@@ -52,6 +52,7 @@ uint32_t IRenderUtility::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFla
     }
 
     LOG(Fatal, LogRender, "Could not find memory type for buffer allocation.");
+    return 0;
 }
 
 VkDevice IRenderUtility::GetDevice()

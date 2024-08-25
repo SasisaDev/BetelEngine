@@ -68,6 +68,13 @@ WindowsPlatform::~WindowsPlatform()
 	Win32ReleaseConsole();
 }
 
+std::string WindowsPlatform::GetExecutablePath()
+{
+	// TODO: Implement
+
+	return IPlatform::GetExecutablePath();
+}
+
 void WindowsPlatform::DebugPrint(const char* string) const
 {
 	//std::cout << string;

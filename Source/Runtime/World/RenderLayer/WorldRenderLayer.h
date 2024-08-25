@@ -26,9 +26,9 @@ public:
 
     virtual bool Initialize(VkDevice device) override;
 
-    virtual void Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* previousLayer) override;
+    virtual void Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer) override;
 
-    virtual void Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef) override;
+    virtual void Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer) override;
 
     virtual bool Deinitialize() override;
 };

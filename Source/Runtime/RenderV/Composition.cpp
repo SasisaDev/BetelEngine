@@ -193,9 +193,11 @@ void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 
     vkCmdClearColorImage(cmdBuffer, images[targetImageId], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, &color, 1, &range);*/
 
+    // TODO: Fix this mess
+
     for(size_t layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
     {
-        Layers[layerRefId]->GetParentLayer()->Prepare(cmdBuffer, previousLayer);
+        Layers[layerRefId]->GetParentLayer()->Prepare(cmdBuffer, Layers[layerRefId], previousLayer);
 
         previousLayer = Layers[layerRefId];
     }
@@ -203,7 +205,7 @@ void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
     previousLayer = nullptr;
     for(size_t layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
     {
-        Layers[layerRefId]->GetParentLayer()->Render(cmdBuffer, previousLayer);
+        Layers[layerRefId]->GetParentLayer()->Render(cmdBuffer, Layers[layerRefId], previousLayer);
 
         previousLayer = Layers[layerRefId];
     }

@@ -25,9 +25,9 @@ int GuardedMain(int argc, char* argv[])
 	// Create game window
 #ifdef EDITOR
 	std::vector<IRenderLayerRef*> editorCompositionLayerRefs = {
-		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetEditorCanvasWidget()),
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
+		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetEditorCanvasWidget()),
 	};
 
 	WindowCreateInfo editorWininfo = {

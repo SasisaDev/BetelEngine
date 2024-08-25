@@ -49,8 +49,6 @@ if(WIN32)
     set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp" "Source/Runtime/Platform/Windows/Files/WindowsFile.cpp")
 endif()
 
-set(EditorSources "") 
-
 # Game
 
 add_executable(Game ${Sources})
@@ -62,6 +60,9 @@ target_include_directories(Game PRIVATE "Source/Runtime")
 set_property(TARGET Game PROPERTY CXX_STANDARD 20)
 
 # Editor
+set(AssetFactoriesSrc "Source/Editor/AssetFactory/Default/ShaderFactory.cpp" )
+
+set(EditorSources ${AssetFactoriesSrc} "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" ) 
 
 add_executable(Editor ${Sources} ${EditorSources})
 
