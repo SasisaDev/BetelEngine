@@ -12,7 +12,7 @@
 
 int GuardedMain(int argc, char* argv[])
 {
-	LOG(Log, LogStartup, "ArteriaFrameworks::GuardedMain()");
+	LOG(Log, LogStartup, "BetelEngine::GuardedMain()");
 
 	Application app(argc, argv);
 
@@ -38,7 +38,7 @@ int GuardedMain(int argc, char* argv[])
 	};
 
 	WindowCreateInfo editorWininfo = {
-		.title="Arteria Editor",
+		.title="Betel Editor [" + settings->GameTitle + "]",
 		.width=1280,
 		.height=720,
 		.layerRefs=editorCompositionLayerRefs
@@ -52,7 +52,7 @@ int GuardedMain(int argc, char* argv[])
 	};
 
 	WindowCreateInfo gameWininfo = {
-		.title="Game",
+		.title=settings->GameTitle,
 		.width=1280,
 		.height=720,
 		.layerRefs=gameCompositionLayerRefs
