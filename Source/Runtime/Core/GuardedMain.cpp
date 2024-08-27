@@ -5,6 +5,9 @@
 #include <UI/RenderLayer/WidgetRenderLayer.h>
 #include <Log/Logger.h>
 
+#include <Settings/SettingsManager.h>
+#include <GameFramework/Settings/GameSettings.h>
+
 #include <RenderV/Objects/Buffers/Buffer.h>
 
 int GuardedMain(int argc, char* argv[])
@@ -22,10 +25,14 @@ int GuardedMain(int argc, char* argv[])
 	render->CreateLayer<WorldRenderLayer>();
 	render->CreateLayer<UIRenderLayer>();
 
+	// Fetch settings
+	GameSettings* settings = app.GetSettings()->GetOrDefault<GameSettings>();
+
 	// Create game window
 #ifdef EDITOR
 	std::vector<IRenderLayerRef*> editorCompositionLayerRefs = {
-		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render),
+		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
+			->SetViewportSize({settings->PixelPerfectViewportWidth, settings->PixelPerfectViewportHeight}),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetEditorCanvasWidget()),
 	};

@@ -161,6 +161,10 @@ bool IRenderComposition::Initialize(IRenderCompositionInitializer* initializer)
 
     initializer->Initialize(this);
 
+    for(IRenderLayerRef* layerRef : Layers) {
+        layerRef->Initialize(IRenderUtility::GetDevice(), DependencyList);
+    }
+
     return true;
 }
 

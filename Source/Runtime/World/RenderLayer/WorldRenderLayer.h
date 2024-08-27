@@ -8,10 +8,22 @@ class WorldRenderLayerRef : public IRenderLayerRef
 {
 protected:
     World* world;
+    VkExtent2D viewport;
+    VkFormat imageFormat;
+
+    std::vector<VkImage> pixelPerfectImages;
+    std::vector<VkDeviceMemory> pixelPerfectImageMemories;
+    std::vector<VkImageView> pixelPerfectImageViews;
+    std::vector<VkFramebuffer> pixelPerfectImageFramebuffers;
+
+    friend class WorldRenderLayer;
 public:
     WorldRenderLayerRef();
 
+    virtual bool Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList) override;
+
     WorldRenderLayerRef* SetWorld(World* newWorld);
+    WorldRenderLayerRef* SetViewportSize(VkExtent2D newViewport) {viewport = newViewport; return this;}
 
     void onWorldLoad(World* loadedWorld){}
 };

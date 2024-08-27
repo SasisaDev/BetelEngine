@@ -8,6 +8,7 @@
 #include "Arguments.h"
 #include <RenderV/Render.h>
 #include <Engine/Engine.h>
+#include <Settings/SettingsManager.h>
 
 class Application
 {
@@ -21,6 +22,7 @@ protected:
     
     IRenderEngine* Render;
     Engine* GameEngine;
+    SettingsManager* Settings;
 
     bool bShouldTerminate = false;
 public:
@@ -33,6 +35,8 @@ public:
     inline IRenderEngine* GetRender() const {return Render;}
 
     inline Engine* GetEngine() const {return GameEngine;}
+
+    inline SettingsManager* GetSettings() const {return Settings;}
 
     inline bool ShouldTerminate() const {return bShouldTerminate;}
 

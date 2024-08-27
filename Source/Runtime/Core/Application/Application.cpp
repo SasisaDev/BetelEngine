@@ -51,6 +51,9 @@ void Application::Initialize()
 	
 	GApplication = this;
 
+	// Create Settings Manager
+	Settings = new SettingsManager();
+
 	// Create Engine object
 	GameEngine = new Engine();
 
