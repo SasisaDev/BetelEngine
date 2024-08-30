@@ -30,7 +30,13 @@ public:
 
 class WorldRenderLayer : public IRenderLayer
 {
-    
+    VkPipeline upscalePipeline;
+    VkPipelineLayout upscalePipelineLayout;
+    void CreateUpscalePipeline();
+
+    friend class WorldRenderLayerRef;
+
+    VkRenderPass upscaleRenderPass;
 public:
     static IRenderLayerRef* CreateRef() {return new WorldRenderLayerRef;}
 

@@ -10,6 +10,8 @@
 
 class IRenderEngine
 {
+private:
+    std::vector<VkSemaphore> memoizedAquireSemaphores;
 protected:
     std::vector<IRenderLayer*> Layers;
     std::vector<IRenderComposition*> Compositions;
@@ -27,7 +29,6 @@ protected:
     VkQueue presentQueue;
     VkQueue computeQueue;
 
-    VkSemaphore aquireSemaphore;
     VkSemaphore submitSemaphore;
     VkCommandPool cmdPool;
     VkCommandBuffer cmdBuffer;
@@ -53,6 +54,8 @@ public:
     void CreateDevice(std::vector<const char*> devExtensions = {}, std::vector<const char*> devLayers = {});
 
     inline VkInstance GetInstance() const {return instance;}
+
+    std::vector<VkSemaphore> GetCompositionsWaitSemaphores() const;
     
     template <typename LayerType>
     uint32_t CreateLayer();

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 
 project ("Betel")
 
+include("CMake/VulkanCompileShaders.cmake")
 include(FetchContent)
 
 FetchContent_Declare(
@@ -37,7 +38,7 @@ set(SrcRenderV "Source/Runtime/RenderV/Vulkan/vkloader.cpp" "Source/Runtime/Rend
 
 set(SrcEngine "Source/Runtime/Engine/Engine.cpp" "Source/Runtime/Engine/EngineDelegates.cpp" "Source/Runtime/Engine/Tickable.cpp") 
 
-set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp") 
+set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp" "Source/Runtime/World/World.cpp") 
 
 set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp") 
 
@@ -73,3 +74,5 @@ target_include_directories(Editor PRIVATE "Source/Runtime" "Source/Editor")
 target_compile_definitions(Editor PUBLIC EDITOR)
 
 set_property(TARGET Editor PROPERTY CXX_STANDARD 20)
+
+add_shaders(Shaders "Shaders/TriangleUpscale/Vertex.vert")

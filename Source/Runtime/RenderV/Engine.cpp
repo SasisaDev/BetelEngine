@@ -156,7 +156,6 @@ void IRenderEngine::CreateDevice(std::vector<const char*> devExtensions, std::ve
     semaphoreCreateInfo.flags = 0;
     semaphoreCreateInfo.pNext = nullptr;
 
-    vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &aquireSemaphore);
     vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &submitSemaphore);
 
     // Create command pool
@@ -183,12 +182,30 @@ uint32_t IRenderEngine::CreateComposition(IRenderCompositionInitializer* initial
     }*/
 
     Compositions.push_back(composition);
+
+    // Memoize aquire semaphores
+    memoizedAquireSemaphores = GetCompositionsWaitSemaphores();
+
     return Compositions.size()-1;
 }
 
 IRenderComposition* IRenderEngine::GetComposition(uint32_t id)
 {
     return Compositions[id];
+}
+
+std::vector<VkSemaphore> IRenderEngine::GetCompositionsWaitSemaphores() const
+{
+    std::vector<VkSemaphore> semaphores;
+    for(IRenderComposition* composition : Compositions)
+    {
+        if(composition->GetAquireSemaphore() != VK_NULL_HANDLE)
+        {
+            semaphores.push_back(composition->GetAquireSemaphore());
+        }
+    }
+
+    return semaphores;
 }
 
 void IRenderEngine::Render()
@@ -235,8 +252,8 @@ void IRenderEngine::Render()
     submitInfo.pCommandBuffers = &cmdBuffer;
     submitInfo.pSignalSemaphores = &submitSemaphore;
     submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = &aquireSemaphore;
-    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = memoizedAquireSemaphores.data();
+    submitInfo.waitSemaphoreCount = memoizedAquireSemaphores.size();
 
     vkQueueSubmit(graphicsQueue, 1, &submitInfo, 0);
     

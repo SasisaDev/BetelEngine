@@ -58,6 +58,8 @@ protected:
     VkFormat imageFormat;
     VkExtent2D extent;
 
+    VkSemaphore aquireSemaphore = VK_NULL_HANDLE;
+
     bool bIsPresentable = false;
 
     uint32_t targetImageId = 0;
@@ -70,6 +72,8 @@ public:
     IRenderComposition();
 
     inline ERenderCompositionType GetType() const {return compositionType;}
+    
+    inline VkSemaphore GetAquireSemaphore() const {return aquireSemaphore;}
 
     bool Initialize(IRenderCompositionInitializer* initializer);
     

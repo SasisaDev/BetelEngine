@@ -45,7 +45,7 @@ uint32_t IRenderUtility::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFla
     VkPhysicalDeviceMemoryProperties memProperties;
     vkGetPhysicalDeviceMemoryProperties(GetPhysicalDevice(), &memProperties);
 
-    for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+    for (size_t i = 0; i < memProperties.memoryTypeCount; i++) {
         if (typeFilter & (1 << i)) {
             return i;
         }

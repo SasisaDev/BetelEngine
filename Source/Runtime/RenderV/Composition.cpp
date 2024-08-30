@@ -142,6 +142,13 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
             LOG(Fatal, LogRender,  "failed to create framebuffer!");
         }
     }
+
+    VkSemaphoreCreateInfo semaphoreCreateInfo;
+    semaphoreCreateInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    semaphoreCreateInfo.flags = 0;
+    semaphoreCreateInfo.pNext = nullptr;
+
+    vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &composition->aquireSemaphore);
 }
 
 void RenderCompositionInitializerImage::Initialize(IRenderComposition* composition) 
@@ -188,16 +195,16 @@ std::pair<uint32_t, uint32_t> IRenderComposition::AddLayerRefs(std::vector<IRend
 
 void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 {
-    IRenderLayerRef* previousLayer = nullptr;
-    /*VkClearColorValue color = { 0, 0, 0, 1 };
-    VkImageSubresourceRange range = {};
-    range.layerCount = 1;
-    range.levelCount = 1;
-    range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    if(compositionType == ERenderCompositionType::RENDER_COMPOSITION_TYPE_SURFACE)
+    {
+        vkAcquireNextImageKHR(IRenderUtility::GetDevice(), swapchain, 0, aquireSemaphore, 0, &targetImageId);
+    }
 
-    vkCmdClearColorImage(cmdBuffer, images[targetImageId], VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, &color, 1, &range);*/
+    IRenderLayerRef* previousLayer = nullptr;
 
     // TODO: Fix this mess
+
+    //vkCmdPipelineBarrier(cmdbuffer);
 
     for(size_t layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
     {
