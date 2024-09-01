@@ -13,7 +13,7 @@ public:
 
     inline VkRenderPass GetRenderPass() const {return renderPass;}
 
-    virtual std::string GetName() const {return "__EmptyNull";}
+    static std::string GetName() {return "__EmptyNull";}
 
     virtual bool Initialize(VkDevice device){return false;}
 

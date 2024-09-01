@@ -1,6 +1,6 @@
 #include "WindowsFile.h"
 
-WindowsFile::WindowsFile(std::string path, EFileAccessFlags accessFlags)
+/*WindowsFile::WindowsFile(std::string path, EFileAccessFlags accessFlags)
 {
 
-}
+}*/

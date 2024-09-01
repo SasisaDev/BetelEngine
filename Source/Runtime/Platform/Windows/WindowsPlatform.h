@@ -15,5 +15,5 @@ public:
 
 	virtual void DebugPrint(const char* string) const override;
 
-	virtual IFile* OpenFile(const char* path, EFileAccessFlags accessFlags) override;
+	virtual IFile* OpenFile(const char* path, uint8_t accessFlags) override;
 };

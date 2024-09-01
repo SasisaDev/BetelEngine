@@ -12,6 +12,11 @@ class ShaderCache
 class IShader
 {
     VkPipeline pipeline;
+    VkPipelineLayout pipelineLayout;
 public:
-    IShader(VkDevice device, VkRenderPass renderPass, std::vector<unsigned char> vertexData, std::vector<unsigned char> fragmentData);
+    IShader(VkRenderPass renderPass, const char* vertexData, const char* fragmentData);
+    ~IShader();
+
+    inline VkPipeline GetPipeline() const {return pipeline;}
+    inline VkPipelineLayout GetPipelineLayout() const {return pipelineLayout;}
 };

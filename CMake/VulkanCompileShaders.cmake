@@ -10,6 +10,7 @@ FetchContent_Declare(
 
 function(add_shaders TARGET_NAME)
   set(SHADER_SOURCE_FILES ${ARGN}) # the rest of arguments to this function will be assigned as shader source files
+  set(BUILD_CONFIG "$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>")
   
   # Validate that source files have been passed
   list(LENGTH SHADER_SOURCE_FILES FILE_COUNT)
@@ -36,19 +37,19 @@ function(add_shaders TARGET_NAME)
     list(APPEND SHADER_COMMAND "glslc")
     list(APPEND SHADER_COMMAND "${SHADER_SOURCE}")
     list(APPEND SHADER_COMMAND "-o")
-    list(APPEND SHADER_COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${SHADER_RELATIVE_SOURCE}.spv")
+    list(APPEND SHADER_COMMAND "${CMAKE_CURRENT_BINARY_DIR}/${BUILD_CONFIG}/${SHADER_RELATIVE_SOURCE}.spv")
 
     # Add product
-    list(APPEND SHADER_PRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/${SHADER_RELATIVE_SOURCE}.spv")
+    list(APPEND SHADER_PRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/${BUILD_CONFIG}/${SHADER_RELATIVE_SOURCE}.spv")
 
   endforeach()
 
   add_custom_target(${TARGET_NAME} ALL
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${SHADER_RELATIVE_PATH}
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${BUILD_CONFIG}/${SHADER_RELATIVE_PATH}"
 
     ${SHADER_COMMAND}
     COMMENT "Compiling Shaders [${TARGET_NAME}]"
     SOURCES ${SHADER_SOURCE_FILES}
-    BYPRODUCTS ${SHADER_PRODUCTS}
+
   )
 endfunction()

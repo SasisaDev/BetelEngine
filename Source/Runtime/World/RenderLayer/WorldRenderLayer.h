@@ -1,6 +1,9 @@
 #pragma once
 
+#include <memory>
+
 #include <RenderV/Layer.h>
+#include <RenderV/Objects/Material.h>
 
 class World;
 
@@ -34,13 +37,18 @@ class WorldRenderLayer : public IRenderLayer
     VkPipelineLayout upscalePipelineLayout;
     void CreateUpscalePipeline();
 
+    std::shared_ptr<IShader> upscaleShader;
+    std::shared_ptr<IMaterial> upscaleMaterial;
+
+    void CreateUpscaleMaterial();
+
     friend class WorldRenderLayerRef;
 
     VkRenderPass upscaleRenderPass;
 public:
     static IRenderLayerRef* CreateRef() {return new WorldRenderLayerRef;}
 
-    virtual std::string GetName() const override {return "WorldRenderLayer";}
+    static std::string GetName() {return "WorldRenderLayer";}
 
     virtual bool Initialize(VkDevice device) override;
 

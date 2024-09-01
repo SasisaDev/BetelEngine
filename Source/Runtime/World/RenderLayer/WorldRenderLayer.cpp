@@ -7,6 +7,8 @@
 
 #include <RenderV/Composition.h>
 
+#include <Platform/Platform.h>
+
 WorldRenderLayerRef::WorldRenderLayerRef()
     : world(nullptr)
 {
@@ -252,6 +254,14 @@ void WorldRenderLayer::CreateUpscalePipeline()
     }
 }
 
+void WorldRenderLayer::CreateUpscaleMaterial()
+{
+    IFile* VertFile = IPlatform::Get()->OpenFile("./Shaders/TriangleUpscale/TriangleUpscale.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+    IFile* FragFile = IPlatform::Get()->OpenFile("./Shaders/TriangleUpscale/TriangleUpscale.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+
+    upscaleShader = std::make_shared<IShader>(upscaleRenderPass, VertFile->FetchAllBinary().data(), FragFile->FetchAllBinary().data());
+}
+
 bool WorldRenderLayer::Initialize(VkDevice device)
 {
     // Create Render Pass
@@ -320,6 +330,7 @@ bool WorldRenderLayer::Initialize(VkDevice device)
     }
 
     CreateUpscalePipeline();
+    CreateUpscaleMaterial();
 
     return true;
 }
@@ -390,7 +401,7 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     scissors.extent = layerRef->GetParentComposition()->GetExtent();
     vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
     
-    //vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
+    vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
 
     vkCmdEndRenderPass(cmdBuffer);
 

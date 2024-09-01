@@ -21,5 +21,5 @@ class UIRenderLayer : public IRenderLayer
 public:
     static IRenderLayerRef* CreateRef() {return new UIRenderLayerRef;}
 
-    virtual std::string GetName() const override {return "UIRenderLayer";}
+    static std::string GetName() {return "UIRenderLayer";}
 };

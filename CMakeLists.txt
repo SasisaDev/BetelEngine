@@ -44,7 +44,7 @@ set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp")
 
 set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Platform/Platform.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
-    "Source/Runtime/Delegate/Delegate.cpp" "Source/Runtime/Core/Window/Window.cpp")
+    "Source/Runtime/Delegate/Delegate.cpp" "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Platform/Interface/Files/IFile.cpp")
 
 if(WIN32)
     set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp" "Source/Runtime/Platform/Windows/Files/WindowsFile.cpp")
@@ -75,4 +75,4 @@ target_compile_definitions(Editor PUBLIC EDITOR)
 
 set_property(TARGET Editor PROPERTY CXX_STANDARD 20)
 
-add_shaders(Shaders "Shaders/TriangleUpscale/Vertex.vert")
+add_shaders(Shaders "Shaders/TriangleUpscale/TriangleUpscale.vert" "Shaders/TriangleUpscale/TriangleUpscale.frag")

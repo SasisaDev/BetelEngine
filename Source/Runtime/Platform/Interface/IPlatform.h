@@ -20,5 +20,5 @@ public:
 	virtual const char* PlatformName() const { return "Unknown"; }
 	virtual void DebugPrint(const char* string) const {}
 
-	virtual IFile* OpenFile(const char* path, EFileAccessFlags accessFlags) { return nullptr; }
+	virtual IFile* OpenFile(const char* path, uint8_t accessFlags) { return new IFile(path, accessFlags); }
 };
