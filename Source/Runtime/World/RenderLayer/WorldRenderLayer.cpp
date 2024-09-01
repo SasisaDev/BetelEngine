@@ -259,7 +259,7 @@ void WorldRenderLayer::CreateUpscaleMaterial()
     IFile* VertFile = IPlatform::Get()->OpenFile("./Shaders/TriangleUpscale/TriangleUpscale.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
     IFile* FragFile = IPlatform::Get()->OpenFile("./Shaders/TriangleUpscale/TriangleUpscale.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
 
-    upscaleShader = std::make_shared<IShader>(upscaleRenderPass, VertFile->FetchAllBinary().data(), FragFile->FetchAllBinary().data());
+    upscaleShader = std::make_shared<IShader>(upscaleRenderPass, VertFile->FetchAllBinary(), FragFile->FetchAllBinary());
 }
 
 bool WorldRenderLayer::Initialize(VkDevice device)
@@ -329,7 +329,7 @@ bool WorldRenderLayer::Initialize(VkDevice device)
         LOG(Fatal, LogRender, "failed to create render pass!");
     }
 
-    CreateUpscalePipeline();
+    //CreateUpscalePipeline();
     CreateUpscaleMaterial();
 
     return true;
@@ -392,7 +392,7 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
     vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
     
-    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, upscalePipeline);
+    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, upscaleShader->GetPipeline());
 
     viewport.width = layerRef->GetParentComposition()->GetExtent().width;
     viewport.height = layerRef->GetParentComposition()->GetExtent().height;
