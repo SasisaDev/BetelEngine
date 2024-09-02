@@ -27,6 +27,7 @@ IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vec
     if (vkCreateShaderModule(IRenderUtility::GetDevice(), &shaderModuleCreateInfo, nullptr, &vertModule) != VK_SUCCESS) {
         // TODO: Read and report shader error
         LOG(Error, LogRender, "Failed to create vertex shader module");
+        return;
     }
 
     shaderModuleCreateInfo.codeSize = fragmentData.size();
@@ -35,6 +36,7 @@ IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vec
     if (vkCreateShaderModule(IRenderUtility::GetDevice(), &shaderModuleCreateInfo, nullptr, &fragModule) != VK_SUCCESS) {
         // TODO: Read and report shader error
         LOG(Error, LogRender, "Failed to create fragment shader module");
+        return;
     }
 
     // Create Stages

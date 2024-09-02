@@ -31,6 +31,7 @@ class EntityRenderProxy
 {
     Entity* Parent;
 public:
+    EntityRenderProxy(Entity* DefaultParent){Parent = DefaultParent;}
     virtual void Update() {}
     virtual void Render(VkCommandBuffer cmdBuffer) {}
 };

@@ -270,6 +270,11 @@ void WorldRenderLayer::CreateUpscaleMaterial()
 
     upscaleShader = std::make_shared<IShader>(upscaleRenderPass, VertFile->FetchAllBinary(), FragFile->FetchAllBinary(), descriptorsLayout);
 
+    if(!upscaleShader->IsValid())
+    {
+        LOG(Fatal, LogWorldRenderLayer, "Upscale shader creation failed");
+    }
+
     ShaderDescriptorSet descriptorsSet;
 
     upscaleMaterial = std::make_shared<IMaterial>(upscaleShader.get(), descriptorsSet);
@@ -355,6 +360,11 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
 
 void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
+    uint32_t CurrentFrame = ((WorldRenderLayerRef*)layerRef)->GetParentComposition()->GetCurrentImageIndex(); 
+
+    IRenderUtility::BeginDebugLabel(cmdBuffer, "Pixel Perfect World");
+
+    IRenderUtility::BeginDebugLabel(cmdBuffer, "Original Viewport");
     VkRenderPassBeginInfo passInfo;
     passInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     passInfo.pNext = nullptr;
@@ -362,7 +372,7 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     VkClearValue clearVal = {{{0, 1, 0, 1}}};
     passInfo.pClearValues = &clearVal;
     passInfo.clearValueCount = 1;
-    passInfo.framebuffer = ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageFramebuffers[0]/*layerRef->GetParentComposition()->GetCurrentFramebuffer()*/;
+    passInfo.framebuffer = ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageFramebuffers[CurrentFrame]/*layerRef->GetParentComposition()->GetCurrentFramebuffer()*/;
     passInfo.renderArea.offset = {0, 0};
     passInfo.renderArea.extent = ((WorldRenderLayerRef*)layerRef)->viewport;
 
@@ -395,7 +405,9 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     // Render End
 
     vkCmdEndRenderPass(cmdBuffer);
-
+    IRenderUtility::EndDebugLabel(cmdBuffer);
+    
+    IRenderUtility::BeginDebugLabel(cmdBuffer, "Upscale");
     // Stretch pass
     clearVal = {{{1, 0, 0, 1}}};
     passInfo.renderPass = upscaleRenderPass;
@@ -417,7 +429,9 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
 
     vkCmdEndRenderPass(cmdBuffer);
+    IRenderUtility::EndDebugLabel(cmdBuffer);
 
+    IRenderUtility::EndDebugLabel(cmdBuffer);
 }
 
 bool WorldRenderLayer::Deinitialize()

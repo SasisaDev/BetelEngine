@@ -24,6 +24,9 @@ protected:
 public:
     AssetLibrary& Get();
 
+    Asset* LoadAsset(std::string Path);
+    Asset* GetAsset(std::string Path);
+
     void RegisterAssetType(AssetType type);
     
     void CrawlAssetsTyped(AssetType type);

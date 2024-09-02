@@ -10,7 +10,21 @@ class AssetPtr
 public:
     AssetPtr(std::string defaultPath);
 
-    AssetType* Load();
+    AssetType* Load() 
+    {
+        if(assetPtr != nullptr) { 
+            return assetPtr;
+        }
+
+        AssetLibrary& lib = AssetLibrary::Get();
+        
+        assetPtr = dynamic_cast<AssetType*>(lib.GetAsset(path));
+        if(assetPtr == nullptr) {
+            assetPtr = lib.LoadAsset(path);
+        }
+
+        return assetPtr;
+    }
 
     bool IsValid();
     bool IsLoaded();

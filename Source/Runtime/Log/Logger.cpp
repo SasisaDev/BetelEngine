@@ -55,6 +55,9 @@ void Logger::WarningFormat(const char* Namespace, const char* message, ...)
 
 void Logger::Error(const char* Namespace, const char* message)
 {
+	OnLogMessage.Broadcast("Error", Namespace, message);
+
+	InternalLog(Namespace, message);
 }
 
 void Logger::ErrorFormat(const char* Namespace, const char* message, ...)

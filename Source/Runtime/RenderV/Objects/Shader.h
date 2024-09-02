@@ -59,6 +59,8 @@ public:
             const ShaderCreateInfo& createInfo = IShader::DefaultShaderCreateInfo);
     ~IShader();
 
+    inline bool IsValid() const {return pipeline != VK_NULL_HANDLE;}
+
     inline VkPipeline GetPipeline() const {return pipeline;}
     inline VkPipelineLayout GetPipelineLayout() const {return pipelineLayout;}
 };
