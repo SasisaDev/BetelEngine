@@ -28,7 +28,7 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
     // Create buffers for Scene Data 
     for(int i = 0; i < framesInFlight; ++i)
     {
-        SceneDataSSBOs.push_back(Buffer(sizeof(WorldRenderLayerGPUStorage), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+        SceneDataSSBOs.push_back(new Buffer(sizeof(WorldRenderLayerGPUStorage), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
     }
 
     // Create Swapchain
@@ -269,6 +269,10 @@ void WorldRenderLayer::CreateUpscaleMaterial()
     descriptorsLayout.GenerateBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
 
     upscaleShader = std::make_shared<IShader>(upscaleRenderPass, VertFile->FetchAllBinary(), FragFile->FetchAllBinary(), descriptorsLayout);
+
+    ShaderDescriptorSet descriptorsSet;
+
+    upscaleMaterial = std::make_shared<IMaterial>(upscaleShader.get(), descriptorsSet);
 }
 
 bool WorldRenderLayer::Initialize(VkDevice device)

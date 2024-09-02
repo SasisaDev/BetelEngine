@@ -10,6 +10,8 @@
 
 #include <RenderV/Objects/Buffers/Buffer.h>
 
+#include <GameFramework/Entities/Test/TestEntity.h>
+
 int GuardedMain(int argc, char* argv[])
 {
 	LOG(Log, LogStartup, "BetelEngine::GuardedMain()");
@@ -60,6 +62,8 @@ int GuardedMain(int argc, char* argv[])
 	
 	app.CreateWindow(gameWininfo);
 #endif
+
+	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());
 
 	app.ApplicationLoop();
 

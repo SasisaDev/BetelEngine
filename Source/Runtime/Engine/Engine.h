@@ -16,11 +16,14 @@ protected:
     AssetLibrary assetLibrary;
 
     World* world;
+
     Widget* canvasWidget;
 #	ifdef EDITOR
     Widget* edCanvasWidget;
 #   endif
 public:
+    Engine();
+
     TickableManager& GetTickManager() {return tickManager;}
     TimerManager& GetTimer() {return timerManager;}
     AssetLibrary& GetAssetLibrary() {return assetLibrary;}

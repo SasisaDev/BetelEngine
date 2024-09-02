@@ -4,3 +4,8 @@ World::World()
 {
     
 }
+
+void World::Tick(float DeltaTime)
+{
+    
+}

@@ -31,7 +31,7 @@ protected:
 
     // GPU Storage Buffer Binding 0
     std::vector<WorldRenderLayerGPUStorage> SceneDataStorages;
-    std::vector<Buffer> SceneDataSSBOs;
+    std::vector<Buffer*> SceneDataSSBOs;
 
     friend class WorldRenderLayer;
 public:
