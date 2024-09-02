@@ -61,8 +61,6 @@ int GuardedMain(int argc, char* argv[])
 	app.CreateWindow(gameWininfo);
 #endif
 
-	volatile Buffer<unsigned long long[5]> buff(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-
 	app.ApplicationLoop();
 
 	return 0;

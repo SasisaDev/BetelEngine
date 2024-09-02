@@ -75,6 +75,8 @@ public:
     
     inline VkSemaphore GetAquireSemaphore() const {return aquireSemaphore;}
 
+    inline size_t GetFramesInFlight() const {return 2;}
+
     bool Initialize(IRenderCompositionInitializer* initializer);
     
     bool Recreate(IRenderCompositionInitializer* initializer);

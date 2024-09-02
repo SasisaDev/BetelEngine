@@ -2,10 +2,19 @@
 
 #include <memory>
 
+#include <glm/glm.hpp>
+
 #include <RenderV/Layer.h>
 #include <RenderV/Objects/Material.h>
+#include <RenderV/Objects/Buffers/Buffer.h>
 
 class World;
+
+struct WorldRenderLayerGPUStorage
+{
+    glm::mat4 ProjectionMatrix;
+    glm::mat4 ViewMatrix;
+};
 
 class WorldRenderLayerRef : public IRenderLayerRef
 {
@@ -18,6 +27,11 @@ protected:
     std::vector<VkDeviceMemory> pixelPerfectImageMemories;
     std::vector<VkImageView> pixelPerfectImageViews;
     std::vector<VkFramebuffer> pixelPerfectImageFramebuffers;
+    std::vector<VkSampler> pixelPerfectSamplers;
+
+    // GPU Storage Buffer Binding 0
+    std::vector<WorldRenderLayerGPUStorage> SceneDataStorages;
+    std::vector<Buffer> SceneDataSSBOs;
 
     friend class WorldRenderLayer;
 public:

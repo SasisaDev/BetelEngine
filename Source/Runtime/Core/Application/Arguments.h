@@ -55,6 +55,18 @@ struct ArgumentCollection
         return {};
     }
 
+    std::string GetOrDefault(std::string Key, std::string Default) 
+    {
+        for(Argument& arg : Arguments)
+        {
+            if(arg.Key == Key)
+            {
+                return arg.Value;
+            }
+        }
+        return Default;
+    }
+
 private:
     std::vector<Argument> Arguments;
 };

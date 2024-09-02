@@ -2,6 +2,13 @@
 
 #include "Shader.h"
 
+struct ShaderDescriptorSet
+{
+    ShaderDescriptorLayout DescriptorLayout;
+    
+    
+};
+
 class IMaterial
 {
 protected:

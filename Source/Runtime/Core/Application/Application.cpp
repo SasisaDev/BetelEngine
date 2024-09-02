@@ -3,6 +3,7 @@
 #include <ctime>
 #include <chrono>
 #include <type_traits>
+#include <thread>
 
 #include <Log/Logger.h>
 #include <Platform/Platform.h>
@@ -135,10 +136,20 @@ void Application::ApplicationLoop()
 {
 	auto frame_lifetime_start = std::chrono::high_resolution_clock::now();
 	auto frame_lifetime_end = std::chrono::high_resolution_clock::now();
+
+	float MinimalDeltaTime = 1000.f/10000.f;
+
 	while(!bShouldTerminate)
 	{
 		float deltaTime = std::chrono::duration<float, std::milli>(frame_lifetime_end-frame_lifetime_start).count() / 1000;
 		frame_lifetime_start = std::chrono::high_resolution_clock::now();
+
+		/*if (deltaTime < MinimalDeltaTime)
+        {
+            std::chrono::duration<double, std::milli> delta_ms(MinimalDeltaTime - deltaTime);
+            auto delta_ms_duration = std::chrono::duration_cast<std::chrono::milliseconds>(delta_ms);
+            std::this_thread::sleep_for(std::chrono::milliseconds(delta_ms_duration.count()));
+        }*/
 
 		//LOGF(Log, LogTime, "%f", deltaTime);
 		// Update all windows, may require compositions recreation

@@ -12,7 +12,7 @@ Window::Window(WindowCreateInfo& createInfo)
 
 	surface = SDL_GetWindowSurface(window);
 
-	SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0xFF, 0x00, 0xFF));
+	//SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0xFF, 0x00, 0xFF));
 
 	SDL_UpdateWindowSurface(window);
 }

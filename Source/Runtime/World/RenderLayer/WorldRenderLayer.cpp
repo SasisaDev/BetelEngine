@@ -23,18 +23,24 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
 {
     VkPhysicalDevice physDevice = IRenderUtility::GetPhysicalDevice();
 
-    const size_t swapchainImageCount = 2;
+    const size_t framesInFlight = GetParentComposition()->GetFramesInFlight();
+
+    // Create buffers for Scene Data 
+    for(int i = 0; i < framesInFlight; ++i)
+    {
+        SceneDataSSBOs.push_back(Buffer(sizeof(WorldRenderLayerGPUStorage), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+    }
 
     // Create Swapchain
     // TODO: swapchain support info
     imageFormat = VK_FORMAT_B8G8R8A8_SRGB;
 
-    pixelPerfectImages.resize(swapchainImageCount);
-    pixelPerfectImageViews.resize(swapchainImageCount);
-    pixelPerfectImageFramebuffers.resize(swapchainImageCount);
-    pixelPerfectImageMemories.resize(swapchainImageCount);
+    pixelPerfectImages.resize(framesInFlight);
+    pixelPerfectImageViews.resize(framesInFlight);
+    pixelPerfectImageFramebuffers.resize(framesInFlight);
+    pixelPerfectImageMemories.resize(framesInFlight);
 
-    for(size_t i = 0; i < swapchainImageCount; i++) {
+    for(size_t i = 0; i < framesInFlight; i++) {
         VkImageCreateInfo imgInfo;
         imgInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
         imgInfo.flags = 0;
@@ -259,7 +265,10 @@ void WorldRenderLayer::CreateUpscaleMaterial()
     IFile* VertFile = IPlatform::Get()->OpenFile("./Shaders/TriangleUpscale/TriangleUpscale.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
     IFile* FragFile = IPlatform::Get()->OpenFile("./Shaders/TriangleUpscale/TriangleUpscale.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
 
-    upscaleShader = std::make_shared<IShader>(upscaleRenderPass, VertFile->FetchAllBinary(), FragFile->FetchAllBinary());
+    ShaderDescriptorLayout descriptorsLayout;
+    descriptorsLayout.GenerateBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+
+    upscaleShader = std::make_shared<IShader>(upscaleRenderPass, VertFile->FetchAllBinary(), FragFile->FetchAllBinary(), descriptorsLayout);
 }
 
 bool WorldRenderLayer::Initialize(VkDevice device)

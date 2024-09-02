@@ -3,7 +3,20 @@
 #include <RenderV/Utility.h>
 #include <Log/Logger.h>
 
-IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vector<char> fragmentData)
+const ShaderDescriptorLayout IShader::DefaultShaderDescriptorLayout = {};
+
+const ShaderCreateInfo IShader::DefaultShaderCreateInfo = {
+    .Viewport={{0, 0}, {0, 0}},
+    .Scissors={{0, 0}, {0, 0}},
+    .Multisampling={
+        .SampleShadingEnabled = VK_FALSE
+    },
+    .Blending={
+        .Enabled = VK_TRUE
+    }
+};
+
+IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vector<char> fragmentData, const ShaderDescriptorLayout& descLayout, const ShaderCreateInfo& createInfo)
 {
     // Create Shader Modules
     VkShaderModuleCreateInfo shaderModuleCreateInfo{};
@@ -63,16 +76,16 @@ IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vec
     inputAssembly.primitiveRestartEnable = VK_FALSE;
 
     VkViewport pipelineViewport{};
-    pipelineViewport.x = 0.0f;
-    pipelineViewport.y = 0.0f;
-    pipelineViewport.width = 1;
-    pipelineViewport.height = 1;
+    pipelineViewport.x = static_cast<float>(createInfo.Viewport.offset.x);
+    pipelineViewport.y = static_cast<float>(createInfo.Viewport.offset.y);
+    pipelineViewport.width = static_cast<float>(createInfo.Viewport.offset.x);
+    pipelineViewport.height = static_cast<float>(createInfo.Viewport.offset.y);
     pipelineViewport.minDepth = 0.0f;
     pipelineViewport.maxDepth = 1.0f;
 
-    VkRect2D scissor{};
-    scissor.offset = {0, 0};
-    scissor.extent = {1, 1};
+    VkRect2D scissor = createInfo.Scissors;
+    //scissor.offset = {0, 0};
+    //scissor.extent = {1, 1};
 
     VkPipelineViewportStateCreateInfo viewportState{};
     viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
@@ -96,7 +109,7 @@ IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vec
     
     VkPipelineMultisampleStateCreateInfo multisampling{};
     multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-    multisampling.sampleShadingEnable = VK_FALSE;
+    multisampling.sampleShadingEnable = createInfo.Multisampling.SampleShadingEnabled;
     multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
     multisampling.minSampleShading = 1.0f; // Optional
     multisampling.pSampleMask = nullptr; // Optional
@@ -106,19 +119,16 @@ IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vec
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
     colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
     colorBlendAttachment.blendEnable = VK_FALSE;
-    colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
-    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
-    colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD; // Optional
-    colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
-    colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
-    colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD; // Optional
-    colorBlendAttachment.blendEnable = VK_TRUE;
-    colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
-    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
-    colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
-    colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
-    colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-    colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+    if(createInfo.Blending.Enabled)
+    {
+        colorBlendAttachment.blendEnable = VK_TRUE;
+        colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+        colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+        colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+        colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+        colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+        colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+    }
 
     VkPipelineColorBlendStateCreateInfo colorBlending{};
     colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
@@ -131,18 +141,26 @@ IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vec
     colorBlending.blendConstants[2] = 0.0f; // Optional
     colorBlending.blendConstants[3] = 0.0f; // Optional
 
+    VkDescriptorSetLayoutCreateInfo layoutInfo{};
+    layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    layoutInfo.bindingCount = descLayout.Bindings.size();
+    layoutInfo.pBindings = descLayout.Bindings.data();
+
+    if (vkCreateDescriptorSetLayout(IRenderUtility::GetDevice(), &layoutInfo, nullptr, &descSetLayout) != VK_SUCCESS) {
+        LOG(Error, LogRender, "failed to create descriptor set layout!");
+    }
+
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo.setLayoutCount = 0; // Optional
-    pipelineLayoutInfo.pSetLayouts = nullptr; // Optional
-    pipelineLayoutInfo.pushConstantRangeCount = 0; // Optional
-    pipelineLayoutInfo.pPushConstantRanges = nullptr; // Optional
+    pipelineLayoutInfo.setLayoutCount = (descSetLayout) ? 1 : 0;
+    pipelineLayoutInfo.pSetLayouts = &descSetLayout;
+    pipelineLayoutInfo.pushConstantRangeCount = 0; 
+    pipelineLayoutInfo.pPushConstantRanges = nullptr; 
 
     if (vkCreatePipelineLayout(IRenderUtility::GetDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
         LOG(Fatal, LogRender, "failed to create pipeline layout!");
     }
 
-    // TODO: Upscale Pipeline Stages
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
     pipelineInfo.stageCount = 2;
@@ -173,4 +191,5 @@ IShader::~IShader()
     vkDestroyShaderModule(IRenderUtility::GetDevice(), vertModule, nullptr);
 
     vkDestroyPipelineLayout(IRenderUtility::GetDevice(), pipelineLayout, nullptr);
+    vkDestroyPipeline(IRenderUtility::GetDevice(), pipeline, nullptr);
 }
