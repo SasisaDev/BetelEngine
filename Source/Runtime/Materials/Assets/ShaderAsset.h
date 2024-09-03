@@ -12,5 +12,7 @@ protected:
     
 public:
     std::string ShaderLayerType = "WorldRenderLayer";
+    bool SampleShadingEnable = false;
+    bool BlendEnable = true;
     
 };

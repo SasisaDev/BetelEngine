@@ -1,6 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
+
+#include "../Artifact/Artifact.h"
 
 enum class EAssetVarType : uint16_t
 {
@@ -37,3 +40,16 @@ struct AssetFileBody
     uint16_t u;
 };
 
+class AssetFile
+{
+    Artifact artifact;
+    std::string path;
+public:
+    AssetFile(std::string filePath);
+
+    AssetFile operator<<(const Artifact& input);
+    AssetFile operator>>(Artifact& input);
+
+    void WriteToDevice();
+    void ReadFromDevice();
+};

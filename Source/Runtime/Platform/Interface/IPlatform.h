@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Files/IFile.h"
+#include "Files/IDirectory.h"
 
 #include <string>
 #include <vector>
@@ -21,4 +22,5 @@ public:
 	virtual void DebugPrint(const char* string) const {}
 
 	virtual IFile* OpenFile(const char* path, uint8_t accessFlags) { return new IFile(path, accessFlags); }
+	virtual IDirectory* OpenDirectory(const char* path, uint8_t flags) { return new IDirectory(path, flags); }
 };

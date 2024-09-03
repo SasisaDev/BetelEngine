@@ -34,7 +34,8 @@ int GuardedMain(int argc, char* argv[])
 #ifdef EDITOR
 	std::vector<IRenderLayerRef*> editorCompositionLayerRefs = {
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
-			->SetViewportSize({settings->PixelPerfectViewportWidth, settings->PixelPerfectViewportHeight}),
+			->SetViewportSize({settings->PixelPerfectViewportWidth, settings->PixelPerfectViewportHeight})
+			->SetWorld(app.GetEngine()->GetWorld()),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetEditorCanvasWidget()),
 	};

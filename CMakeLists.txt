@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.21)
 
 project ("Betel")
 
+set(BUILD_CONFIG "$<$<CONFIG:Debug>:Debug>$<$<CONFIG:Release>:Release>")
+
 include("CMake/VulkanCompileShaders.cmake")
+include("CMake/CookAssets.cmake")
 include(FetchContent)
 
 FetchContent_Declare(
@@ -32,6 +35,8 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(vulkan sdl glm lua)
 
 # Modules Sources
+set(SrcGameFramework "Source/Runtime/GameFramework/Entities/Test/TestEntity.cpp") 
+
 set(SrcRenderV "Source/Runtime/RenderV/Vulkan/vkloader.cpp" "Source/Runtime/RenderV/Render.cpp" "Source/Runtime/RenderV/Engine.cpp" 
     "Source/Runtime/RenderV/Composition.cpp" "Source/Runtime/RenderV/Layer.cpp" "Source/Runtime/RenderV/Utility.cpp" "Source/Runtime/RenderV/Objects/Shader.cpp"
     "Source/Runtime/RenderV/Objects/Buffers/Buffer.cpp" "Source/Runtime/RenderV/Objects/Material.cpp")
@@ -42,9 +47,10 @@ set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp" "Source/Run
 
 set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp") 
 
-set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
+set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGameFramework} "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Platform/Platform.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
-    "Source/Runtime/Delegate/Delegate.cpp" "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Platform/Interface/Files/IFile.cpp")
+    "Source/Runtime/Delegate/Delegate.cpp" "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Platform/Interface/Files/IFile.cpp" 
+    "Source/Runtime/Platform/Interface/Files/IDirectory.cpp")
 
 if(WIN32)
     set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp" "Source/Runtime/Platform/Windows/Files/WindowsFile.cpp")
@@ -75,4 +81,8 @@ target_compile_definitions(Editor PUBLIC EDITOR)
 
 set_property(TARGET Editor PROPERTY CXX_STANDARD 20)
 
+# Shaders
 add_shaders(Shaders "Shaders/TriangleUpscale/TriangleUpscale.vert" "Shaders/TriangleUpscale/TriangleUpscale.frag")
+
+# Assets
+cook_assets(Cook "Content/" "Content/")

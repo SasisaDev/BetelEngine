@@ -15,6 +15,7 @@ public:
     EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo) 
     {
         EntityType* spawnedEntity = new EntityType();
+        spawnedEntity->CreateRenderProxy();
         entities.push_back(spawnedEntity);
         return spawnedEntity;
     }
