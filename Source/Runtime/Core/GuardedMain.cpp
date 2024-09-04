@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Platform/Platform.h>
 #include <Core/Application/Application.h>
 #include <World/RenderLayer/WorldRenderLayer.h>
 #include <UI/RenderLayer/WidgetRenderLayer.h>
@@ -65,6 +66,8 @@ int GuardedMain(int argc, char* argv[])
 #endif
 
 	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());
+
+	IDirectory* directory = IPlatform::Get()->OpenDirectory("./Content", DIRECTORY_FLAG_RECURSIVE);
 
 	app.ApplicationLoop();
 

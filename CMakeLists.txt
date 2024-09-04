@@ -37,6 +37,8 @@ FetchContent_MakeAvailable(vulkan sdl glm lua)
 # Modules Sources
 set(SrcGameFramework "Source/Runtime/GameFramework/Entities/Test/TestEntity.cpp") 
 
+set(SrcAssets "Source/Runtime/Assets/AssetLibrary.cpp") 
+
 set(SrcRenderV "Source/Runtime/RenderV/Vulkan/vkloader.cpp" "Source/Runtime/RenderV/Render.cpp" "Source/Runtime/RenderV/Engine.cpp" 
     "Source/Runtime/RenderV/Composition.cpp" "Source/Runtime/RenderV/Layer.cpp" "Source/Runtime/RenderV/Utility.cpp" "Source/Runtime/RenderV/Objects/Shader.cpp"
     "Source/Runtime/RenderV/Objects/Buffers/Buffer.cpp" "Source/Runtime/RenderV/Objects/Material.cpp")
@@ -47,7 +49,8 @@ set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp" "Source/Run
 
 set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp") 
 
-set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGameFramework} "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
+set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGameFramework} ${SrcAssets} 
+    "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Platform/Platform.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
     "Source/Runtime/Delegate/Delegate.cpp" "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Platform/Interface/Files/IFile.cpp" 
     "Source/Runtime/Platform/Interface/Files/IDirectory.cpp")

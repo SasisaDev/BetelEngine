@@ -22,7 +22,7 @@ protected:
     std::vector<AssetType> RegisteredAssetTypes;
     std::vector<AssetDescriptor> AssetList;
 public:
-    AssetLibrary& Get();
+    static AssetLibrary& Get();
 
     Asset* LoadAsset(std::string Path);
     Asset* GetAsset(std::string Path);
