@@ -22,5 +22,5 @@ public:
 	virtual void DebugPrint(const char* string) const {}
 
 	virtual IFile* OpenFile(const char* path, uint8_t accessFlags) { return new IFile(path, accessFlags); }
-	virtual IDirectory* OpenDirectory(const char* path, uint8_t flags = 0) { return new IDirectory(path, flags); }
+	virtual IDirectory* OpenDirectory(const char* path, uint8_t flags = 0) { return new IDirectory(IPath(path), flags); }
 };

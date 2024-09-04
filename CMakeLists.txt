@@ -47,13 +47,15 @@ set(SrcEngine "Source/Runtime/Engine/Engine.cpp" "Source/Runtime/Engine/EngineDe
 
 set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp" "Source/Runtime/World/World.cpp") 
 
-set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp") 
+set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp")
 
-set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGameFramework} ${SrcAssets} 
+set(SrcPlatform "Source/Runtime/Platform/Interface/Files/IFile.cpp" "Source/Runtime/Platform/Interface/Files/IDirectory.cpp" "Source/Runtime/Platform/Platform.cpp"
+                "Source/Runtime/Platform/Interface/Files/IPath.cpp")
+
+set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGameFramework} ${SrcAssets} ${SrcPlatform}
     "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
-    "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Platform/Platform.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
-    "Source/Runtime/Delegate/Delegate.cpp" "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Platform/Interface/Files/IFile.cpp" 
-    "Source/Runtime/Platform/Interface/Files/IDirectory.cpp")
+    "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
+    "Source/Runtime/Delegate/Delegate.cpp" "Source/Runtime/Core/Window/Window.cpp" )
 
 if(WIN32)
     set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp" "Source/Runtime/Platform/Windows/Files/WindowsFile.cpp")

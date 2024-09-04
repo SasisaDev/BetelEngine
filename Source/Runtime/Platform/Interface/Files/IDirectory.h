@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstdint>
 
+#include "IPath.h"
+
 enum EDirectoryFlags : uint8_t
 {
 	DIRECTORY_FLAG_RECURSIVE = (1 << 0),
@@ -13,10 +15,9 @@ enum EDirectoryFlags : uint8_t
 class IDirectory
 {
     struct Entry {
-        // TODO: Create path class
         bool isDirectory : 1;
         bool exists: 1; 
-        std::string path;
+        IPath path;
         std::vector<Entry> nodes;
     };
 
@@ -25,11 +26,11 @@ class IDirectory
 
     virtual std::vector<IDirectory::Entry> ParseNested(std::string path, bool recursive);
 public:
-    IDirectory(std::string path, uint8_t flags);
+    IDirectory(IPath path, uint8_t flags);
     IDirectory(const Entry& defaultEntry);
 
     virtual inline const Entry& GetEntry() const {return entry;}
-    virtual inline const std::string& GetPath() const {return entry.path;}
+    virtual inline const IPath& GetPath() const {return entry.path;}
     virtual inline bool IsDirectory() const {return entry.isDirectory;}
     virtual inline bool Exists() const {return entry.exists;}
 

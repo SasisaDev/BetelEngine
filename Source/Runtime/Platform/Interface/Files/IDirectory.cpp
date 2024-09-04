@@ -1,15 +1,17 @@
 #include "IDirectory.h"
 #include <filesystem>
 
-IDirectory::IDirectory(std::string path, uint8_t flags)
+IDirectory::IDirectory(IPath path, uint8_t flags)
 {
     entry.isDirectory = true;
     entry.path = path;
     entry.exists = true;
 
-    if(!std::filesystem::exists(path)) {
+    volatile auto npath = path.GetPath();
+
+    if(!std::filesystem::exists(path.GetPath())) {
         if((flags & DIRECTORY_FLAG_CREATE) == DIRECTORY_FLAG_CREATE) {
-            if(!std::filesystem::create_directories(path))
+            if(!std::filesystem::create_directories(path.GetPath()))
             {
                 entry.exists = false;
             }
@@ -19,7 +21,7 @@ IDirectory::IDirectory(std::string path, uint8_t flags)
         }
     }
 
-    entry.nodes = ParseNested(path, (flags & DIRECTORY_FLAG_RECURSIVE) == DIRECTORY_FLAG_RECURSIVE);
+    entry.nodes = ParseNested(path.GetPath(), (flags & DIRECTORY_FLAG_RECURSIVE) == DIRECTORY_FLAG_RECURSIVE);
 }
 
 IDirectory::IDirectory(const Entry& defaultEntry)
@@ -45,7 +47,7 @@ const std::vector<IDirectory*>& IDirectory::GetChildren()
 
 const std::vector<IDirectory*>& IDirectory::FetchChildren()
 {
-    entry.nodes = ParseNested(entry.path, false);
+    entry.nodes = ParseNested(entry.path.GetPath(), false);
 
     return GetChildren();
 }
