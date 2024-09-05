@@ -53,6 +53,8 @@ class IShader
     VkPipeline pipeline;
     VkPipelineLayout pipelineLayout;
     VkDescriptorSetLayout descSetLayout;
+
+    ShaderDescriptorLayout descriptorLayoutParameters;
 public:
     IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vector<char> fragmentData, 
             const ShaderDescriptorLayout& descLayout = IShader::DefaultShaderDescriptorLayout, 
@@ -63,4 +65,7 @@ public:
 
     inline VkPipeline GetPipeline() const {return pipeline;}
     inline VkPipelineLayout GetPipelineLayout() const {return pipelineLayout;}
+    inline VkDescriptorSetLayout GetDescriptorSetLayout() const {return descSetLayout;}
+
+    inline const ShaderDescriptorLayout& GetShaderDescriptorLayoutStructure() const {return descriptorLayoutParameters;}
 };

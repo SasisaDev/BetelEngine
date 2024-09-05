@@ -27,7 +27,7 @@ protected:
     std::vector<VkDeviceMemory> pixelPerfectImageMemories;
     std::vector<VkImageView> pixelPerfectImageViews;
     std::vector<VkFramebuffer> pixelPerfectImageFramebuffers;
-    std::vector<VkSampler> pixelPerfectSamplers;
+    VkSampler pixelPerfectSampler;
 
     // GPU Storage Buffer Binding 0
     std::vector<WorldRenderLayerGPUStorage> SceneDataStorages;
@@ -36,6 +36,7 @@ protected:
     friend class WorldRenderLayer;
 public:
     WorldRenderLayerRef();
+    ~WorldRenderLayerRef();
 
     virtual bool Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList) override;
 

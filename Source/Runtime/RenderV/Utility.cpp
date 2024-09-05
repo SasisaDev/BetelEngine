@@ -1,6 +1,9 @@
 #include "Utility.h"
 #include <Log/Logger.h>
 
+uint32_t IRenderUtility::framesInFlight = 2;
+uint32_t IRenderUtility::currentFrameInFlight = 0;
+
 RenderQueueFamilyIndices IRenderUtility::FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
     RenderQueueFamilyIndices indices;

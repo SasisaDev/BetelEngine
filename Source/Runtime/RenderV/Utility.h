@@ -17,11 +17,19 @@ struct RenderQueueFamilyIndices {
 
 class IRenderUtility
 {
+    static uint32_t framesInFlight;
+    static uint32_t currentFrameInFlight;
 public:
     static RenderQueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface = 0);
     static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
     static VkDevice GetDevice();
     static VkPhysicalDevice GetPhysicalDevice();
+
+    static inline uint32_t GetFramesInFlight() {return framesInFlight;}
+    static inline void SetFramesInFlight(uint32_t fif) {framesInFlight = fif;}
+    
+    static inline uint32_t GetCurrentFrameInFlight() {return currentFrameInFlight;}
+    static inline void SetCurrentFrameInFlight(uint32_t curfif) {currentFrameInFlight = curfif;}
 
     static inline void BeginDebugLabel(VkCommandBuffer cmdBuffer, const char* label, float r=0.5, float g=0.5, float b=0.5)
     {

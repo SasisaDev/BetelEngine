@@ -122,6 +122,31 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
         }
     }
 
+    VkSamplerCreateInfo samplerInfo{};
+    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    samplerInfo.magFilter = VK_FILTER_NEAREST;
+    samplerInfo.minFilter = VK_FILTER_NEAREST;
+
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+
+    samplerInfo.anisotropyEnable = VK_FALSE;
+    samplerInfo.maxAnisotropy = 1.0f;
+    
+    samplerInfo.unnormalizedCoordinates = VK_FALSE;
+    samplerInfo.compareEnable = VK_FALSE;
+    samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    samplerInfo.mipLodBias = 0.0f;
+    samplerInfo.minLod = 0.0f;
+    samplerInfo.maxLod = 0.0f;
+
+    if (vkCreateSampler(device, &samplerInfo, nullptr, &pixelPerfectSampler) != VK_SUCCESS) {
+        LOG(Fatal, LogWorldRenderLayer,  "failed to create texture sampler!");
+    }
+
     return true;
 }
 
@@ -275,9 +300,7 @@ void WorldRenderLayer::CreateUpscaleMaterial()
         LOG(Fatal, LogWorldRenderLayer, "Upscale shader creation failed");
     }
 
-    ShaderDescriptorSet descriptorsSet;
-
-    upscaleMaterial = std::make_shared<IMaterial>(upscaleShader.get(), descriptorsSet);
+    upscaleMaterial = std::make_shared<IMaterial>(upscaleShader.get());
 }
 
 bool WorldRenderLayer::Initialize(VkDevice device)
@@ -355,7 +378,15 @@ bool WorldRenderLayer::Initialize(VkDevice device)
 
 void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
-
+    // FIXME
+    // To make this work, we should use texture from the previous render pass?
+    // In actuallity: if we switch indices, Original Viewport pass will draw to 2DCA 169,
+    // But Upscale pass will read from 2DCA 164, hence the error. 
+    std::vector<VkImageView> upscaleViews = {
+        ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageViews[1],
+        ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageViews[0]
+    };
+    upscaleMaterial->SetSamplerRenderTarget(0, upscaleViews, ((WorldRenderLayerRef*)layerRef)->pixelPerfectSampler);
 }
 
 void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
@@ -399,13 +430,36 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
         auto entities = ((WorldRenderLayerRef*)layerRef)->world->GetEntities();
         for(size_t worldEntityIdx = 0; worldEntityIdx < entities.size(); ++worldEntityIdx)
         {
-            entities[worldEntityIdx]->GetRenderProxy()->Render(cmdBuffer);
+            if(EntityRenderProxy* proxy = entities[worldEntityIdx]->GetRenderProxy()) 
+            {
+                proxy->Render(cmdBuffer);
+            }
         }
     }
-    // Render End
 
     vkCmdEndRenderPass(cmdBuffer);
     IRenderUtility::EndDebugLabel(cmdBuffer);
+    // Render End
+
+    // Barrier
+    VkImageMemoryBarrier imgMemBar = {};
+    imgMemBar.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+    imgMemBar.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    imgMemBar.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+    imgMemBar.image = ((WorldRenderLayerRef*)layerRef)->pixelPerfectImages[CurrentFrame];
+    imgMemBar.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    imgMemBar.subresourceRange.baseMipLevel = 0;
+    imgMemBar.subresourceRange.levelCount = 1;
+    imgMemBar.subresourceRange.baseArrayLayer = 0;
+    imgMemBar.subresourceRange.layerCount = 1;
+
+    imgMemBar.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    imgMemBar.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+    imgMemBar.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    imgMemBar.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+    vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &imgMemBar);
     
     IRenderUtility::BeginDebugLabel(cmdBuffer, "Upscale");
     // Stretch pass
@@ -416,6 +470,9 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     passInfo.renderArea.extent = layerRef->GetParentComposition()->GetExtent();
 
     vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+
+    const VkDescriptorSet upscaleDescSet = upscaleMaterial->Get(CurrentFrame);
+    vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, upscaleShader->GetPipelineLayout(), 0, 1, &upscaleDescSet, 0, nullptr);
     
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, upscaleShader->GetPipeline());
 
@@ -432,6 +489,23 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     IRenderUtility::EndDebugLabel(cmdBuffer);
 
     IRenderUtility::EndDebugLabel(cmdBuffer);
+}
+
+WorldRenderLayerRef::~WorldRenderLayerRef()
+{
+    for(VkImage image : pixelPerfectImages){
+        vkDestroyImage(IRenderUtility::GetDevice(), image, nullptr);
+    }
+
+    for(VkImageView view : pixelPerfectImageViews){
+        vkDestroyImageView(IRenderUtility::GetDevice(), view, nullptr);
+    }
+
+    for(VkFramebuffer fb : pixelPerfectImageFramebuffers){
+        vkDestroyFramebuffer(IRenderUtility::GetDevice(), fb, nullptr);
+    }
+
+    vkDestroySampler(IRenderUtility::GetDevice(), pixelPerfectSampler, nullptr);
 }
 
 bool WorldRenderLayer::Deinitialize()

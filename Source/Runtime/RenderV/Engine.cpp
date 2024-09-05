@@ -21,6 +21,9 @@ VkPhysicalDevice IRenderEngine::InternalPickPhysDevice(std::vector<VkPhysicalDev
 
 bool IRenderEngine::Initialize(std::vector<const char*> extensions, std::vector<const char*> layers)
 {
+    IRenderUtility::SetFramesInFlight(2);
+    IRenderUtility::SetCurrentFrameInFlight(0);
+
     // Initialize Vulkan Loader
     VkResult result = vkloader::InitializeLoader();
     if(result != VK_SUCCESS)
@@ -81,7 +84,7 @@ bool IRenderEngine::Initialize(std::vector<const char*> extensions, std::vector<
     return true;
 }
 
-void IRenderEngine::InitializeWithSurface(VkSurfaceKHR surface)
+void IRenderEngine::UpdateQueueFamilies(VkSurfaceKHR surface)
 {
     queueFamilyIndices = IRenderUtility::FindQueueFamilies(physDevice, surface);
 }
@@ -233,10 +236,10 @@ void IRenderEngine::Render()
             swapchains.push_back(composition->GetSwapchain());
             swapchainImageIndices.push_back(composition->GetCurrentImageIndex());
         } else {
-
+            // TODO: Render to texture
         }
 
-        Compositions[compositionId]->Render(cmdBuffer);
+        composition->Render(cmdBuffer);
 
         composition->EndFrame(cmdBuffer);
     }

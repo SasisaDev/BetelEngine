@@ -18,6 +18,8 @@ const ShaderCreateInfo IShader::DefaultShaderCreateInfo = {
 
 IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vector<char> fragmentData, const ShaderDescriptorLayout& descLayout, const ShaderCreateInfo& createInfo)
 {
+    descriptorLayoutParameters = descLayout;
+
     // Create Shader Modules
     VkShaderModuleCreateInfo shaderModuleCreateInfo{};
     shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

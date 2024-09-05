@@ -31,6 +31,9 @@ class EntityRenderProxy
 {
     Entity* Parent;
 public:
+    // Specifies whether entity gets automatically loaded/unloaded from memory
+    bool bPersistent = false;
+public:
     EntityRenderProxy(Entity* DefaultParent){Parent = DefaultParent;}
     virtual void Update() {}
     virtual void Render(VkCommandBuffer cmdBuffer) {}

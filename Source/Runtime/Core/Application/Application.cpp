@@ -96,7 +96,7 @@ void Application::Initialize()
 	VkSurfaceKHR dummySurface;
 	SDL_Vulkan_CreateSurface(window, Render->GetInstance(), &dummySurface);
 
-	Render->InitializeWithSurface(dummySurface);
+	Render->UpdateQueueFamilies(dummySurface);
 
 	SDL_DestroyWindow(window);
 

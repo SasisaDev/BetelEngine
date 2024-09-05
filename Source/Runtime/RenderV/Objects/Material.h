@@ -2,19 +2,20 @@
 
 #include "Shader.h"
 
-struct ShaderDescriptorSet
-{
-    ShaderDescriptorLayout DescriptorLayout;
-};
-
 class IMaterial
 {
 protected:
     IShader* pShader;
     VkDescriptorPool descriptorPool;
-    VkDescriptorSet descriptorSet;
+    std::vector<VkDescriptorSet> descriptorSets;
 public:
-    IMaterial(IShader* shader, const ShaderDescriptorSet& descSetInfo);
+    IMaterial(IShader* shader);
+    ~IMaterial();
+
+    void SetSampler(uint32_t binding, VkImageView view, VkSampler sampler);
+    void SetSamplerRenderTarget(uint32_t binding, std::vector<VkImageView> views, VkSampler sampler);
+
+    inline VkDescriptorSet Get(uint32_t id) const {return descriptorSets[id];}
 
     void Bind(VkCommandBuffer cmd);
 };
