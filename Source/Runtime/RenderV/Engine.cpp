@@ -263,7 +263,7 @@ void IRenderEngine::Render()
     VkPresentInfoKHR presentInfo = {};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
     presentInfo.pSwapchains = swapchains.data();
-    presentInfo.swapchainCount = 1;
+    presentInfo.swapchainCount = swapchains.size();
     presentInfo.pImageIndices = swapchainImageIndices.data();
     presentInfo.pWaitSemaphores = &submitSemaphore;
     presentInfo.waitSemaphoreCount = 1;

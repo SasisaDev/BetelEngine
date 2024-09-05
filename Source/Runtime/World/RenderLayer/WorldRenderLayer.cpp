@@ -117,7 +117,7 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
         framebufferInfo.attachmentCount = 1;
         framebufferInfo.pAttachments = &pixelPerfectImageViews[i];
        
-        if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, pixelPerfectImageFramebuffers.data()) != VK_SUCCESS) {
+        if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, &pixelPerfectImageFramebuffers[i]) != VK_SUCCESS) {
             LOG(Fatal, LogWorldRenderLayer,  "failed to create framebuffer!");
         }
     }
@@ -383,8 +383,8 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
     // In actuallity: if we switch indices, Original Viewport pass will draw to 2DCA 169,
     // But Upscale pass will read from 2DCA 164, hence the error. 
     std::vector<VkImageView> upscaleViews = {
-        ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageViews[1],
-        ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageViews[0]
+        ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageViews[0],
+        ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageViews[1]
     };
     upscaleMaterial->SetSamplerRenderTarget(0, upscaleViews, ((WorldRenderLayerRef*)layerRef)->pixelPerfectSampler);
 }

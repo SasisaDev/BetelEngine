@@ -197,7 +197,7 @@ void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 {
     if(compositionType == ERenderCompositionType::RENDER_COMPOSITION_TYPE_SURFACE)
     {
-        vkAcquireNextImageKHR(IRenderUtility::GetDevice(), swapchain, 0, aquireSemaphore, 0, &targetImageId);
+        vkAcquireNextImageKHR(IRenderUtility::GetDevice(), swapchain, UINT64_MAX, aquireSemaphore, VK_NULL_HANDLE, &targetImageId);
     }
 
     IRenderLayerRef* previousLayer = nullptr;
@@ -220,4 +220,6 @@ void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 
         previousLayer = Layers[layerRefId];
     }
+
+    targetImageId = (targetImageId + 1) % GetFramesInFlight();
 }
