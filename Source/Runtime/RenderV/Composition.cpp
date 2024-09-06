@@ -221,5 +221,5 @@ void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
         previousLayer = Layers[layerRefId];
     }
 
-    targetImageId = (targetImageId + 1) % GetFramesInFlight();
+    //targetImageId = (targetImageId + 1) % GetFramesInFlight();
 }
