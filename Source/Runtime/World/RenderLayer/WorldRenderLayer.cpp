@@ -378,10 +378,6 @@ bool WorldRenderLayer::Initialize(VkDevice device)
 
 void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
-    // FIXME
-    // To make this work, we should use texture from the previous render pass?
-    // In actuallity: if we switch indices, Original Viewport pass will draw to 2DCA 169,
-    // But Upscale pass will read from 2DCA 164, hence the error. 
     std::vector<VkImageView> upscaleViews = {
         ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageViews[0],
         ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageViews[1]
@@ -444,7 +440,7 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     // Barrier
     VkImageMemoryBarrier imgMemBar = {};
     imgMemBar.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    imgMemBar.oldLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+    imgMemBar.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     imgMemBar.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
     imgMemBar.image = ((WorldRenderLayerRef*)layerRef)->pixelPerfectImages[CurrentFrame];
@@ -458,8 +454,8 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     imgMemBar.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
     imgMemBar.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
     imgMemBar.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-    vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 0, &imgMemBar);
+ 
+    vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &imgMemBar);
     
     IRenderUtility::BeginDebugLabel(cmdBuffer, "Upscale");
     // Stretch pass
