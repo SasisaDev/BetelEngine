@@ -44,7 +44,7 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
     createInfo.flags = 0;
     createInfo.surface = surface;
 
-    createInfo.minImageCount = 2;
+    createInfo.minImageCount = composition->GetFramesInFlight();
     createInfo.imageFormat = surfaceFormat.format;
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
     createInfo.imageExtent = extent;
@@ -148,7 +148,10 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
     semaphoreCreateInfo.flags = 0;
     semaphoreCreateInfo.pNext = nullptr;
 
-    vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &composition->aquireSemaphore);
+    composition->aquireSemaphores.resize(composition->GetFramesInFlight());
+    for(int i = 0; i < composition->GetFramesInFlight(); ++i) {
+        vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &composition->aquireSemaphores[i]);
+    }
 }
 
 void RenderCompositionInitializerImage::Initialize(IRenderComposition* composition) 
@@ -197,7 +200,7 @@ void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 {
     if(compositionType == ERenderCompositionType::RENDER_COMPOSITION_TYPE_SURFACE)
     {
-        vkAcquireNextImageKHR(IRenderUtility::GetDevice(), swapchain, UINT64_MAX, aquireSemaphore, VK_NULL_HANDLE, &targetImageId);
+        vkAcquireNextImageKHR(IRenderUtility::GetDevice(), swapchain, UINT64_MAX, GetAquireSemaphore(), VK_NULL_HANDLE, &targetImageId);
     }
 
     IRenderLayerRef* previousLayer = nullptr;

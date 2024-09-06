@@ -14,7 +14,7 @@ class Buffer
     size_t bufferSize;
 
 public:
-    Buffer(size_t BufferDataSize, VkBufferUsageFlags usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, void* initialBufferData = nullptr);
+    Buffer(size_t BufferDataSize, VkBufferUsageFlags usage = VK_BUFFER_USAGE_FLAG_BITS_MAX_ENUM, void* initialBufferData = nullptr);
     ~Buffer();
 
     inline VkBuffer GetBufferObject() const { return buffer; }

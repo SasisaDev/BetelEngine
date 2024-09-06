@@ -11,7 +11,7 @@
 class IRenderEngine
 {
 private:
-    std::vector<VkSemaphore> memoizedAquireSemaphores;
+    std::vector<VkSemaphore> currentFrameAquireSemaphores;
 protected:
     std::vector<IRenderLayer*> Layers;
     std::vector<IRenderComposition*> Compositions;
@@ -28,6 +28,8 @@ protected:
     VkQueue graphicsQueue;
     VkQueue presentQueue;
     VkQueue computeQueue;
+
+    std::vector<VkFence> queueFences;
 
     VkSemaphore submitSemaphore;
     VkCommandPool cmdPool;

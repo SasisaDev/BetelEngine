@@ -8,6 +8,8 @@
 #include <RenderV/Objects/Material.h>
 #include <RenderV/Objects/Buffers/Buffer.h>
 
+#include <RenderV/Composition.h>
+
 class World;
 
 struct WorldRenderLayerGPUStorage
@@ -39,6 +41,8 @@ public:
     ~WorldRenderLayerRef();
 
     virtual bool Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList) override;
+
+    inline Buffer* GetSceneDataBuffer() const {return SceneDataSSBOs[GetParentComposition()->GetCurrentImageIndex()];}
 
     WorldRenderLayerRef* SetWorld(World* newWorld);
     WorldRenderLayerRef* SetViewportSize(VkExtent2D newViewport) {viewport = newViewport; return this;}

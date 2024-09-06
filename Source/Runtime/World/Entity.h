@@ -27,6 +27,8 @@ public:
     virtual inline World* GetWorld() const {return OwnerWorld;}
 };
 
+class WorldRenderLayerRef;
+
 class EntityRenderProxy
 {
     Entity* Parent;
@@ -36,7 +38,7 @@ public:
 public:
     EntityRenderProxy(Entity* DefaultParent){Parent = DefaultParent;}
     virtual void Update() {}
-    virtual void Render(VkCommandBuffer cmdBuffer) {}
+    virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef) {}
 };
 
 template<typename T>

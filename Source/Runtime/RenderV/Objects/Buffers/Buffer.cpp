@@ -45,3 +45,18 @@ Buffer::~Buffer()
     vkDestroyBuffer(device, buffer, nullptr);
     vkFreeMemory(device, bufferMemory, nullptr);
 }
+
+void Buffer::Write(void* newData) 
+{
+    vkMapMemory(IRenderUtility::GetDevice(), bufferMemory, 0, bufferSize, 0, &bufferData);
+    memcpy(bufferData, newData, bufferSize);
+    vkUnmapMemory(IRenderUtility::GetDevice(), bufferMemory);
+}
+
+void* Buffer::Read()
+{
+    void* data = malloc(bufferSize); 
+    vkMapMemory(IRenderUtility::GetDevice(), bufferMemory, 0, bufferSize, 0, &bufferData);
+    memcpy(data, bufferData, bufferSize);
+    vkUnmapMemory(IRenderUtility::GetDevice(), bufferMemory);
+}

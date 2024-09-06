@@ -147,6 +147,13 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
         LOG(Fatal, LogWorldRenderLayer,  "failed to create texture sampler!");
     }
 
+    // Create GPU Data SSBO
+    SceneDataStorages.resize(GetParentComposition()->GetFramesInFlight());
+    for(const WorldRenderLayerGPUStorage& storage : SceneDataStorages)
+    {
+        SceneDataSSBOs.push_back(new Buffer(sizeof(WorldRenderLayerGPUStorage), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+    }
+
     return true;
 }
 
@@ -428,7 +435,7 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
         {
             if(EntityRenderProxy* proxy = entities[worldEntityIdx]->GetRenderProxy()) 
             {
-                proxy->Render(cmdBuffer);
+                proxy->Render(cmdBuffer, (WorldRenderLayerRef*)layerRef);
             }
         }
     }

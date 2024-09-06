@@ -187,7 +187,7 @@ uint32_t IRenderEngine::CreateComposition(IRenderCompositionInitializer* initial
     Compositions.push_back(composition);
 
     // Memoize aquire semaphores
-    memoizedAquireSemaphores = GetCompositionsWaitSemaphores();
+    currentFrameAquireSemaphores = GetCompositionsWaitSemaphores();
 
     return Compositions.size()-1;
 }
@@ -213,6 +213,8 @@ std::vector<VkSemaphore> IRenderEngine::GetCompositionsWaitSemaphores() const
 
 void IRenderEngine::Render()
 {
+    currentFrameAquireSemaphores = GetCompositionsWaitSemaphores();
+
     VkCommandBufferAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandBufferCount = 1;
@@ -255,8 +257,8 @@ void IRenderEngine::Render()
     submitInfo.pCommandBuffers = &cmdBuffer;
     submitInfo.pSignalSemaphores = &submitSemaphore;
     submitInfo.signalSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = memoizedAquireSemaphores.data();
-    submitInfo.waitSemaphoreCount = memoizedAquireSemaphores.size();
+    submitInfo.pWaitSemaphores = currentFrameAquireSemaphores.data();
+    submitInfo.waitSemaphoreCount = currentFrameAquireSemaphores.size();
 
     vkQueueSubmit(graphicsQueue, 1, &submitInfo, 0);
     
@@ -268,7 +270,13 @@ void IRenderEngine::Render()
     presentInfo.pWaitSemaphores = &submitSemaphore;
     presentInfo.waitSemaphoreCount = 1;
 
-    vkQueuePresentKHR(presentQueue, &presentInfo);
+    VkResult presentResult = vkQueuePresentKHR(presentQueue, &presentInfo);
+
+    if (presentResult == VK_ERROR_OUT_OF_DATE_KHR || presentResult == VK_SUBOPTIMAL_KHR) {
+        //RecreateSwapchain();
+    } else if (presentResult != VK_SUCCESS) {
+        LOG(Fatal, LogRender, "failed to present swap chain image!");
+    }
 
     vkDeviceWaitIdle(device);
 

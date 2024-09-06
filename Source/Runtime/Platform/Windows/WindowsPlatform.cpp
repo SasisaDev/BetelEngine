@@ -70,8 +70,6 @@ WindowsPlatform::~WindowsPlatform()
 
 std::string WindowsPlatform::GetExecutablePath()
 {
-	// TODO: Implement
-
 	return IPlatform::GetExecutablePath();
 }
 

@@ -58,7 +58,7 @@ protected:
     VkFormat imageFormat;
     VkExtent2D extent;
 
-    VkSemaphore aquireSemaphore = VK_NULL_HANDLE;
+    std::vector<VkSemaphore> aquireSemaphores;
 
     bool bIsPresentable = false;
 
@@ -73,7 +73,7 @@ public:
 
     inline ERenderCompositionType GetType() const {return compositionType;}
     
-    inline VkSemaphore GetAquireSemaphore() const {return aquireSemaphore;}
+    inline VkSemaphore GetAquireSemaphore() const {return aquireSemaphores[targetImageId];}
 
     inline size_t GetFramesInFlight() const {return 2;}
 

@@ -1,6 +1,9 @@
 #pragma once
 #include <cstdint>
 #include <unordered_map>
+#include <string>
+
+#include <i18n/Text.h>
 
 enum class ArtifactType : uint8_t
 {
@@ -34,6 +37,5 @@ public:
     void AddUInt32(std::string key, uint32_t value);
     void AddString(std::string key, std::string value);
     void AddCustom(std::string key, size_t size, void* data);
-    // TODO: Create Localized Text
-    //void AddText(std::string key, bool value);
+    void AddText(std::string key, Text value);
 };
