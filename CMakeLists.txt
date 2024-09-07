@@ -35,7 +35,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(vulkan sdl glm lua)
 
 # Modules Sources
-set(SrcGameFramework "Source/Runtime/GameFramework/Entities/Test/TestEntity.cpp") 
+set(SrcGameFramework "Source/Runtime/GameFramework/Entities/Test/TestEntity.cpp" "Source/Runtime/GameFramework/Entities/Sprite/SpriteEntity.cpp") 
 
 set(SrcAssets "Source/Runtime/Assets/AssetLibrary.cpp") 
 
@@ -87,7 +87,7 @@ target_compile_definitions(Editor PUBLIC EDITOR)
 set_property(TARGET Editor PROPERTY CXX_STANDARD 20)
 
 # Shaders
-add_shaders(Shaders "Shaders/TriangleUpscale/TriangleUpscale.vert" "Shaders/TriangleUpscale/TriangleUpscale.frag")
+add_shaders(Shaders "Shaders/TriangleUpscale/TriangleUpscale.vert" "Shaders/TriangleUpscale/TriangleUpscale.frag" "Shaders/Test/Test.vert" "Shaders/Test/Test.frag")
 
 # Assets
 cook_assets(Cook "Content/" "Content/")

@@ -82,6 +82,30 @@ void IMaterial::SetSamplerRenderTarget(uint32_t binding, std::vector<VkImageView
     }
 }
 
+void IMaterial::SetBuffer(uint32_t binding, VkBuffer buffer, uint32_t size, bool StorageBuffer)
+{
+        for(VkDescriptorSet set : descriptorSets)
+    {
+        VkDescriptorBufferInfo bufferInfo{};
+        bufferInfo.buffer = buffer;
+        bufferInfo.offset = 0;
+        bufferInfo.range = size;
+
+        VkWriteDescriptorSet descriptorWrites;
+
+        descriptorWrites.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites.pNext = nullptr;
+        descriptorWrites.dstSet = set;
+        descriptorWrites.dstBinding = binding;
+        descriptorWrites.dstArrayElement = 0;
+        descriptorWrites.descriptorType = ((StorageBuffer) ? VK_DESCRIPTOR_TYPE_STORAGE_BUFFER : VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
+        descriptorWrites.descriptorCount = 1;
+        descriptorWrites.pBufferInfo = &bufferInfo;
+
+        vkUpdateDescriptorSets(IRenderUtility::GetDevice(), 1, &descriptorWrites, 0, nullptr);
+    }
+}
+
 IMaterial::~IMaterial() {
     vkDestroyDescriptorPool(IRenderUtility::GetDevice(), descriptorPool, nullptr);
 }

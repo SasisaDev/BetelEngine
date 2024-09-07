@@ -44,6 +44,7 @@ public:
     bool bPersistent = false;
 public:
     EntityRenderProxy(Entity* DefaultParent){Parent = DefaultParent;}
+    virtual void CreateResources(WorldRenderLayerRef* layerRef){}
     virtual void Update() {}
     virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef) {}
 };

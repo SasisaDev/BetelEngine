@@ -65,6 +65,7 @@ int GuardedMain(int argc, char* argv[])
 	app.CreateWindow(gameWininfo);
 #endif
 
+	app.GetEngine()->GetWorld()->SetBackgroundColor(Vec3(0.75, 0.5, 0));
 	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());
 
 	IDirectory* directory = IPlatform::Get()->OpenDirectory("./Content", DIRECTORY_FLAG_RECURSIVE);

@@ -379,7 +379,23 @@ bool WorldRenderLayer::Initialize(VkDevice device)
 
 void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
+    //FIXME Just for tests
+    if(((WorldRenderLayerRef*)layerRef)->world)
+    {
+        auto entities = ((WorldRenderLayerRef*)layerRef)->world->GetEntities();
+        for(size_t worldEntityIdx = 0; worldEntityIdx < entities.size(); ++worldEntityIdx)
+        {
+            if(EntityRenderProxy* proxy = entities[worldEntityIdx]->GetRenderProxy()) 
+            {
+                proxy->CreateResources((WorldRenderLayerRef*)layerRef);
+            }
+        }
+    }
+
     WorldRenderLayerRef* ref = ((WorldRenderLayerRef*)(layerRef));
+
+    // TODO: Update GPU data
+
     const size_t imageID = ref->GetParentComposition()->GetCurrentImageIndex();
     
     /*for(int i = 0; i < ref->SceneDataSSBOs.size(); ++i)
@@ -401,6 +417,9 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
 void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
     uint32_t CurrentFrame = ((WorldRenderLayerRef*)layerRef)->GetParentComposition()->GetCurrentImageIndex(); 
+    WorldRenderLayerRef* worldRef = (WorldRenderLayerRef*)layerRef;
+    // TODO: Gradient
+    const Vec3& WorldColorValue = worldRef->GetWorld()->BackgroundColor;
 
     IRenderUtility::BeginDebugLabel(cmdBuffer, "Pixel Perfect World");
 
@@ -409,12 +428,12 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     passInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     passInfo.pNext = nullptr;
     passInfo.renderPass = renderPass;
-    VkClearValue clearVal = {{{0, 1, 0, 1}}};
+    VkClearValue clearVal = {{{WorldColorValue.x, WorldColorValue.y, WorldColorValue.z, 1}}};
     passInfo.pClearValues = &clearVal;
     passInfo.clearValueCount = 1;
-    passInfo.framebuffer = ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageFramebuffers[CurrentFrame]/*layerRef->GetParentComposition()->GetCurrentFramebuffer()*/;
+    passInfo.framebuffer = worldRef->pixelPerfectImageFramebuffers[CurrentFrame]/*layerRef->GetParentComposition()->GetCurrentFramebuffer()*/;
     passInfo.renderArea.offset = {0, 0};
-    passInfo.renderArea.extent = ((WorldRenderLayerRef*)layerRef)->viewport;
+    passInfo.renderArea.extent = worldRef->viewport;
 
     vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
 
@@ -431,8 +450,10 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
     VkRect2D scissors;
     scissors.offset = {0, 0};
+    scissors.extent = ((WorldRenderLayerRef*)layerRef)->viewport;
 
     vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+    vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
 
     if(((WorldRenderLayerRef*)layerRef)->world)
     {

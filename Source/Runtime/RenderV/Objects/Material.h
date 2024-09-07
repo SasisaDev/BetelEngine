@@ -12,6 +12,7 @@ public:
     IMaterial(IShader* shader);
     ~IMaterial();
 
+    void SetBuffer(uint32_t binding, VkBuffer buffer, uint32_t size, bool StorageBuffer = false);
     void SetSampler(uint32_t binding, VkImageView view, VkSampler sampler);
     void SetSamplerRenderTarget(uint32_t binding, std::vector<VkImageView> views, VkSampler sampler);
 

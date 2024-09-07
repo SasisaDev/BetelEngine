@@ -47,6 +47,8 @@ public:
     WorldRenderLayerRef* SetWorld(World* newWorld);
     WorldRenderLayerRef* SetViewportSize(VkExtent2D newViewport) {viewport = newViewport; return this;}
 
+    inline World* GetWorld() const {return world;}
+
     void onWorldLoad(World* loadedWorld){}
 };
 
