@@ -4,11 +4,15 @@
 #include <memory>
 #include <functional>
 
+#include "DelegateInstance.h"
+
 template <class... Args>
 class TSingleDelegateNoReturn {
 protected:
 	std::unique_ptr<void(Args...args)> delegatefunc;
 	void (*DelegateFunction)(Args... args) = nullptr;
+
+	DelegateInstance<void*(Args...)>* instance;
 public:
 	void Bind(void (*func)(Args... args));
 	void Broadcast(Args... args);
@@ -18,6 +22,8 @@ template <typename Return, class... Args>
 class TSingleDelegateReturn {
 protected:
 	Return (*DelegateFunction)(Args... args) = nullptr;
+
+	DelegateInstance<Return(Args...)>* instance;
 public:
 	void Bind(Return (*func)(Args... args));
 	Return Broadcast(Args... args);
@@ -27,6 +33,8 @@ template <class... Args>
 class TMulticastDelegate {
 protected:
 	std::vector<std::function<void(Args...)>> DelegateFunctions;
+
+	std::vector<DelegateInstance<void*(Args...)>*> instances;
 public:
 
 	// Deprecated, should never call
