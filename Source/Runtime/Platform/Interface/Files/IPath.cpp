@@ -36,7 +36,8 @@ std::string IPath::GetPath()
     if(isRelative) {
         path += "./";
     } else {
-        path += disc + ":/";
+        path.push_back(disc);
+        path.append(":/");
     }
 
     for(size_t i = 0; i < pathMembers.size(); ++i) {

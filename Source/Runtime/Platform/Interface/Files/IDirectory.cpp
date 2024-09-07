@@ -56,6 +56,11 @@ std::vector<IDirectory::Entry> IDirectory::ParseNested(std::string path, bool re
 {
     std::vector<IDirectory::Entry> nodes;
 
+    if(!std::filesystem::exists(path))
+    {
+        return nodes;
+    }
+
     std::filesystem::directory_iterator it(path);
     for (const auto& dirEntry : it) {
         Entry entry;

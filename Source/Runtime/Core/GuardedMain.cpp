@@ -1,5 +1,3 @@
-#pragma once
-
 #include <Platform/Platform.h>
 #include <Core/Application/Application.h>
 #include <World/RenderLayer/WorldRenderLayer.h>

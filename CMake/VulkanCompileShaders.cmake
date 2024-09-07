@@ -19,6 +19,7 @@ function(add_shaders TARGET_NAME)
   endif()
 
   set(SHADER_COMMAND)
+  set(MAKEDIR_COMMAND)
   set(SHADER_PRODUCTS)
 
   foreach(SHADER_SOURCE IN LISTS SHADER_SOURCE_FILES)
@@ -31,6 +32,11 @@ function(add_shaders TARGET_NAME)
 
     # Make directory
     file(MAKE_DIRECTORY ${SHADER_RELATIVE_PATH})
+
+    list(APPEND MAKEDIR_COMMAND COMMAND)
+    list(APPEND MAKEDIR_COMMAND ${CMAKE_COMMAND} -E make_directory)
+    list(APPEND MAKEDIR_COMMAND "${BUILD_CONFIG}/${SHADER_RELATIVE_PATH}")
+
     
     # Build command
     list(APPEND SHADER_COMMAND COMMAND)
@@ -45,7 +51,7 @@ function(add_shaders TARGET_NAME)
   endforeach()
 
   add_custom_target(${TARGET_NAME} ALL
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${BUILD_CONFIG}/${SHADER_RELATIVE_PATH}"
+    ${MAKEDIR_COMMAND}
 
     ${SHADER_COMMAND}
     COMMENT "Compiling Shaders [${TARGET_NAME}]"

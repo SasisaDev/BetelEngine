@@ -4,7 +4,7 @@
 #include <cstdint>
 
 #include <SDL.h>
-#include <SDL_Vulkan.h>
+#include <SDL_vulkan.h>
 
 #include <RenderV/LayerRef.h>
 

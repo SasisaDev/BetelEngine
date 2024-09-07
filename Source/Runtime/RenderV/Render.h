@@ -33,7 +33,7 @@ public:
     template <typename LayerType>
     static std::shared_ptr<IShader> CreateShader(IRenderEngine* engine, std::vector<unsigned char> vertCode, std::vector<unsigned char> fragCode)
     {
-        for(IRenderLayer* layer : engine->Layers)
+        for(IRenderLayer* layer : engine->GetLayers())
         {
             if(layer->GetName() == LayerType::GetName())
             {

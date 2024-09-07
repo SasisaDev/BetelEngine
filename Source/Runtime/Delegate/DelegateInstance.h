@@ -61,6 +61,6 @@ public:
   */
   virtual RetType Execute(ArgTypes... args) const override
   {
-    return ptr.function(args);
+    return ptr.function(args...);
   }
 };
