@@ -25,12 +25,6 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
 
     const size_t framesInFlight = GetParentComposition()->GetFramesInFlight();
 
-    // Create buffers for Scene Data 
-    for(int i = 0; i < framesInFlight; ++i)
-    {
-        SceneDataSSBOs.push_back(new Buffer(sizeof(WorldRenderLayerGPUStorage), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
-    }
-
     // Create Swapchain
     // TODO: swapchain support info
     imageFormat = VK_FORMAT_B8G8R8A8_SRGB;
@@ -385,11 +379,23 @@ bool WorldRenderLayer::Initialize(VkDevice device)
 
 void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
+    WorldRenderLayerRef* ref = ((WorldRenderLayerRef*)(layerRef));
+    const size_t imageID = ref->GetParentComposition()->GetCurrentImageIndex();
+    
+    /*for(int i = 0; i < ref->SceneDataSSBOs.size(); ++i)
+    {
+        ref->SceneDataSSBOs[i]->Write(&((WorldRenderLayerRef*)(layerRef))->SceneDataStorages[i]);
+    }*/
+
+   ref->SceneDataSSBOs[imageID]->Write(&ref->SceneDataStorages[imageID]);
+
     std::vector<VkImageView> upscaleViews = {
         ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageViews[0],
         ((WorldRenderLayerRef*)layerRef)->pixelPerfectImageViews[1]
     };
-    upscaleMaterial->SetSamplerRenderTarget(0, upscaleViews, ((WorldRenderLayerRef*)layerRef)->pixelPerfectSampler);
+    //upscaleMaterial->SetSamplerRenderTarget(0, upscaleViews, ((WorldRenderLayerRef*)layerRef)->pixelPerfectSampler);
+
+    upscaleMaterial->SetSampler(0, ref->pixelPerfectImageViews[imageID], ((WorldRenderLayerRef*)layerRef)->pixelPerfectSampler);
 }
 
 void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
@@ -447,7 +453,7 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     // Barrier
     VkImageMemoryBarrier imgMemBar = {};
     imgMemBar.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    imgMemBar.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    imgMemBar.oldLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
     imgMemBar.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
     imgMemBar.image = ((WorldRenderLayerRef*)layerRef)->pixelPerfectImages[CurrentFrame];

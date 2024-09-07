@@ -59,4 +59,5 @@ void* Buffer::Read()
     vkMapMemory(IRenderUtility::GetDevice(), bufferMemory, 0, bufferSize, 0, &bufferData);
     memcpy(data, bufferData, bufferSize);
     vkUnmapMemory(IRenderUtility::GetDevice(), bufferMemory);
+    return data;
 }

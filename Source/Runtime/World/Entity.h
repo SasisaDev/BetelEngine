@@ -5,6 +5,8 @@
 #include <concepts>
 #include <type_traits>
 
+#include <Math/Transform.h>
+
 class EntityRenderProxy;
 class World;
 
@@ -16,6 +18,8 @@ struct EntitySpawnInfo
 class Entity
 {
 protected:
+    Transform transform;
+
     World* OwnerWorld;
     Entity* Parent;
     std::set<Entity*> Children;
@@ -25,6 +29,9 @@ public:
     virtual EntityRenderProxy* GetRenderProxy() {return RenderProxy;}
 
     virtual inline World* GetWorld() const {return OwnerWorld;}
+
+    virtual void SetTransform(const Transform& newTransform){transform = newTransform;}
+    virtual const Transform& GetTransform() const {return transform;}
 };
 
 class WorldRenderLayerRef;
