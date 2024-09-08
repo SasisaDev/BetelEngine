@@ -34,7 +34,8 @@ int GuardedMain(int argc, char* argv[])
 	std::vector<IRenderLayerRef*> editorCompositionLayerRefs = {
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
 			->SetViewportSize({settings->PixelPerfectViewportWidth, settings->PixelPerfectViewportHeight})
-			->SetWorld(app.GetEngine()->GetWorld()),
+			->SubscribeWorldLoad(&EngineDelegates::OnWorldLoad)
+			->SubscribeWorldLoad(&EngineDelegates::OnWorldUnload),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetEditorCanvasWidget()),
 	};
@@ -49,7 +50,10 @@ int GuardedMain(int argc, char* argv[])
 	app.CreateWindow(editorWininfo);
 #else
 	std::vector<IRenderLayerRef*> gameCompositionLayerRefs = {
-		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render),
+		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
+			->SetViewportSize({settings->PixelPerfectViewportWidth, settings->PixelPerfectViewportHeight})
+			->SubscribeWorldLoad(&EngineDelegates::OnWorldLoad)
+			->SubscribeWorldLoad(&EngineDelegates::OnWorldUnload),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
 	};
 
@@ -63,6 +67,8 @@ int GuardedMain(int argc, char* argv[])
 	app.CreateWindow(gameWininfo);
 #endif
 
+	// TODO: Delete these synthetic calls
+	EngineDelegates::OnWorldLoad.Broadcast(app.GetEngine()->GetWorld());
 	app.GetEngine()->GetWorld()->SetBackgroundColor(Vec3(0.75, 0.5, 0));
 	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());
 

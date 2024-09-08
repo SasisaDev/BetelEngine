@@ -29,6 +29,8 @@ public:
     AssetLibrary& GetAssetLibrary() {return assetLibrary;}
 
 #pragma region "World API"
+    // Shouldn't be used, instead use Engine::LoadWorld
+    void SetWorld(World* world);
     void LoadWorld(AssetPtr<World> worldPtr);
     inline World* GetWorld() const {return world;}
 #pragma endregion "World API"

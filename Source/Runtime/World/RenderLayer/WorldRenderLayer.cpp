@@ -12,7 +12,50 @@
 WorldRenderLayerRef::WorldRenderLayerRef()
     : world(nullptr)
 {
-    EngineDelegates::OnWorldLoad.BindMember(this, &WorldRenderLayerRef::onWorldLoad);
+    //EngineDelegates::OnWorldLoad.BindMember(this, &WorldRenderLayerRef::onWorldLoad);
+}
+
+void WorldRenderLayerRef::onWorldLoad(World* loadedWorld)
+{
+    world = loadedWorld;
+
+    // Create Render Proxies and subscribe to world events
+    if(!world){
+        return;
+    }
+
+    world->OnEntitySpawned.BindMember(this, &WorldRenderLayerRef::onWorldEntitySpawned);
+
+    for(Entity* entity : world->GetEntities()) {
+        if(EntityRenderProxy* renderProxy = entity->CreateRenderProxy()) {
+            renderProxy->CreateResources(this);
+            renderProxies.push_back(renderProxy);
+        }
+    }
+}
+
+void WorldRenderLayerRef::onWorldEntitySpawned(Entity* entity)
+{
+    if(entity){
+        if(EntityRenderProxy* renderProxy = entity->CreateRenderProxy()) {
+            renderProxy->CreateResources(this);
+            renderProxies.push_back(renderProxy);
+        }
+    }
+}
+
+WorldRenderLayerRef* WorldRenderLayerRef::SubscribeWorldLoad(MulticastDelegate<World*>* delegate)
+{
+    delegate->BindMember(this, &WorldRenderLayerRef::onWorldLoad);
+
+    return this;
+}
+
+WorldRenderLayerRef* WorldRenderLayerRef::SubscribeWorldUnload(MulticastDelegate<World*>* delegate)
+{
+    delegate->BindMember(this, &WorldRenderLayerRef::onWorldUnload);
+
+    return this;
 }
 
 bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList)
@@ -375,20 +418,11 @@ bool WorldRenderLayer::Initialize(VkDevice device)
 
 void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
-    //FIXME Just for tests
-    if(((WorldRenderLayerRef*)layerRef)->world)
-    {
-        auto entities = ((WorldRenderLayerRef*)layerRef)->world->GetEntities();
-        for(size_t worldEntityIdx = 0; worldEntityIdx < entities.size(); ++worldEntityIdx)
-        {
-            if(EntityRenderProxy* proxy = entities[worldEntityIdx]->GetRenderProxy()) 
-            {
-                proxy->CreateResources((WorldRenderLayerRef*)layerRef);
-            }
-        }
-    }
-
     WorldRenderLayerRef* ref = ((WorldRenderLayerRef*)(layerRef));
+
+    for(EntityRenderProxy* proxy : ref->renderProxies) {
+        proxy->Update();
+    }
 
     // TODO: Update GPU data
 
@@ -412,109 +446,105 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
 
 void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
-    uint32_t CurrentFrame = ((WorldRenderLayerRef*)layerRef)->GetParentComposition()->GetCurrentImageIndex(); 
-    WorldRenderLayerRef* worldRef = (WorldRenderLayerRef*)layerRef;
-    // TODO: Gradient
-    const Vec3& WorldColorValue = worldRef->GetWorld()->BackgroundColor;
-
-    IRenderUtility::BeginDebugLabel(cmdBuffer, "Pixel Perfect World");
-
-    IRenderUtility::BeginDebugLabel(cmdBuffer, "Original Viewport");
-    VkRenderPassBeginInfo passInfo;
-    passInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-    passInfo.pNext = nullptr;
-    passInfo.renderPass = renderPass;
-    VkClearValue clearVal = {{{WorldColorValue.x, WorldColorValue.y, WorldColorValue.z, 1}}};
-    passInfo.pClearValues = &clearVal;
-    passInfo.clearValueCount = 1;
-    passInfo.framebuffer = worldRef->pixelPerfectImageFramebuffers[CurrentFrame]/*layerRef->GetParentComposition()->GetCurrentFramebuffer()*/;
-    passInfo.renderArea.offset = {0, 0};
-    passInfo.renderArea.extent = worldRef->viewport;
-
-    vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
-
-    // Render
-    VkViewport viewport;
-    viewport.x = 0;
-    viewport.y = 0;
-    viewport.width = ((WorldRenderLayerRef*)layerRef)->viewport.width;
-    viewport.height = ((WorldRenderLayerRef*)layerRef)->viewport.height;
-    //viewport.width = layerRef->GetParentComposition()->GetExtent().width;
-    //viewport.height = layerRef->GetParentComposition()->GetExtent().height;
-    viewport.minDepth = 0;
-    viewport.maxDepth = 1;
-
-    VkRect2D scissors;
-    scissors.offset = {0, 0};
-    scissors.extent = ((WorldRenderLayerRef*)layerRef)->viewport;
-
-    vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
-    vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
-
     if(((WorldRenderLayerRef*)layerRef)->world)
     {
-        auto entities = ((WorldRenderLayerRef*)layerRef)->world->GetEntities();
-        for(size_t worldEntityIdx = 0; worldEntityIdx < entities.size(); ++worldEntityIdx)
+        uint32_t CurrentFrame = ((WorldRenderLayerRef*)layerRef)->GetParentComposition()->GetCurrentImageIndex(); 
+        WorldRenderLayerRef* worldRef = (WorldRenderLayerRef*)layerRef;
+        // TODO: Gradient
+        const Vec3& WorldColorValue = worldRef->GetWorld()->BackgroundColor;
+
+        IRenderUtility::BeginDebugLabel(cmdBuffer, "Pixel Perfect World", 0.5, 1, 0.5);
+        
+        IRenderUtility::BeginDebugLabel(cmdBuffer, "Original Viewport", 1, 1, 0.5);
+        VkRenderPassBeginInfo passInfo;
+        passInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        passInfo.pNext = nullptr;
+        passInfo.renderPass = renderPass;
+        VkClearValue clearVal = {{{WorldColorValue.x, WorldColorValue.y, WorldColorValue.z, 1}}};
+        passInfo.pClearValues = &clearVal;
+        passInfo.clearValueCount = 1;
+        passInfo.framebuffer = worldRef->pixelPerfectImageFramebuffers[CurrentFrame]/*layerRef->GetParentComposition()->GetCurrentFramebuffer()*/;
+        passInfo.renderArea.offset = {0, 0};
+        passInfo.renderArea.extent = worldRef->viewport;
+
+        vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+
+        // Render
+        VkViewport viewport;
+        viewport.x = 0;
+        viewport.y = 0;
+        viewport.width = ((WorldRenderLayerRef*)layerRef)->viewport.width;
+        viewport.height = ((WorldRenderLayerRef*)layerRef)->viewport.height;
+        //viewport.width = layerRef->GetParentComposition()->GetExtent().width;
+        //viewport.height = layerRef->GetParentComposition()->GetExtent().height;
+        viewport.minDepth = 0;
+        viewport.maxDepth = 1;
+
+        VkRect2D scissors;
+        scissors.offset = {0, 0};
+        scissors.extent = ((WorldRenderLayerRef*)layerRef)->viewport;
+
+        vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+        vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
+
+        for(EntityRenderProxy* proxy : ((WorldRenderLayerRef*)layerRef)->renderProxies)
         {
-            if(EntityRenderProxy* proxy = entities[worldEntityIdx]->GetRenderProxy()) 
-            {
-                proxy->Render(cmdBuffer, (WorldRenderLayerRef*)layerRef);
-            }
+            proxy->Render(cmdBuffer, (WorldRenderLayerRef*)layerRef);
         }
+
+        vkCmdEndRenderPass(cmdBuffer);
+        IRenderUtility::EndDebugLabel(cmdBuffer);
+        // Render End
+
+        // Barrier
+        VkImageMemoryBarrier imgMemBar = {};
+        imgMemBar.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        imgMemBar.oldLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        imgMemBar.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+        imgMemBar.image = ((WorldRenderLayerRef*)layerRef)->pixelPerfectImages[CurrentFrame];
+        imgMemBar.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        imgMemBar.subresourceRange.baseMipLevel = 0;
+        imgMemBar.subresourceRange.levelCount = 1;
+        imgMemBar.subresourceRange.baseArrayLayer = 0;
+        imgMemBar.subresourceRange.layerCount = 1;
+
+        imgMemBar.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        imgMemBar.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        imgMemBar.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+        imgMemBar.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+    
+        vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &imgMemBar);
+
+        IRenderUtility::BeginDebugLabel(cmdBuffer, "Upscale");
+        // Stretch pass
+        clearVal = {{{1, 0, 0, 1}}};
+        passInfo.renderPass = upscaleRenderPass;
+        passInfo.framebuffer = layerRef->GetParentComposition()->GetCurrentFramebuffer();
+        passInfo.renderArea.offset = {0, 0};
+        passInfo.renderArea.extent = layerRef->GetParentComposition()->GetExtent();
+
+        vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+
+        const VkDescriptorSet upscaleDescSet = upscaleMaterial->Get(CurrentFrame);
+        vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, upscaleShader->GetPipelineLayout(), 0, 1, &upscaleDescSet, 0, nullptr);
+
+        vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, upscaleShader->GetPipeline());
+
+        viewport.width = layerRef->GetParentComposition()->GetExtent().width;
+        viewport.height = layerRef->GetParentComposition()->GetExtent().height;
+        vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+
+        scissors.extent = layerRef->GetParentComposition()->GetExtent();
+        vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
+
+        vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
+
+        vkCmdEndRenderPass(cmdBuffer);
+        IRenderUtility::EndDebugLabel(cmdBuffer);
+
+        IRenderUtility::EndDebugLabel(cmdBuffer);
     }
-
-    vkCmdEndRenderPass(cmdBuffer);
-    IRenderUtility::EndDebugLabel(cmdBuffer);
-    // Render End
-
-    // Barrier
-    VkImageMemoryBarrier imgMemBar = {};
-    imgMemBar.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    imgMemBar.oldLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    imgMemBar.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-    imgMemBar.image = ((WorldRenderLayerRef*)layerRef)->pixelPerfectImages[CurrentFrame];
-    imgMemBar.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    imgMemBar.subresourceRange.baseMipLevel = 0;
-    imgMemBar.subresourceRange.levelCount = 1;
-    imgMemBar.subresourceRange.baseArrayLayer = 0;
-    imgMemBar.subresourceRange.layerCount = 1;
-
-    imgMemBar.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    imgMemBar.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    imgMemBar.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-    imgMemBar.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
- 
-    vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &imgMemBar);
-    
-    IRenderUtility::BeginDebugLabel(cmdBuffer, "Upscale");
-    // Stretch pass
-    clearVal = {{{1, 0, 0, 1}}};
-    passInfo.renderPass = upscaleRenderPass;
-    passInfo.framebuffer = layerRef->GetParentComposition()->GetCurrentFramebuffer();
-    passInfo.renderArea.offset = {0, 0};
-    passInfo.renderArea.extent = layerRef->GetParentComposition()->GetExtent();
-
-    vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
-
-    const VkDescriptorSet upscaleDescSet = upscaleMaterial->Get(CurrentFrame);
-    vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, upscaleShader->GetPipelineLayout(), 0, 1, &upscaleDescSet, 0, nullptr);
-    
-    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, upscaleShader->GetPipeline());
-
-    viewport.width = layerRef->GetParentComposition()->GetExtent().width;
-    viewport.height = layerRef->GetParentComposition()->GetExtent().height;
-    vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
-
-    scissors.extent = layerRef->GetParentComposition()->GetExtent();
-    vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
-    
-    vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
-
-    vkCmdEndRenderPass(cmdBuffer);
-    IRenderUtility::EndDebugLabel(cmdBuffer);
-
-    IRenderUtility::EndDebugLabel(cmdBuffer);
 }
 
 WorldRenderLayerRef::~WorldRenderLayerRef()

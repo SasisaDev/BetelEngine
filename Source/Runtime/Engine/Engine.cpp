@@ -10,6 +10,12 @@ Engine::Engine()
     AssetLibrary::Get().CrawlAssetsAll();
 }
 
+void Engine::SetWorld(World* nWorld)
+{
+    world = nWorld;
+    EngineDelegates::OnWorldLoad.Broadcast(world);
+}
+
 void Engine::Tick(float DeltaTime)
 {
     tickManager.Tick(DeltaTime);

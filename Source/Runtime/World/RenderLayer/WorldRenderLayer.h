@@ -11,6 +11,8 @@
 #include <RenderV/Composition.h>
 
 class World;
+class Entity;
+class EntityRenderProxy;
 
 struct WorldRenderLayerGPUStorage
 {
@@ -24,6 +26,8 @@ protected:
     World* world;
     VkExtent2D viewport;
     VkFormat imageFormat;
+
+    std::vector<EntityRenderProxy*> renderProxies;
 
     std::vector<VkImage> pixelPerfectImages;
     std::vector<VkDeviceMemory> pixelPerfectImageMemories;
@@ -44,12 +48,16 @@ public:
 
     inline Buffer* GetSceneDataBuffer() const {return SceneDataSSBOs[GetParentComposition()->GetCurrentImageIndex()];}
 
+    WorldRenderLayerRef* SubscribeWorldLoad(MulticastDelegate<World*>* delegate);
+    WorldRenderLayerRef* SubscribeWorldUnload(MulticastDelegate<World*>* delegate);
     WorldRenderLayerRef* SetWorld(World* newWorld);
     WorldRenderLayerRef* SetViewportSize(VkExtent2D newViewport) {viewport = newViewport; return this;}
 
     inline World* GetWorld() const {return world;}
 
-    void onWorldLoad(World* loadedWorld){}
+    void onWorldLoad(World* loadedWorld);
+    void onWorldUnload(World* loadedWorld){}
+    void onWorldEntitySpawned(Entity* entity);
 };
 
 class WorldRenderLayer : public IRenderLayer

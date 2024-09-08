@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <Math/Transform.h>
+#include <Delegate/Delegate.h>
 
 class World
 {
@@ -17,14 +18,19 @@ protected:
 public:
     World();
 
+    MulticastDelegate<Entity*> OnEntitySpawned;
+    MulticastDelegate<Entity*> OnEntityDestroyed;
+
     void SetBackgroundColor(const Vec3& color) {BackgroundColor = color;}
 
     template<EntityClass EntityType>
     EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo) 
     {
         EntityType* spawnedEntity = new EntityType();
-        spawnedEntity->CreateRenderProxy();
         entities.push_back(spawnedEntity);
+
+        OnEntitySpawned.Broadcast(spawnedEntity);
+
         return spawnedEntity;
     }
 
