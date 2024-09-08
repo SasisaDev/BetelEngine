@@ -13,7 +13,7 @@ struct AssetDescriptor
 {
     AssetType* Type;
     std::string Path;
-    std::optional<Asset*> Asset;
+    std::optional<Asset*> AssetPtr;
 };
 
 class AssetLibrary

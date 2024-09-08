@@ -32,7 +32,7 @@ void Logger::LogFormat(const char* Namespace, const char* message, ...)
 	const unsigned int bufferSize = vsnprintf(NULL, 0, message, varg_ptr) + 1;
 	char* buffer = new char[bufferSize];
 
-	vsprintf_s(buffer, bufferSize, message, varg_ptr);
+	vsprintf(buffer, message, varg_ptr);
 
 	OnLogMessage.Broadcast("Log", Namespace, buffer);
 
