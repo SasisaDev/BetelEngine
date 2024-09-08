@@ -1,12 +1,14 @@
 #include "Buffer.h"
 
+#include <cstring>
+
 Buffer::Buffer(size_t BufferDataSize, VkBufferUsageFlags usage, void* initialBufferData)
     : bufferSize(BufferDataSize)
 {
     bufferData = malloc(BufferDataSize);
 
     if(initialBufferData != nullptr) {
-        memcpy_s(bufferData, bufferSize, initialBufferData, bufferSize);
+        std::memcpy(bufferData, initialBufferData, bufferSize);
     }
 
     VkDevice device = IRenderUtility::GetDevice();
@@ -49,7 +51,7 @@ Buffer::~Buffer()
 void Buffer::Write(void* newData) 
 {
     vkMapMemory(IRenderUtility::GetDevice(), bufferMemory, 0, bufferSize, 0, &bufferData);
-    memcpy(bufferData, newData, bufferSize);
+    std::memcpy(bufferData, newData, bufferSize);
     vkUnmapMemory(IRenderUtility::GetDevice(), bufferMemory);
 }
 
@@ -57,7 +59,7 @@ void* Buffer::Read()
 {
     void* data = malloc(bufferSize); 
     vkMapMemory(IRenderUtility::GetDevice(), bufferMemory, 0, bufferSize, 0, &bufferData);
-    memcpy(data, bufferData, bufferSize);
+    std::memcpy(data, bufferData, bufferSize);
     vkUnmapMemory(IRenderUtility::GetDevice(), bufferMemory);
     return data;
 }

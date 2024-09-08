@@ -193,7 +193,7 @@ std::pair<uint32_t, uint32_t> IRenderComposition::AddLayerRefs(std::vector<IRend
         Layers.push_back(ref);
         ref->SetParentComposition(this);
     }
-    return std::pair<uint32_t, uint32_t>(firstID, Layers.size() - 1);
+    return std::pair<uint32_t, uint32_t>(firstID, static_cast<uint32_t>(Layers.size() - 1));
 }
 
 void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
