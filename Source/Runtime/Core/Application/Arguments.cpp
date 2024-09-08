@@ -1,5 +1,5 @@
 #include "Arguments.h"
-
+#include <cstring>
 
 ArgumentCollection ArgumentParser::ParseArgs(int argc, char* argv[])
 {
@@ -11,7 +11,7 @@ ArgumentCollection ArgumentParser::ParseArgs(int argc, char* argv[])
 
     for(int argNum = 0; argNum < argc; ++argNum)
     {
-        size_t argLength = strlen(argv[argNum]);
+        size_t argLength = std::strlen(argv[argNum]);
         char curChar;
         for(int chari = 0; chari < argLength; ++chari)
         {
