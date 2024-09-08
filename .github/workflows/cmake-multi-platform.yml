@@ -47,7 +47,7 @@ jobs:
           - os: ubuntu-latest
             c_compiler: cl
           - os: macos-12
-            c_compiler: cl
+            c_compiler: cl, gcc
 
     steps:
     - uses: actions/checkout@v4
