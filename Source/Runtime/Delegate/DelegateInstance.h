@@ -26,33 +26,34 @@ template <typename RetType,
   typename... ArgTypes>
 class RawDelegateInstance : public DelegateInstance<RetType(ArgTypes...)>
 {
-    //RawFuncPtr<RetType, ArgTypes...> ptr;
-    // FIXME: Make auto-deduction work
-    RawFuncPtr<RetType(ArgTypes...)> ptr;
+  typename RawFuncPtr<RetType(ArgTypes...)>::Type function;
 public:
+  RawDelegateInstance(typename RawFuncPtr<RetType(ArgTypes...)>::Type InMethodPtr) : function(InMethodPtr) {}
  /**
   * Execute the delegate.
   If the function pointer
   is not valid, an error
   will occur.
   */
-  virtual RetType Execute(ArgTypes...) const override
+  virtual RetType Execute(ArgTypes... args) const override
   {
-    return;
+    return function(args...);
   }
 };
 
 // MemFuncPtr Delegate
-template <typename UserClass, typename RetType,
+template <bool Const, typename UserClass, typename RetType,
   typename... ArgTypes>
 class MemDelegateInstance : public DelegateInstance<RetType(ArgTypes...)>
 {
     //MemFuncPtr<UserClass, RetType, ArgTypes...> ptr;
 
     // FIXME: Make auto-deduction work
-    MemFuncPtr<false, UserClass, RetType(ArgTypes...)> ptr;
+    typename MemFuncPtr<Const, UserClass, RetType(ArgTypes...)>::Type function;
     UserClass* user;
 public:
+  MemDelegateInstance(UserClass* InUserObject, typename MemFuncPtr<Const, UserClass, RetType(ArgTypes...)>::Type InMethodPtr) : user(InUserObject), function(InMethodPtr) {}
+
  /**
   * Execute the delegate.
   If the function pointer
@@ -61,6 +62,6 @@ public:
   */
   virtual RetType Execute(ArgTypes... args) const override
   {
-    return ptr.function(args...);
+    return (user->*function)(args...);
   }
 };

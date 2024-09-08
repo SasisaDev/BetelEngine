@@ -7,7 +7,7 @@
 #include <Platform/Platform.h>
 #include <cstdarg>
 
-TMulticastDelegate<const char*, const char*, const char*> Logger::OnLogMessage = TMulticastDelegate<const char*, const char*, const char*>();
+MulticastDelegate<const char*, const char*, const char*> Logger::OnLogMessage = MulticastDelegate<const char*, const char*, const char*>();
 
 void Logger::InternalLog(const char* Namespace, const char* message, const char* prefix)
 {

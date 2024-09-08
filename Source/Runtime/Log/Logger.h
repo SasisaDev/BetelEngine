@@ -7,8 +7,8 @@ class Logger {
 protected:
 	inline static void InternalLog(const char* Namespace, const char* message, const char* prefix = "");
 public:
-	static TMulticastDelegate<const char*, const char*, const char*> OnLogMessage;
-	static TMulticastDelegate<const char*, const char*, const char*> OnLogFatal;
+	static MulticastDelegate<const char*, const char*, const char*> OnLogMessage;
+	static MulticastDelegate<const char*, const char*, const char*> OnLogFatal;
 
 	static void Log(const char* Namespace, const char* message);
 	static void LogFormat(const char* Namespace, const char* message, ...);

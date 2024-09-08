@@ -7,6 +7,6 @@ class World;
 class EngineDelegates
 {
 public:
-    static TMulticastDelegate<World*> OnWorldLoad;
-    static TMulticastDelegate<World*> OnWorldUnload;
+    static MulticastDelegate<World*> OnWorldLoad;
+    static MulticastDelegate<World*> OnWorldUnload;
 };

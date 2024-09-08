@@ -1,4 +1,4 @@
 #include "EngineDelegates.h"
 
-TMulticastDelegate<World*> EngineDelegates::OnWorldLoad;
-TMulticastDelegate<World*> EngineDelegates::OnWorldUnload;
+MulticastDelegate<World*> EngineDelegates::OnWorldLoad;
+MulticastDelegate<World*> EngineDelegates::OnWorldUnload;

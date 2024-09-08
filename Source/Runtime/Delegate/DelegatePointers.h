@@ -4,8 +4,9 @@ template <typename FuncType>
 struct RawFuncPtr;
 
 template <typename RetType, typename... ArgTypes>
-struct RawFuncPtr<RetType(ArgTypes...)> {
-
+struct RawFuncPtr<RetType(ArgTypes...)> 
+{
+  typedef RetType (*Type)(ArgTypes...);
 };
 
 // Member Function Pointer
@@ -34,6 +35,4 @@ struct MemFuncPtr<true,
   RetType(ArgTypes...)>
 {
   typedef RetType(Class::* Type)(ArgTypes...) const;
-
-  Type function;
 };

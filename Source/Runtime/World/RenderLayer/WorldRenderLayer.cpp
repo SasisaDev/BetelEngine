@@ -12,11 +12,7 @@
 WorldRenderLayerRef::WorldRenderLayerRef()
     : world(nullptr)
 {
-    std::function<void(World*)> func;
-    func = std::bind(&WorldRenderLayerRef::onWorldLoad, this, std::placeholders::_1);
-    EngineDelegates::OnWorldLoad.AddBind(func);
-
-
+    EngineDelegates::OnWorldLoad.BindMember(this, &WorldRenderLayerRef::onWorldLoad);
 }
 
 bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList)

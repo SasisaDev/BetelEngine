@@ -55,7 +55,7 @@ set(SrcPlatform "Source/Runtime/Platform/Interface/Files/IFile.cpp" "Source/Runt
 set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGameFramework} ${SrcAssets} ${SrcPlatform}
     "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
-    "Source/Runtime/Delegate/Delegate.cpp" "Source/Runtime/Core/Window/Window.cpp" )
+    "Source/Runtime/Core/Window/Window.cpp" )
 
 if(WIN32)
     set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp" "Source/Runtime/Platform/Windows/Files/WindowsFile.cpp")

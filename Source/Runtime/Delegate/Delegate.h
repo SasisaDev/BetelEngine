@@ -1,63 +1,70 @@
 #pragma once
 
-#include <vector>
-#include <memory>
-#include <functional>
-
 #include "DelegateInstance.h"
+#include <memory>
+#include <vector>
 
-template <class... Args>
-class TSingleDelegateNoReturn {
-protected:
-	std::unique_ptr<void(Args...args)> delegatefunc;
-	void (*DelegateFunction)(Args... args) = nullptr;
+template <typename FuncType>
+class Delegate;
 
-	DelegateInstance<void*(Args...)>* instance;
+template <typename RetValType, typename... ArgTypes>
+class Delegate<RetValType(ArgTypes...)>
+{
+    std::shared_ptr<DelegateInstance<RetValType(ArgTypes...)>>instance;
 public:
-	void Bind(void (*func)(Args... args));
-	void Broadcast(Args... args);
+
+    template <typename UserClass>
+    inline static Delegate<RetValType(ArgTypes...)>
+    CreateMember(
+        UserClass* InUserObject,
+        typename MemFuncPtr<false,
+            UserClass,
+            RetValType(ArgTypes...)
+        >::Type InFunc)
+    {
+        Delegate<RetValType(ArgTypes...)> Result;
+        Result.instance.reset(new MemDelegateInstance<false, UserClass, RetValType, ArgTypes...>(InUserObject, InFunc));
+        return Result;
+    }
+
+    inline static Delegate<RetValType(ArgTypes...)>
+    CreateRaw(typename RawFuncPtr<RetValType(ArgTypes...)>::Type InFunc)
+    {
+        Delegate<RetValType(ArgTypes...)> Result;
+        Result.instance.reset(new RawDelegateInstance<RetValType, ArgTypes...>(InFunc));
+        return Result;
+    }
+
+    inline RetValType Execute(ArgTypes... Params)
+    {
+        return instance->Execute(Params...);
+    }
 };
 
-template <typename Return, class... Args>
-class TSingleDelegateReturn {
-protected:
-	Return (*DelegateFunction)(Args... args) = nullptr;
-
-	DelegateInstance<Return(Args...)>* instance;
+template <typename... ArgTypes>
+class MulticastDelegate {
+    std::vector<std::shared_ptr<DelegateInstance<void(ArgTypes...)>>> delegates;
 public:
-	void Bind(Return (*func)(Args... args));
-	Return Broadcast(Args... args);
-};
+    inline void BindRaw(typename RawFuncPtr<void(ArgTypes...)>::Type InFunc)
+    {
+        delegates.push_back(std::make_shared<RawDelegateInstance<void, ArgTypes...>>(InFunc));
+    }
 
-template <class... Args>
-class TMulticastDelegate {
-protected:
-	std::vector<std::function<void(Args...)>> DelegateFunctions;
+    template <typename UserClass>
+    inline void BindMember(UserClass* InUserObject,
+        typename MemFuncPtr<false,
+            UserClass,
+            void(ArgTypes...)
+        >::Type InFunc)
+    {
+        delegates.push_back(std::make_shared<MemDelegateInstance<false, UserClass, void, ArgTypes...>>(InUserObject, InFunc));
+    }
 
-	std::vector<DelegateInstance<void*(Args...)>*> instances;
-public:
-
-	// Deprecated, should never call
-	void AddBind(std::function<void(Args...)> bind)
-	{
-		DelegateFunctions.push_back(bind);
-	}
-
-	void Add(void(*func)(Args... args))
-	{
-		DelegateFunctions.push_back(std::bind(func));
-	}
-
-	void AddDynamic(void(*func)(Args... args), std::nullptr_t* This)
-	{
-		DelegateFunctions.push_back(std::bind(func, This));
-	}
-
-	void Broadcast(Args... args)
-	{
-		for (auto delegate : DelegateFunctions)
-		{
-			delegate(args...);
-		}
-	}
+    inline void Broadcast(ArgTypes... Params)
+    {
+        for(auto delegate : delegates)
+        { 
+            delegate->Execute(Params...);
+        }
+    }
 };
