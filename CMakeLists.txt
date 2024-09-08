@@ -45,7 +45,7 @@ set(SrcRenderV "Source/Runtime/RenderV/Vulkan/vkloader.cpp" "Source/Runtime/Rend
 
 set(SrcEngine "Source/Runtime/Engine/Engine.cpp" "Source/Runtime/Engine/EngineDelegates.cpp" "Source/Runtime/Engine/Tickable.cpp") 
 
-set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp" "Source/Runtime/World/World.cpp") 
+set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp" "Source/Runtime/World/World.cpp" "Source/Runtime/World/Entity.cpp") 
 
 set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp")
 

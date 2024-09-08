@@ -12,7 +12,7 @@ class EntityRenderProxyTest : public EntityRenderProxy
 public:
     EntityRenderProxyTest(Entity* DefaultParent);
     virtual void CreateResources(WorldRenderLayerRef* layerRef) override;
-    virtual void Update() override{}
+    virtual void Update(WorldRenderLayerRef* layerRef) override{}
     virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef) override;
 };
 

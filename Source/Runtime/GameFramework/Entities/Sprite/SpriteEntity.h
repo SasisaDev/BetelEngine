@@ -13,7 +13,7 @@ class SpriteRenderProxy : public EntityRenderProxy
     static VkSampler sampler;
 public:
     SpriteRenderProxy(Entity* DefaultParent) : EntityRenderProxy(DefaultParent) {}
-    virtual void Update() override{}
+    virtual void Update(WorldRenderLayerRef* layerRef) override{}
     virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef) override;
 };
 

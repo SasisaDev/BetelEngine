@@ -421,7 +421,7 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
     WorldRenderLayerRef* ref = ((WorldRenderLayerRef*)(layerRef));
 
     for(EntityRenderProxy* proxy : ref->renderProxies) {
-        proxy->Update();
+        proxy->Update(ref);
     }
 
     // TODO: Update GPU data
@@ -453,9 +453,9 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
         // TODO: Gradient
         const Vec3& WorldColorValue = worldRef->GetWorld()->BackgroundColor;
 
-        IRenderUtility::BeginDebugLabel(cmdBuffer, "Pixel Perfect World", 0.5, 1, 0.5);
+        IRenderUtility::BeginDebugLabel(cmdBuffer, "Pixel Perfect World", 0.35, 0.85, 0.5);
         
-        IRenderUtility::BeginDebugLabel(cmdBuffer, "Original Viewport", 1, 1, 0.5);
+        IRenderUtility::BeginDebugLabel(cmdBuffer, "Original Viewport", 0.85, 0.85, 0.5);
         VkRenderPassBeginInfo passInfo;
         passInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
         passInfo.pNext = nullptr;

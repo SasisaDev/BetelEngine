@@ -10,4 +10,12 @@ struct Transform
     Quat Rotator;
 
     Transform(){}
+
+    Transform operator+(Transform const& other) {
+        Transform ret;
+        ret.Location = Location + other.Location;
+        ret.Scale = Scale + other.Scale;
+        //ret.Rotator = Rotator + other.Rotator;
+        return ret;
+    }
 };

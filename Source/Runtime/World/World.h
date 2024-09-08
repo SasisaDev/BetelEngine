@@ -24,7 +24,7 @@ public:
     void SetBackgroundColor(const Vec3& color) {BackgroundColor = color;}
 
     template<EntityClass EntityType>
-    EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo) 
+    EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo)
     {
         EntityType* spawnedEntity = new EntityType();
         entities.push_back(spawnedEntity);

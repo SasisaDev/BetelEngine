@@ -29,9 +29,14 @@ public:
     virtual EntityRenderProxy* GetRenderProxy() {return RenderProxy;}
 
     virtual inline World* GetWorld() const {return OwnerWorld;}
+    
+    virtual void Tick(float deltaTime);
 
-    virtual void SetTransform(const Transform& newTransform){transform = newTransform;}
-    virtual const Transform& GetTransform() const {return transform;}
+    virtual Transform GetTransform();
+    virtual const Transform& GetRelativeTransform() const {return transform;}
+
+    virtual Vec3 GetLocation();
+    virtual const Vec3& GetRelativeLocation() const {return transform.Location;}
 };
 
 class WorldRenderLayerRef;
@@ -45,7 +50,7 @@ public:
 public:
     EntityRenderProxy(Entity* DefaultParent){Parent = DefaultParent;}
     virtual void CreateResources(WorldRenderLayerRef* layerRef){}
-    virtual void Update() {}
+    virtual void Update(WorldRenderLayerRef* layerRef) {}
     virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef) {}
 };
 

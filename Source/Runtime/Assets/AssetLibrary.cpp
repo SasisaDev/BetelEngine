@@ -12,7 +12,7 @@ void AssetLibrary::CrawlAssetsTyped(AssetType type)
 {
     IPlatform* platform = IPlatform::Get();
 
-    IDirectory* directory = platform->OpenDirectory("./Content");
+    IDirectory* directory = platform->OpenDirectory("./Content", DIRECTORY_FLAG_RECURSIVE);
     if(!directory->Exists()) {
         LOG(Warning, LogAsset, "Content directory does not exist. Are assets cooked?");
         return;
