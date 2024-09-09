@@ -33,9 +33,10 @@ struct WindowCreateInfo
 
 class Window
 {
+    friend class WindowManager;
+    
     SDL_Window* window;
 	SDL_Surface* surface;
-	SDL_Event event;
 
     std::string title;
     unsigned int width, height;

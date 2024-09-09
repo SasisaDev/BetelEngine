@@ -28,7 +28,7 @@ void Window::CreateSurface(VkInstance instance, VkSurfaceKHR* vksurface)
 void Window::Update()
 {
 	// TODO: SDL Events are global and do not need polling for every window, except for WINDOWEVENT
-	SDL_PollEvent(&event);
+	/*SDL_PollEvent(&event);
 	
 	switch(event.type)
 	{
@@ -44,5 +44,5 @@ void Window::Update()
 					break;
 			}
 			break;
-	}
+	}*/
 }

@@ -4,7 +4,7 @@
 #include <vector>
 #include <queue>
 
-#include "../Window/Window.h"
+#include "../Window/WindowManager.h"
 #include "Arguments.h"
 #include <RenderV/Render.h>
 #include <Engine/Engine.h>
@@ -13,13 +13,10 @@
 class Application
 {
 private:
-    std::queue<int> DestroyPendingWindows;
-
     ArgumentCollection Arguments;
     std::string ApplicationPath;
 protected:
-    std::vector<Window*> Windows;
-    
+    WindowManager* Windows;
     IRenderEngine* Render;
     Engine* GameEngine;
     SettingsManager* Settings;
@@ -38,7 +35,7 @@ public:
 
     inline SettingsManager* GetSettings() const {return Settings;}
 
-    inline bool ShouldTerminate() const {return bShouldTerminate;}
+    inline bool ShouldTerminate() const {return bShouldTerminate || Windows->ShouldTerminate();}
 
     window_t CreateWindow(WindowCreateInfo& createInfo);
 

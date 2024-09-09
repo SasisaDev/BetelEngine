@@ -52,6 +52,8 @@ void Application::Initialize()
 	
 	GApplication = this;
 
+	Windows = new WindowManager();
+
 	// Create Settings Manager
 	Settings = new SettingsManager();
 
@@ -116,7 +118,7 @@ Application::~Application()
 
 window_t Application::CreateWindow(WindowCreateInfo& createInfo)
 {
-	Window* window = new Window(createInfo);
+	Window* window = Windows->CreateWindow(createInfo);
 
 	// Subscribe to events
 	window->OnWindowEvent.BindMember(this, &Application::OnWindowEvent);
@@ -131,8 +133,7 @@ window_t Application::CreateWindow(WindowCreateInfo& createInfo)
 	window->RendererCompositionID = Render->CreateComposition(&surfaceInitializer);
 	IRenderComposition* composition = Render->GetComposition(window->RendererCompositionID);
 
-	Windows.push_back(window);
-	return Windows.size() - 1;
+	return window->WindowID;
 }
 
 void Application::ApplicationLoop()
@@ -142,7 +143,7 @@ void Application::ApplicationLoop()
 
 	float MinimalDeltaTime = 1000.f/120.f;
 
-	while(!bShouldTerminate)
+	while(!Windows->ShouldTerminate())
 	{
 		float deltaTime = std::chrono::duration<float, std::milli>(frame_lifetime_end-frame_lifetime_start).count() / 1000;
 		frame_lifetime_start = std::chrono::high_resolution_clock::now();
@@ -156,10 +157,7 @@ void Application::ApplicationLoop()
 
 		//LOGF(Log, LogTime, "%f", deltaTime);
 		// Update all windows, may require compositions recreation
-		for (int i = 0; i < Windows.size(); i++)
-		{
-			Windows[i]->Update();
-		}
+		Windows->Update(deltaTime);
 
 		// Tick Game Engine
 		GameEngine->Tick(deltaTime);
@@ -167,28 +165,8 @@ void Application::ApplicationLoop()
 		// Perform rendering
 		Render->Render();
 
-		// Check windows state
-		for(int i = 0; i < Windows.size(); i++)
-		{
-			if(Windows[i]->bShouldClose)
-			{
-				DestroyPendingWindows.push(i);
-			}
-		}
-
-		// Destroy windows that should close
-		for(; !DestroyPendingWindows.empty(); DestroyPendingWindows.pop())
-		{
-			// Kill window
-			delete Windows[DestroyPendingWindows.front()];
-			Windows.erase(Windows.begin() += DestroyPendingWindows.front());
-
-			// If we're out of windows, close application
-			if(Windows.size() <= 0)
-			{
-				bShouldTerminate = true;
-			}
-		}
+		// Cleanup ShouldClose-Windows
+		Windows->CleanupClosePending();
 
 		frame_lifetime_end = std::chrono::high_resolution_clock::now();
 	}
@@ -207,9 +185,8 @@ void Application::OnWindowEvent(Window* win, WindowEventPayload* payload)
 	switch(payload->type) {
 		case WINDOW_EVENT_RESIZE:
 			recreateComp = true;
-			reinitInfo.extent = VkExtent2D(((WindowEventPayloadResize*)payload)->width, ((WindowEventPayloadResize*)payload)->height);
-			break;
-		default:
+			reinitInfo.extent.width = ((WindowEventPayloadResize*)payload)->width;
+			reinitInfo.extent.height =  ((WindowEventPayloadResize*)payload)->height;
 			break;
 	};
 
