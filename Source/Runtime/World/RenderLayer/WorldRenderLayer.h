@@ -77,7 +77,7 @@ class WorldRenderLayer : public IRenderLayer
 public:
     static IRenderLayerRef* CreateRef() {return new WorldRenderLayerRef;}
 
-    static std::string GetName() {return "WorldRenderLayer";}
+    static std::string GetStaticName() {return "WorldRenderLayer";}
 
     virtual bool Initialize(VkDevice device) override;
 

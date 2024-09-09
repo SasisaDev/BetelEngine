@@ -105,6 +105,8 @@ void Application::Initialize()
 #	if !defined(NDEBUG)
 	Render->CreateDebugMessenger(DebugMessageCallback, 0);
 #	endif
+
+	LOG(Log, LogBetel, "Successfully initialized Application's Essentials");
 }
 
 Application::~Application()
@@ -132,6 +134,8 @@ window_t Application::CreateWindow(WindowCreateInfo& createInfo)
 
 	window->RendererCompositionID = Render->CreateComposition(&surfaceInitializer);
 	IRenderComposition* composition = Render->GetComposition(window->RendererCompositionID);
+
+	LOGF(Log, LogWindow, "Successfully created window: %u", window->WindowID);
 
 	return window->WindowID;
 }

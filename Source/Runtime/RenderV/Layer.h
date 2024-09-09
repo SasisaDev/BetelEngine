@@ -6,14 +6,21 @@
 
 class IRenderLayer
 {
+    friend class IRenderEngine;
 protected:
     VkRenderPass renderPass;
+    std::string localName;
 public:
     static IRenderLayerRef* CreateRef();
 
     inline VkRenderPass GetRenderPass() const {return renderPass;}
 
-    static std::string GetName() {return "__EmptyNull";}
+    static std::string GetStaticName() {return "__EmptyNull";}
+    /* 
+     * Returns local name specified from static name on creation. 
+     * GetName() == LayerType::GetStaticName()
+     */
+    std::string GetName() {return localName;}
 
     virtual bool Initialize(VkDevice device){return false;}
 

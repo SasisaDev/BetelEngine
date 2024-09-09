@@ -48,23 +48,11 @@ void WindowManager::Update(float deltaTime)
 		case SDL_WINDOWEVENT:
 			// Handle window events
             emittedWindow = internal_GetBySDLWindow(SDL_GetWindowFromID(event.window.windowID));
-			switch(event.window.event)
-			{
-                case SDL_WINDOWEVENT_CLOSE:
-                    emittedWindow->bShouldClose = true;
-				case SDL_WINDOWEVENT_RESIZED:
-                    if(!emittedWindow->bShouldClose) {
-					    emittedWindow->OnWindowEvent.Broadcast(emittedWindow, new WindowEventPayloadResize(event.window.data1, event.window.data2));
-                    }
-					break;
+			if(emittedWindow) {
+				emittedWindow->Update(event.window);
 			}
 			break;
 	}
-
-    for(Window* win : Windows)
-    {
-        win->Update();
-    }
 }
 
 void WindowManager::CleanupClosePending()

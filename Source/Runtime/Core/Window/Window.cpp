@@ -23,26 +23,19 @@ void Window::CreateSurface(VkInstance instance, VkSurfaceKHR* vksurface)
 	{
 		LOG(Fatal, LogSDL, "Failed creating vulkan surface out of window.");
 	}
+	LOGF(Log, LogWindow, "Created surface: %u", surface);
 }
 
-void Window::Update()
+void Window::Update(const SDL_WindowEvent& event)
 {
-	// TODO: SDL Events are global and do not need polling for every window, except for WINDOWEVENT
-	/*SDL_PollEvent(&event);
-	
-	switch(event.type)
+	switch(event.event)
 	{
-		case SDL_QUIT:
-			bShouldClose = true;
+        case SDL_WINDOWEVENT_CLOSE:
+            bShouldClose = true;
+		case SDL_WINDOWEVENT_RESIZED:
+            if(!bShouldClose) {
+			    OnWindowEvent.Broadcast(this, new WindowEventPayloadResize(event.data1, event.data2));
+            }
 			break;
-		case SDL_WINDOWEVENT:
-			// Handle window events
-			switch(event.window.event)
-			{
-				case SDL_WINDOWEVENT_RESIZED:
-					OnWindowEvent.Broadcast(this, new WindowEventPayloadResize(event.window.data1, event.window.data2));
-					break;
-			}
-			break;
-	}*/
+	}
 }

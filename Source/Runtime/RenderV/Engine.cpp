@@ -103,6 +103,8 @@ void IRenderEngine::CreateDevice(std::vector<const char*> devExtensions, std::ve
         LOG(Warning, LogVulkan, "Presentation family index was not picked before device creation. Compute shaders would not be unavailable.");
     }
 
+    LOG(Log, LogVulkan, "All presentation families are in place.");
+
     // Create Device Queue
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     std::set<uint32_t> uniqueQueueFamilies = { queueFamilyIndices.graphicsFamily.value(), queueFamilyIndices.presentFamily.value(), queueFamilyIndices.computeFamily.value() };
@@ -142,6 +144,7 @@ void IRenderEngine::CreateDevice(std::vector<const char*> devExtensions, std::ve
     if (vkloader::vkCreateDevice(physDevice, &deviceCreateInfo, nullptr, &device) != VK_SUCCESS) {
         LOG(Fatal, LogVulkan, "Failed creating device");
     }
+    LOG(Log, LogVulkan, "Created device");
 
     vkGetDeviceQueue(device, queueFamilyIndices.graphicsFamily.value(), 0, &graphicsQueue);
     if(queueFamilyIndices.presentFamily.has_value()) 

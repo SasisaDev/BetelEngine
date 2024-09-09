@@ -79,6 +79,7 @@ template <typename LayerType>
 inline uint32_t IRenderEngine::CreateLayer()
 {
     LayerType* layer = new LayerType();
+    layer->localName = LayerType::GetStaticName();
     layer->Initialize(device);
     Layers.push_back(layer);
     return Layers.size()-1;

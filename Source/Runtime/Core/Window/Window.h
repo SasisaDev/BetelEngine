@@ -52,7 +52,7 @@ public:
 
     void CreateSurface(VkInstance instance, VkSurfaceKHR* vksurface);
 
-    void Update();
+    void Update(const SDL_WindowEvent& event);
 
     /*
      * Window Event handler

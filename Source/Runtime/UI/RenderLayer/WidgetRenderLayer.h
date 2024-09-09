@@ -21,5 +21,5 @@ class UIRenderLayer : public IRenderLayer
 public:
     static IRenderLayerRef* CreateRef() {return new UIRenderLayerRef;}
 
-    static std::string GetName() {return "UIRenderLayer";}
+    static std::string GetStaticName() {return "UIRenderLayer";}
 };

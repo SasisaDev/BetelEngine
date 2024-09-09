@@ -4,10 +4,26 @@
 
 void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composition) 
 {
+    if(extent.width <= 0 || extent.height <= 0) {
+        if(composition->extent.width <= 0 || composition->extent.height <= 0) {
+            LOG(Fatal, LogRender, "Could not initialize surface composition: Viewport Extent is zero!");
+            return;
+        } else {
+            extent = composition->extent;
+        }
+    } else {
+        composition->extent = extent;
+    }
+
     if(surface != VK_NULL_HANDLE) {
         composition->surface = surface;
     } else {
-        surface = composition->surface;
+        if(composition->surface == VK_NULL_HANDLE) {
+            LOG(Fatal, LogRender, "Could not initialize surface composition: Surface is nullptr!");
+            return;
+        } else {
+            surface = composition->surface;
+        }
     }
 
     composition->AddLayerRefs(layerRefs);
@@ -39,8 +55,6 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
 
     VkSurfaceFormatKHR surfaceFormat = resultFormat;
     VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
-
-    composition->extent = extent;
 
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
@@ -156,6 +170,8 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
     for(int i = 0; i < composition->GetFramesInFlight(); ++i) {
         vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &composition->aquireSemaphores[i]);
     }
+
+    LOGF(Log, LogRender, "Successfully initialized composition for surface: %u", surface);
 }
 
 void RenderCompositionInitializerImage::Initialize(IRenderComposition* composition) 
@@ -175,7 +191,10 @@ bool IRenderComposition::Initialize(IRenderCompositionInitializer* initializer)
 
     initializer->Initialize(this);
 
+    LOG(Log, LogRender, "Composition Layer List: ");
+    size_t layerI = 1;
     for(IRenderLayerRef* layerRef : Layers) {
+        LOGF(Log, LogRender, "\t%u: %s", layerI++, layerRef->GetParentLayer()->GetName().c_str());
         layerRef->Initialize(IRenderUtility::GetDevice(), DependencyList);
     }
 
