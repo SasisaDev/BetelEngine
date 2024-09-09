@@ -118,6 +118,9 @@ window_t Application::CreateWindow(WindowCreateInfo& createInfo)
 {
 	Window* window = new Window(createInfo);
 
+	// Subscribe to events
+	window->OnWindowEvent.BindMember(this, &Application::OnWindowEvent);
+
 	// Register Composition and
 	// Initialize Composition with Surface
 	RenderCompositionInitializerSurface surfaceInitializer;
@@ -188,5 +191,29 @@ void Application::ApplicationLoop()
 		}
 
 		frame_lifetime_end = std::chrono::high_resolution_clock::now();
+	}
+}
+
+void Application::OnWindowEvent(Window* win, WindowEventPayload* payload)
+{
+	if(!win || !payload) {
+		assert(!"Window Event callback must have window and payload pointer specified!");
+		return;
+	}
+
+	bool recreateComp = false;
+	RenderCompositionInitializerSurface reinitInfo;
+
+	switch(payload->type) {
+		case WINDOW_EVENT_RESIZE:
+			recreateComp = true;
+			reinitInfo.extent = VkExtent2D(((WindowEventPayloadResize*)payload)->width, ((WindowEventPayloadResize*)payload)->height);
+			break;
+		default:
+			break;
+	};
+
+	if(recreateComp) {
+		Render->GetComposition(win->RendererCompositionID)->Recreate(&reinitInfo);
 	}
 }

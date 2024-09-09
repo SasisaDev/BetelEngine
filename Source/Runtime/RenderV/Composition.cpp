@@ -4,7 +4,11 @@
 
 void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composition) 
 {
-    composition->surface = surface;
+    if(surface != VK_NULL_HANDLE) {
+        composition->surface = surface;
+    } else {
+        surface = composition->surface;
+    }
 
     composition->AddLayerRefs(layerRefs);
 
@@ -14,7 +18,7 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
     // Create Swapchain
     // TODO: swapchain support info
     composition->imageFormat = VK_FORMAT_B8G8R8A8_SRGB;
-
+    
     std::vector<VkSurfaceFormatKHR> availableFormats;
     uint32_t formatCount;
     vkGetPhysicalDeviceSurfaceFormatsKHR(physDevice, surface, &formatCount, nullptr);
@@ -69,7 +73,7 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     createInfo.presentMode = presentMode;
     createInfo.clipped = VK_TRUE;
-    createInfo.oldSwapchain = VK_NULL_HANDLE;
+    createInfo.oldSwapchain = composition->swapchain;
 
     if (vkCreateSwapchainKHR(device, &createInfo, nullptr, &(composition->swapchain)) != VK_SUCCESS) {
         LOG(Fatal, LogRender, "failed to create swap chain!");
@@ -173,6 +177,30 @@ bool IRenderComposition::Initialize(IRenderCompositionInitializer* initializer)
 
     for(IRenderLayerRef* layerRef : Layers) {
         layerRef->Initialize(IRenderUtility::GetDevice(), DependencyList);
+    }
+
+    return true;
+}
+
+bool IRenderComposition::Recreate(IRenderCompositionInitializer* initializer)
+{
+    vkDeviceWaitIdle(IRenderUtility::GetDevice());
+
+    // Cleanup Swapchain
+    if(compositionType == ERenderCompositionType::RENDER_COMPOSITION_TYPE_SURFACE) {
+        for (size_t i = 0; i < framebuffers.size(); i++) {
+            vkDestroyFramebuffer(IRenderUtility::GetDevice(), framebuffers[i], nullptr);
+        }
+
+        for (size_t i = 0; i < imageViews.size(); i++) {
+            vkDestroyImageView(IRenderUtility::GetDevice(), imageViews[i], nullptr);
+        }
+    }
+
+    initializer->Initialize(this);
+
+    for(IRenderLayerRef* layerRef : Layers) {
+        layerRef->Recreate();
     }
 
     return true;

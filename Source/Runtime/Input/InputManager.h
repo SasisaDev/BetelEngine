@@ -1,20 +1,21 @@
 #pragma once
 
 #include <Delegate/Delegate.h>
+#include <Core/Window/Window.h>
 
 class InputManager
 {
-protected:
+public:
     /*
     * Multicast delegate, bound functions will be called each time
     * an input event has occured.
     *
     * Arguments:
-    *   uint8_t     WindowID
+    *   window_t    WindowID
     *   uint8_t     EventType
     *   uint32_t    EventKey
     *   void*       EventData
     */
-    TMulticastDelegate<uint8_t, uint8_t, uint32_t, void*> OnInputEvent;
+    MulticastDelegate<window_t, uint8_t, uint32_t, void*> OnInputEvent;
     
 };

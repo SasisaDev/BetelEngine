@@ -43,6 +43,9 @@ public:
     window_t CreateWindow(WindowCreateInfo& createInfo);
 
     void ApplicationLoop();
+
+protected:
+    void OnWindowEvent(Window* win, WindowEventPayload* payload);
 };
 
 extern Application* GApplication;

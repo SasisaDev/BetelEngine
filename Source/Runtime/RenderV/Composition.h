@@ -25,7 +25,7 @@ struct IRenderCompositionInitializer
 
 struct RenderCompositionInitializerSurface : public IRenderCompositionInitializer
 {
-    VkSurfaceKHR surface;
+    VkSurfaceKHR surface = VK_NULL_HANDLE;
     VkExtent2D extent;
     VkFormat format;
     
@@ -49,7 +49,7 @@ class IRenderComposition
     friend class RenderCompositionInitializerImage;
     friend class RenderCompositionInitializerSurface;
 protected:
-    VkSwapchainKHR swapchain;
+    VkSwapchainKHR swapchain = VK_NULL_HANDLE;
     std::vector<VkImage> images;
     std::vector<VkImageView> imageViews;
     std::vector<VkFramebuffer> framebuffers;

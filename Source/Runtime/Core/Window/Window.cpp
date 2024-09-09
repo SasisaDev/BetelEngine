@@ -8,7 +8,7 @@ Window::Window(WindowCreateInfo& createInfo)
     width = createInfo.width;
     height = createInfo.height;
 
-    window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN);
+    window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_VULKAN | SDL_WINDOW_RESIZABLE);
 
 	surface = SDL_GetWindowSurface(window);
 
@@ -27,10 +27,22 @@ void Window::CreateSurface(VkInstance instance, VkSurfaceKHR* vksurface)
 
 void Window::Update()
 {
+	// TODO: SDL Events are global and do not need polling for every window, except for WINDOWEVENT
 	SDL_PollEvent(&event);
 	
-	if (event.type == SDL_QUIT)
+	switch(event.type)
 	{
-		bShouldClose = true;
+		case SDL_QUIT:
+			bShouldClose = true;
+			break;
+		case SDL_WINDOWEVENT:
+			// Handle window events
+			switch(event.window.event)
+			{
+				case SDL_WINDOWEVENT_RESIZED:
+					OnWindowEvent.Broadcast(this, new WindowEventPayloadResize(event.window.data1, event.window.data2));
+					break;
+			}
+			break;
 	}
 }
