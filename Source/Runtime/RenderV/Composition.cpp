@@ -256,6 +256,8 @@ void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 
     //vkCmdPipelineBarrier(cmdbuffer);
 
+    IRenderUtility::ImageBarrier(cmdBuffer, GetCurrentImage(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+
     for(size_t layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
     {
         Layers[layerRefId]->GetParentLayer()->Prepare(cmdBuffer, Layers[layerRefId], previousLayer);

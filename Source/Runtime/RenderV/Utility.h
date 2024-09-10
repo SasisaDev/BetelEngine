@@ -31,6 +31,30 @@ public:
     static inline uint32_t GetCurrentFrameInFlight() {return currentFrameInFlight;}
     static inline void SetCurrentFrameInFlight(uint32_t curfif) {currentFrameInFlight = curfif;}
 
+    static inline void ImageBarrier(VkCommandBuffer cmdBuffer, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout,
+                                    VkPipelineStageFlags src = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VkPipelineStageFlags dst = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                                    VkAccessFlags srcFlag = 0, VkAccessFlags dstFlag = 0)
+    {
+        VkImageMemoryBarrier imgMemBar = {};
+        imgMemBar.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+        imgMemBar.oldLayout = oldLayout;
+        imgMemBar.newLayout = newLayout;
+
+        imgMemBar.image = image;
+        imgMemBar.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        imgMemBar.subresourceRange.baseMipLevel = 0;
+        imgMemBar.subresourceRange.levelCount = 1;
+        imgMemBar.subresourceRange.baseArrayLayer = 0;
+        imgMemBar.subresourceRange.layerCount = 1;
+
+        imgMemBar.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        imgMemBar.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+        imgMemBar.srcAccessMask = srcFlag;
+        imgMemBar.dstAccessMask = dstFlag;
+    
+        vkCmdPipelineBarrier(cmdBuffer, src, dst, 0, 0, nullptr, 0, nullptr, 1, &imgMemBar);
+    }
+
     static inline void BeginDebugLabel(VkCommandBuffer cmdBuffer, const char* label, float r=0.5, float g=0.5, float b=0.5)
     {
 #       if !NDEBUG

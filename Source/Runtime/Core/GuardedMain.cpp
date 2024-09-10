@@ -9,7 +9,9 @@
 
 #include <RenderV/Objects/Buffers/Buffer.h>
 
+// TODO: Remove test boilerplate
 #include <GameFramework/Entities/Test/TestEntity.h>
+#include <UI/Widget.h>
 
 int GuardedMain(int argc, char* argv[])
 {

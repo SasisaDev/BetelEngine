@@ -382,11 +382,11 @@ bool WorldRenderLayer::Initialize(VkDevice device)
     VkAttachmentDescription stretchColorAttachment{};
     stretchColorAttachment.format = VK_FORMAT_B8G8R8A8_SRGB;
     stretchColorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    stretchColorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    stretchColorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
     stretchColorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
     stretchColorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
     stretchColorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    stretchColorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    stretchColorAttachment.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
     //stretchColorAttachment.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
     stretchColorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
@@ -519,6 +519,7 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
         IRenderUtility::BeginDebugLabel(cmdBuffer, "Upscale");
         // Stretch pass
         clearVal = {{{1, 0, 0, 1}}};
+        passInfo.clearValueCount = 0;
         passInfo.renderPass = upscaleRenderPass;
         passInfo.framebuffer = layerRef->GetParentComposition()->GetCurrentFramebuffer();
         passInfo.renderArea.offset = {0, 0};
