@@ -11,6 +11,12 @@ UIRenderLayerRef::UIRenderLayerRef()
     
 }
 
+bool UIRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList)
+{
+    
+    return true;
+}
+
 UIRenderLayerRef* UIRenderLayerRef::SetCanvasWidget(Widget* newWidget)
 {
     widget = newWidget;

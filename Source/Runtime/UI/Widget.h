@@ -1,49 +1,57 @@
 #pragma once
 
 #include <vector>
+#include <memory>
+#include <Math/Vector.h>
 
 class Widget;
 
-class WidgetSlot
-{
-    std::shared_ptr<Widget> childWidget;
-public:
+enum WidgetSlotAlignFlags {
+    WIDGET_SLOT_ALIGN_CENTER = (1 << 0),
+    WIDGET_SLOT_ALIGN_LEFT = (1 << 1),
+    WIDGET_SLOT_ALIGN_RIGHT = (1 << 2),
+    WIDGET_SLOT_ALIGN_TOP = (1 << 3),
+    WIDGET_SLOT_ALIGN_BOTTOM = (1 << 4),
+};
 
-    std::vector<WidgetSlot> operator+(WidgetSlot&& nSlot) {
-        return {*this, nSlot};
-    }
+enum WidgetSlotStretchFlags {
+    WIDGET_SLOT_STRETCH_HORIZONTAL = (1 << 0),
+    WIDGET_SLOT_STRETCH_VERTICAL = (1 << 1),
+};
 
-    std::vector<WidgetSlot> operator+(std::vector<WidgetSlot>&& nSlots) {
-        std::vector<WidgetSlot> slots(nSlots.size() + 1);
-        slots.push_back(*this);
-        slots.insert(slots.end(), nSlots.begin(), nSlots.end());
-        return slots;
-    }
+struct WidgetSlotTransform {
+    float x, y;
+    float offsetX, offsetY;
+    float z;
 };
 
 class Widget
 {
+    friend class UIRenderLayer;
 protected:
-    std::vector<WidgetSlot> slots;
+    WidgetSlotAlignFlags align;
+    WidgetSlotStretchFlags stretch;
+
+    WidgetSlotTransform transform;
+
+    bool externallyConstrained = false;
+
+    std::vector<std::shared_ptr<Widget>> children;
+
+    Widget* parent;
 public:
 
-    Widget* operator[](WidgetSlot& nSlot) {
-        slots.push_back(nSlot);
+    virtual void UpdateTransform();
+
+    virtual void SetParent(Widget* widget) {parent = widget;}
+    
+    virtual void Tick(float deltaTime);
+
+    virtual Widget* AddChild(std::shared_ptr<Widget> child) {
+        child->SetParent(this);
+        children.push_back(child);
         return this;
     }
 
-    Widget* operator[](WidgetSlot&& nSlot) {
-        slots.push_back(nSlot);
-        return this;
-    }
-
-    Widget* operator[](std::vector<WidgetSlot>& nSlots) {
-        slots = nSlots;
-        return this;
-    }
-
-    Widget* operator[](std::vector<WidgetSlot>&& nSlots) {
-        slots = nSlots;
-        return this;
-    }
+    virtual void Render();
 };

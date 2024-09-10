@@ -47,7 +47,7 @@ set(SrcEngine "Source/Runtime/Engine/Engine.cpp" "Source/Runtime/Engine/EngineDe
 
 set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp" "Source/Runtime/World/World.cpp" "Source/Runtime/World/Entity.cpp") 
 
-set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp")
+set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp" "Source/Runtime/UI/Widget.cpp")
 
 set(SrcPlatform "Source/Runtime/Platform/Interface/Files/IFile.cpp" "Source/Runtime/Platform/Interface/Files/IDirectory.cpp" "Source/Runtime/Platform/Platform.cpp"
                 "Source/Runtime/Platform/Interface/Files/IPath.cpp")

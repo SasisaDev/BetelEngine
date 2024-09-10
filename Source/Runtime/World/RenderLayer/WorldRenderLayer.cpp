@@ -497,7 +497,7 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
         // Render End
 
         // Barrier
-        VkImageMemoryBarrier imgMemBar = {};
+        /*VkImageMemoryBarrier imgMemBar = {};
         imgMemBar.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
         imgMemBar.oldLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         imgMemBar.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -514,7 +514,12 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
         imgMemBar.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
         imgMemBar.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
     
-        vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &imgMemBar);
+        vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &imgMemBar);*/
+
+        IRenderUtility::ImageBarrier(cmdBuffer, ((WorldRenderLayerRef*)layerRef)->pixelPerfectImages[CurrentFrame], 
+                                     VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 
+                                     VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                                     VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT);
 
         IRenderUtility::BeginDebugLabel(cmdBuffer, "Upscale");
         // Stretch pass

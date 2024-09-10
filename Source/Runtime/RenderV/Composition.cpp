@@ -198,6 +198,8 @@ bool IRenderComposition::Initialize(IRenderCompositionInitializer* initializer)
         layerRef->Initialize(IRenderUtility::GetDevice(), DependencyList);
     }
 
+    // TODO: Dependency Injection Sorting
+
     return true;
 }
 
@@ -256,6 +258,7 @@ void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 
     //vkCmdPipelineBarrier(cmdbuffer);
 
+    // Get image ready for render pass chain
     IRenderUtility::ImageBarrier(cmdBuffer, GetCurrentImage(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 
     for(size_t layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
