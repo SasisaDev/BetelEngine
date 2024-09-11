@@ -74,7 +74,9 @@ set_property(TARGET Game PROPERTY CXX_STANDARD 20)
 # Editor
 set(AssetFactoriesSrc "Source/Editor/AssetFactory/Default/ShaderFactory.cpp" )
 
-set(EditorSources ${AssetFactoriesSrc} "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" ) 
+set(ArgumentEventsSrc "Source/Editor/ArgumentEvents/UseAssetFactoryEvent.cpp")
+
+set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" ) 
 
 add_executable(Editor ${Sources} ${EditorSources})
 

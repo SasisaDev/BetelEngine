@@ -70,7 +70,11 @@ WindowsPlatform::~WindowsPlatform()
 
 std::string WindowsPlatform::GetExecutablePath()
 {
-	return IPlatform::GetExecutablePath();
+	char pBuf[1024];
+	size_t len = sizeof(pBuf); 
+
+	int bytes = GetModuleFileName(NULL, pBuf, len);
+	return (bytes ? std::string(pBuf) : IPlatform::GetExecutablePath());
 }
 
 void WindowsPlatform::DebugPrint(const char* string) const

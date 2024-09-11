@@ -3,6 +3,7 @@
 #include <sstream>
 #include <chrono>
 #include <ctime>
+#include <stdexcept>
 
 #include <Platform/Platform.h>
 #include <cstdarg>
@@ -71,7 +72,7 @@ void Logger::Fatal(const char* Namespace, const char* message)
 
 	InternalLog(Namespace, message);
 
-	throw std::exception();
+	throw std::runtime_error(message);
 }
 
 void Logger::FatalFormat(const char* Namespace, const char* message, ...)

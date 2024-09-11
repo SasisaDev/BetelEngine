@@ -9,6 +9,7 @@
 #include <RenderV/Render.h>
 #include <Engine/Engine.h>
 #include <Settings/SettingsManager.h>
+#include "ArgumentsEventHandler.h"
 
 class Application
 {

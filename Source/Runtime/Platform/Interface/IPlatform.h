@@ -22,7 +22,9 @@ public:
 	virtual void SetExecVariables(std::vector<std::string> newVars){ExecVariables = newVars;}
 	virtual std::vector<std::string> GetExecVariables() const {return ExecVariables;}
 
+	// TODO: Rewrite it more neatly
 	virtual std::string GetExecutablePath() { return (ExecVariables.size() > 0) ? ExecVariables[0] : ""; }
+	virtual std::string GetExecutableFolder() { return (ExecVariables.size() > 0) ? IPath(ExecVariables[0]).StepBack() : ""; }
 
 	virtual const char* PlatformName() const { return "Unknown"; }
 	virtual void DebugPrint(const char* string) const {}

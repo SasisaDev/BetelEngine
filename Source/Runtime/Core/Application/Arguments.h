@@ -76,3 +76,9 @@ class ArgumentParser
 public:
     static ArgumentCollection ParseArgs(int argc, char* argv[]);
 };
+
+class ArgumentEvent
+{
+public:
+    virtual bool Handle(ArgumentCollection& collection) {return true;}
+};

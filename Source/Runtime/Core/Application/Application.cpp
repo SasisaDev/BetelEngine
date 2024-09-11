@@ -29,16 +29,23 @@ Application::Application()
 
 Application::Application(int argc, char* argv[])
 {
-	// TODO: ARGV[0] may not be a path! Undefined behaviour!
-	ApplicationPath = argv[0];
-
 	std::vector<std::string> args(argc);
 	for(int i = 0; i < argc; ++i) {
 		args[i] = argv[i];
 	}
 	IPlatform::Get()->SetExecVariables(args);
 
+	ApplicationPath = IPlatform::Get()->GetExecutablePath();
+
 	Arguments = ArgumentParser::ParseArgs(argc - 1, argv + 1);
+
+	for(ArgumentEvent* event : ArgumentsEventHandler::Get().events)
+	{
+		if(!event->Handle(Arguments)) {
+			exit(0);
+			return;
+		}
+	}
 
 	Initialize();
 }
@@ -79,7 +86,7 @@ void Application::Initialize()
 
 	// Boilerplate for GetInstanceExtensions, until window handle is dropped in new SDL 
 	SDL_Window* window;
-	window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1, 1, SDL_WINDOW_VULKAN);
+	window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1, 1, SDL_WINDOW_HIDDEN | SDL_WINDOW_VULKAN);
 
 	// Create Render Engine object
     Render = IRenderFactory::CreateEngine();
