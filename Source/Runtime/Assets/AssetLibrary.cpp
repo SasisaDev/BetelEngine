@@ -29,7 +29,7 @@ void AssetLibrary::CrawlAssetsTyped(AssetType type)
     }
 }
 
-void AssetLibrary::CrawlAssetsAll()
+void AssetLibrary::CrawlAssetsAll(std::string LocalDomain)
 {
     // TODO
     CrawlAssetsTyped(AssetType());

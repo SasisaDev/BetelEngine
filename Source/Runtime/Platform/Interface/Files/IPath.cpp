@@ -29,6 +29,12 @@ IPath::IPath(const std::string& path)
     }
 }
 
+IPath::IPath(const char* path)
+    :IPath(std::string(path))
+{
+
+}
+
 std::string IPath::GetPath()
 {
     std::string path;
@@ -50,19 +56,26 @@ std::string IPath::GetPath()
     return path;
 }
 
-const IPath& IPath::operator+(const IPath& path)
+IPath IPath::operator+(const IPath& path)
 {
-    pathMembers.insert(pathMembers.end(), path.pathMembers.begin(), path.pathMembers.end());
-    return *this;
+    IPath nPath(*this);
+    nPath.pathMembers.insert(nPath.pathMembers.end(), path.pathMembers.begin(), path.pathMembers.end());
+    return nPath;
 }
 
-const IPath& IPath::operator+(const std::string& path)
+IPath IPath::operator+(const std::string& path)
 {
     return this->operator+(IPath(path));
 }
 
-const IPath& IPath::operator--()
+IPath& IPath::operator--()
 {
     pathMembers.pop_back();
     return *this;
+}
+
+IPath IPath::StepBack()
+{
+    IPath nPath(*this);
+    return --nPath;
 }

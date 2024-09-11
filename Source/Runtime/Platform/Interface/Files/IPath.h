@@ -8,6 +8,7 @@ struct IPath
 {
     IPath(){isRelative = true;}
     IPath(const std::string& path);
+    IPath(const char* path);
 
     bool isRelative;
 
@@ -19,10 +20,11 @@ struct IPath
     inline char GetDisc() const {return disc;}
 
     // Add subdirectory
-    const IPath& operator+(const IPath& path);
-    const IPath& operator+(const std::string& path);
+    IPath operator+(const IPath& path);
+    IPath operator+(const std::string& path);
     // Go one directory back
-    const IPath& operator--();
+    IPath& operator--();
+    IPath StepBack();
 
     // String decay
     operator std::string(){return GetPath();}

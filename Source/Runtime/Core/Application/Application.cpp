@@ -45,15 +45,22 @@ Application::Application(int argc, char* argv[])
 
 void Application::Initialize()
 {
-	if(GApplication != nullptr)
-	{
+	if(GApplication != nullptr) {
 		return;
 	}
 	
 	GApplication = this;
 
 	// Create Virtual Filesystem handler
-	IPlatform::Get()->AddLocalPath((IsEditor() ? "Editor" : "Game"), IPlatform::Get()->GetExecutablePath());
+	if(IsEditor()) {
+		IPlatform::Get()->AddLocalPath("Editor", IPath(IPlatform::Get()->GetExecutablePath()).StepBack());
+		if(Arguments.Has("project")) {
+			IPlatform::Get()->AddLocalPath("Game", Arguments.Get("project"));
+		}
+	} else {
+		IPlatform::Get()->AddLocalPath("Game", IPath(IPlatform::Get()->GetExecutablePath()).StepBack());
+		IPlatform::Get()->AddLocalPath("Editor", IPath(IPlatform::Get()->GetExecutablePath()).StepBack());
+	}
 	
 
 	Windows = new WindowManager();

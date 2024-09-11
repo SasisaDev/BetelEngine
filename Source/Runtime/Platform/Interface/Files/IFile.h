@@ -21,6 +21,8 @@ public:
 	IFile(std::string path, uint8_t accessFlags);
 	~IFile();
 
+	virtual bool IsOpen() const {return file.is_open();}
+
 	virtual const char* Fetch(size_t count);
 	virtual std::string FetchAll();
 

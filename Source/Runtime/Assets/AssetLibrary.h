@@ -11,6 +11,7 @@
 struct AssetDescriptor
 {
     AssetType* Type;
+    // Local path. E.g. "Editor/Content/Some/Asset"
     std::string Path;
     std::optional<Asset*> AssetPtr;
 };
@@ -33,5 +34,5 @@ public:
     Asset* GetAsset(std::string Path);
     
     void CrawlAssetsTyped(AssetType type);
-    void CrawlAssetsAll();
+    void CrawlAssetsAll(std::string LocalDomain);
 };
