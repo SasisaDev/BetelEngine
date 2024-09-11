@@ -52,6 +52,10 @@ void Application::Initialize()
 	
 	GApplication = this;
 
+	// Create Virtual Filesystem handler
+	IPlatform::Get()->AddLocalPath((IsEditor() ? "Editor" : "Game"), IPlatform::Get()->GetExecutablePath());
+	
+
 	Windows = new WindowManager();
 
 	// Create Settings Manager

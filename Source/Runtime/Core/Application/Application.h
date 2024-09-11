@@ -41,6 +41,13 @@ public:
 
     void ApplicationLoop();
 
+    inline bool IsEditor() const {
+#       ifdef EDITOR
+            return true;
+#       endif
+        return false;
+    }
+
 protected:
     void OnWindowEvent(Window* win, WindowEventPayload* payload);
 };

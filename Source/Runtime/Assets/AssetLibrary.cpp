@@ -23,6 +23,8 @@ void AssetLibrary::CrawlAssetsTyped(AssetType type)
         if(child->IsDirectory())
         {
             // Make path analysis
+        } else {
+            Asset* asset = new Asset();
         }
     }
 }

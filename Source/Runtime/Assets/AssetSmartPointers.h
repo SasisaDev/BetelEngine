@@ -2,15 +2,15 @@
 
 #include "AssetLibrary.h"
 
-template <class AssetType>
+template <class AssetTypeT>
 class AssetPtr
 {
-    AssetType* assetPtr;
+    AssetTypeT* assetPtr;
     std::string path;
 public:
     AssetPtr(std::string defaultPath);
 
-    AssetType* Load() 
+    AssetTypeT* Load() 
     {
         if(assetPtr != nullptr) { 
             return assetPtr;
@@ -18,7 +18,7 @@ public:
 
         AssetLibrary& lib = AssetLibrary::Get();
         
-        assetPtr = dynamic_cast<AssetType*>(lib.GetAsset(path));
+        assetPtr = dynamic_cast<AssetTypeT*>(lib.GetAsset(path));
         if(assetPtr == nullptr) {
             assetPtr = lib.LoadAsset(path);
         }
