@@ -58,6 +58,8 @@ void Application::Initialize()
 	
 	GApplication = this;
 
+	ApplicationPath = IPlatform::Get()->GetExecutablePath();
+
 	// Create Virtual Filesystem handler
 	if(IsEditor()) {
 		IPlatform::Get()->AddLocalPath("Editor", IPath(IPlatform::Get()->GetExecutablePath()).StepBack());

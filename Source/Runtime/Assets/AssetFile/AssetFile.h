@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <string>
+#include <Platform/Platform.h>
 
 #include "../Artifact/Artifact.h"
 
@@ -43,13 +44,16 @@ struct AssetFileBody
 class AssetFile
 {
     Artifact artifact;
-    std::string path;
+    IPath path;
 public:
-    AssetFile(std::string filePath);
+    AssetFile() {}
+    AssetFile(IPath filePath) : path(filePath) {}
 
-    AssetFile operator<<(const Artifact& input);
-    AssetFile operator>>(Artifact& input);
+    AssetFile& operator<<(const Artifact& input);
+    AssetFile& operator>>(Artifact& input);
 
-    void WriteToDevice();
-    void ReadFromDevice();
+#ifdef EDITOR
+    void WriteToDevice(IFile* file = nullptr);
+#endif
+    void ReadFromDevice(IFile* file = nullptr);
 };

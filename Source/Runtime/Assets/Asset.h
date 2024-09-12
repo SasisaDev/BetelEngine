@@ -5,7 +5,12 @@
 
 class Asset
 {
+    friend class AssetFactory;
+    friend class AssetLibrary;
+
+    std::string name;
     std::string path;
+    std::string className;
 public:
 
     virtual Artifact Serialize() {return {};}

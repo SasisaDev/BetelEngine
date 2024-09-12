@@ -13,6 +13,7 @@ enum class ArtifactType : uint8_t
     String,
     Artifact,
     Text,
+    Byte,
     Custom,
 };
 
@@ -33,6 +34,7 @@ public:
     void AddArtifact(std::string key, const Artifact& value);
 
     void AddBool(std::string key, bool value);
+    void AddByte(std::string key, unsigned char byte);
     void AddInt32(std::string key, int32_t value);
     void AddUInt32(std::string key, uint32_t value);
     void AddString(std::string key, std::string value);
