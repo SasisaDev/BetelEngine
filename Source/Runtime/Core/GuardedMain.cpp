@@ -12,6 +12,7 @@
 // TODO: Remove test boilerplate
 #include <GameFramework/Entities/Test/TestEntity.h>
 #include <UI/Widget.h>
+#include <Assets/AssetFile/AssetFile.h>
 
 int GuardedMain(int argc, char* argv[])
 {
@@ -75,6 +76,9 @@ int GuardedMain(int argc, char* argv[])
 	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());
 
 	IDirectory* directory = IPlatform::Get()->OpenDirectory("./Content", DIRECTORY_FLAG_RECURSIVE);
+
+	AssetFile assetFile("Editor/Content/AssetFile");
+	assetFile.ReadFromDevice();
 
 	app.ApplicationLoop();
 

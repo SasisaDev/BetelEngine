@@ -32,10 +32,24 @@ void Window::Update(const SDL_WindowEvent& event)
 	{
         case SDL_WINDOWEVENT_CLOSE:
             bShouldClose = true;
-		case SDL_WINDOWEVENT_RESIZED:
+			break;
+		case SDL_WINDOWEVENT_SIZE_CHANGED:
             if(!bShouldClose) {
+				width = event.data1;
+				height = event.data2;
 			    OnWindowEvent.Broadcast(this, new WindowEventPayloadResize(event.data1, event.data2));
+				SDL_FlushEvent(SDL_WINDOWEVENT_SIZE_CHANGED);
             }
 			break;
+		case SDL_WINDOWEVENT_MINIMIZED:
+			if(!bShouldClose) {
+			    OnWindowEvent.Broadcast(this, new WindowEventPayload(WINDOW_EVENT_HIDDEN));
+            }
+			break;
+		/*case SDL_WINDOWEVENT_EXPOSED:
+			if(!bShouldClose) {
+			    OnWindowEvent.Broadcast(this, new WindowEventPayloadResize(width, height));
+            }
+			break;*/
 	}
 }

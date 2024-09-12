@@ -23,8 +23,8 @@ struct AssetFileHeader
     uint16_t uMagic = 0xBE7E;
     uint16_t uVersion = 1;
     uint16_t uFactoryVersion;
-    uint16_t uClassNameLength;
-    char* pClassName;
+    uint16_t uTypeNameLength;
+    char* pTypeName;
 };
 
 struct AssetFileVariable
@@ -38,11 +38,15 @@ struct AssetFileVariable
 
 struct AssetFileBody
 {
-    uint16_t u;
+    uint16_t uVariableCount;
+    AssetFileVariable* pVariables;
 };
 
 class AssetFile
 {
+    AssetFileHeader header;
+    AssetFileBody body;
+
     Artifact artifact;
     std::string assetTypeName;
     IPath path;

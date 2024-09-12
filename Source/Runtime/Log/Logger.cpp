@@ -63,7 +63,19 @@ void Logger::Error(const char* Namespace, const char* message)
 
 void Logger::ErrorFormat(const char* Namespace, const char* message, ...)
 {
-	OnLogMessage.Broadcast("Error", Namespace, message);
+	va_list varg_ptr;
+	va_start(varg_ptr, message);
+
+	const unsigned int bufferSize = vsnprintf(NULL, 0, message, varg_ptr) + 1;
+	char* buffer = new char[bufferSize];
+
+	vsprintf(buffer, message, varg_ptr);
+
+	OnLogMessage.Broadcast("Error", Namespace, buffer);
+
+	InternalLog(Namespace, buffer);
+
+	va_end(varg_ptr);
 }
 
 void Logger::Fatal(const char* Namespace, const char* message)

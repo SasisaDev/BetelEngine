@@ -6,10 +6,12 @@ enum WindowEventType
     WINDOW_EVENT_RESIZE,
     WINDOW_EVENT_MINIMIZE,
     WINDOW_EVENT_MAXIMIZE,
+    WINDOW_EVENT_HIDDEN,
+    WINDOW_EVENT_EXPOSED,
     WINDOW_EVENT_FULLSCREEN
 };
 
-class WindowEventPayload {public: WindowEventType type; };
+class WindowEventPayload {public: WindowEventType type; WindowEventPayload(){} WindowEventPayload(WindowEventType ntype){type = ntype;}};
 
 class WindowEventPayloadResize : public WindowEventPayload {
 public:

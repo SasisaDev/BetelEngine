@@ -13,6 +13,14 @@ enum EFileAccessFlags : uint8_t
 	FILE_ACCESS_FLAG_ATE = (1 << 3)
 };
 
+enum EFileSeekFlags : uint8_t
+{
+	FILE_SEEK_FLAG_EOF,
+	FILE_SEEK_FLAG_CUR,
+	FILE_SEEK_FLAG_BEG
+};
+
+
 class IFile
 {
 	std::fstream file;
@@ -23,6 +31,9 @@ public:
 
 	virtual bool IsOpen() const {return file.is_open();}
 
+	virtual size_t Position() {return file.tellg();}
+	virtual void Seek(size_t offset, uint8_t seekOrigin);
+	virtual const char* Peek(size_t count);
 	virtual const char* Fetch(size_t count);
 	virtual std::string FetchAll();
 

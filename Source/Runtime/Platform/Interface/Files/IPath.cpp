@@ -11,6 +11,8 @@ IPath::IPath(const std::string& path)
     } else if(path.size() > 1 && path[1] == ':') {
         disc = path[0];
         offset = 3;
+    } else {
+        isRelative = true;
     }
 
     std::string member;

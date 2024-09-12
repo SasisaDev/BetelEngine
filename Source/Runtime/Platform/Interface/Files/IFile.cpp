@@ -30,9 +30,29 @@ IFile::~IFile()
     file.close();
 }
 
+void IFile::Seek(size_t offset, uint8_t seekOrigin)
+{
+    file.seekg(offset, ((seekOrigin == FILE_SEEK_FLAG_BEG) ? std::ios::beg : 
+                       ((seekOrigin == FILE_SEEK_FLAG_EOF) ? std::ios::end :
+                         std::ios::cur)) );
+}
+
+const char* IFile::Peek(size_t count)
+{
+    char* buffer = new char[count];
+    
+    size_t oldCursor = file.tellg();
+    file.read(buffer, count);
+
+    file.seekg(oldCursor, std::ios::beg);
+    return buffer;
+}
+
 const char* IFile::Fetch(size_t count)
 {
-    return nullptr;
+    char* buffer = new char[count];
+    file.read(buffer, count);
+    return buffer;
 }
 
 std::string IFile::FetchAll()

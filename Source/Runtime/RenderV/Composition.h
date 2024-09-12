@@ -49,6 +49,8 @@ class IRenderComposition
     friend class RenderCompositionInitializerImage;
     friend class RenderCompositionInitializerSurface;
 protected:
+    bool bPauseRender = false;
+
     VkSwapchainKHR swapchain = VK_NULL_HANDLE;
     std::vector<VkImage> images;
     std::vector<VkImageView> imageViews;
@@ -76,6 +78,9 @@ public:
     inline VkSemaphore GetAquireSemaphore() const {return aquireSemaphores[targetImageId];}
 
     inline size_t GetFramesInFlight() const {return 2;}
+
+    void Pause() {bPauseRender = true;}
+    void Unpause() {bPauseRender = false;}
 
     bool Initialize(IRenderCompositionInitializer* initializer);
     

@@ -224,6 +224,8 @@ bool IRenderComposition::Recreate(IRenderCompositionInitializer* initializer)
         layerRef->Recreate();
     }
 
+    bPauseRender = false;
+
     return true;
 }
 
@@ -247,9 +249,13 @@ std::pair<uint32_t, uint32_t> IRenderComposition::AddLayerRefs(std::vector<IRend
 
 void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 {
+    if(bPauseRender) {
+        return;
+    }
+
     if(compositionType == ERenderCompositionType::RENDER_COMPOSITION_TYPE_SURFACE)
     {
-        vkAcquireNextImageKHR(IRenderUtility::GetDevice(), swapchain, UINT64_MAX, GetAquireSemaphore(), VK_NULL_HANDLE, &targetImageId);
+        vkAcquireNextImageKHR(IRenderUtility::GetDevice(), swapchain, 1, GetAquireSemaphore(), VK_NULL_HANDLE, &targetImageId);
     }
 
     IRenderLayerRef* previousLayer = nullptr;
