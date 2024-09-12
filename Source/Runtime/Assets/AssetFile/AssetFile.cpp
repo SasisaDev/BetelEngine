@@ -7,16 +7,16 @@ AssetFile& AssetFile::operator<<(const Artifact& input)
     return *this;
 }
 
-AssetFile& AssetFile::operator>>(Artifact& input)
+AssetFile& AssetFile::operator>>(Artifact& output)
 {
-    input = artifact;
+    output = artifact;
     return *this;
 }
 
 void AssetFile::WriteToDevice(IFile* file)
 {
     if(file == nullptr) {
-        file = IPlatform::Get()->OpenLocalFile(path, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY);
+        file = IPlatform::Get()->OpenLocalFile(path, FILE_ACCESS_FLAG_WRITE | FILE_ACCESS_FLAG_BINARY);
     }
 
 
@@ -24,5 +24,7 @@ void AssetFile::WriteToDevice(IFile* file)
 
 void AssetFile::ReadFromDevice(IFile* file)
 {
-
+    if(file == nullptr) {
+        file = IPlatform::Get()->OpenLocalFile(path, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY);
+    }
 }

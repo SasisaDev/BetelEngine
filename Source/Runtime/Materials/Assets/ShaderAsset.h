@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <Assets/Asset.h>
+#include <Assets/AssetLibrary.h>
 #include <RenderV/Render.h>
 
 class ShaderAsset : public Asset
@@ -15,4 +15,11 @@ public:
     bool SampleShadingEnable = false;
     bool BlendEnable = true;
     
+};
+
+class ShaderAssetType : public AssetType
+{
+    static bool bIsRegistered;
+public:
+    virtual Asset* CreateInstance() override {return new ShaderAsset;}
 };

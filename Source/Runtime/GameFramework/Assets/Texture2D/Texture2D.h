@@ -2,7 +2,7 @@
 
 #include <Assets/Asset.h>
 
-class Texture2D : public Asset
+class Texture2DAsset : public Asset
 {
 
 };

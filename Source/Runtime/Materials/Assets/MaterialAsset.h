@@ -12,3 +12,10 @@ protected:
     AssetPtr<ShaderAsset> Shader;
 public:
 };
+
+class MaterialAssetType : public AssetType
+{
+    static bool bIsRegistered;
+public:
+    virtual Asset* CreateInstance() override {return new ShaderAsset;}
+};

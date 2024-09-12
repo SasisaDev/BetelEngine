@@ -8,6 +8,7 @@ class AssetPtr
     AssetTypeT* assetPtr;
     std::string path;
 public:
+    AssetPtr(){}
     AssetPtr(std::string defaultPath);
 
     AssetTypeT* Load() 

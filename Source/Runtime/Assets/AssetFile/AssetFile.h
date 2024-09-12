@@ -44,13 +44,16 @@ struct AssetFileBody
 class AssetFile
 {
     Artifact artifact;
+    std::string assetTypeName;
     IPath path;
 public:
     AssetFile() {}
     AssetFile(IPath filePath) : path(filePath) {}
 
+    inline std::string GetAssetTypeName() const {return assetTypeName;}
+
     AssetFile& operator<<(const Artifact& input);
-    AssetFile& operator>>(Artifact& input);
+    AssetFile& operator>>(Artifact& output);
 
 #ifdef EDITOR
     void WriteToDevice(IFile* file = nullptr);

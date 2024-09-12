@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include "WidgetBrush.h"
 #include <Math/Vector.h>
 
 class Widget;
@@ -44,6 +45,7 @@ public:
     virtual void UpdateTransform();
 
     virtual void SetParent(Widget* widget) {parent = widget;}
+    virtual Widget* GetParent() const {return parent;}
     
     virtual void Tick(float deltaTime);
 
@@ -52,10 +54,15 @@ public:
     virtual Widget* SetStretch(WidgetSlotStretchFlags flags) {stretch = flags; return this;}
 
     virtual Widget* AddChild(std::shared_ptr<Widget> child) {
+        child->GetParent()->RemoveChild(child.get());
         child->SetParent(this);
         children.push_back(child);
         return this;
     }
 
-    virtual void Render();
+    virtual void RemoveChild(Widget* widget) {
+        // TODO
+    }
+
+    virtual void Render(VkCommandBuffer cmdBuffer){}
 };
