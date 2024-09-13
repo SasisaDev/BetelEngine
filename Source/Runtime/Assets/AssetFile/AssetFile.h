@@ -15,7 +15,9 @@ enum class EAssetVarType : uint16_t
     String = 2,
     Text = 3,
     Struct = 4,
-    Custom = 5
+    Custom = 5,
+    // Used to check top bound when parsing 
+    LAST
 };
 
 struct AssetFileHeader
@@ -31,7 +33,7 @@ struct AssetFileHeader
 
 struct AssetFileVariable
 {
-    EAssetVarType uVariableType;
+    uint16_t uVariableType;
     uint16_t uVariableNameLength;
     char* pVariableName;
     uint32_t uVariableDataLength;

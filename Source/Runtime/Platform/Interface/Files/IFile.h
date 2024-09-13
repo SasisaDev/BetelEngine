@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <fstream>
 #include <vector>
+#include <Delegate/Delegate.h>
 
 enum EFileAccessFlags : uint8_t
 {
