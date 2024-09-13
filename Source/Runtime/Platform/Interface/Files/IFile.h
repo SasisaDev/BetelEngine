@@ -33,8 +33,8 @@ public:
 
 	virtual size_t Position() {return file.tellg();}
 	virtual void Seek(size_t offset, uint8_t seekOrigin);
-	virtual const char* Peek(size_t count);
-	virtual const char* Fetch(size_t count);
+	virtual char* Peek(size_t count);
+	virtual char* Fetch(size_t count);
 	virtual std::string FetchAll();
 
 	virtual std::vector<char> FetchAllBinary();

@@ -6,6 +6,8 @@
 
 #include "../Artifact/Artifact.h"
 
+#define BETEL_ASSET_FILE_VERSION 1
+
 enum class EAssetVarType : uint16_t
 {
     Int = 0,
@@ -21,7 +23,7 @@ struct AssetFileHeader
     // Betel Asset File
     unsigned char pSignature[3] = {'B', 'A', 'F'};
     uint16_t uMagic = 0xBE7E;
-    uint16_t uVersion = 1;
+    uint16_t uVersion = BETEL_ASSET_FILE_VERSION;
     uint16_t uFactoryVersion;
     uint16_t uTypeNameLength;
     char* pTypeName;
@@ -49,10 +51,10 @@ class AssetFile
 
     Artifact artifact;
     std::string assetTypeName;
-    IPath path;
+    std::string path;
 public:
     AssetFile() {}
-    AssetFile(IPath filePath) : path(filePath) {}
+    AssetFile(std::string filePath) : path(filePath) {}
 
     inline std::string GetAssetTypeName() const {return assetTypeName;}
 

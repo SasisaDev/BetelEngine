@@ -37,7 +37,7 @@ void IFile::Seek(size_t offset, uint8_t seekOrigin)
                          std::ios::cur)) );
 }
 
-const char* IFile::Peek(size_t count)
+char* IFile::Peek(size_t count)
 {
     char* buffer = new char[count];
     
@@ -48,7 +48,7 @@ const char* IFile::Peek(size_t count)
     return buffer;
 }
 
-const char* IFile::Fetch(size_t count)
+char* IFile::Fetch(size_t count)
 {
     char* buffer = new char[count];
     file.read(buffer, count);
