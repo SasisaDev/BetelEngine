@@ -3,11 +3,12 @@
 #include <memory>
 
 #include <World/Entity.h>
-#include <RenderV/Objects/Shader.h>
+#include <RenderV/Objects/Material.h>
 
 class EntityRenderProxyTest : public EntityRenderProxy
 {
     std::shared_ptr<IShader> shader;
+    std::shared_ptr<IMaterial> material;
     Entity* Parent;
 public:
     EntityRenderProxyTest(Entity* DefaultParent);

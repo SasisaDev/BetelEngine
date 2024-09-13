@@ -19,6 +19,7 @@ public:
 
     inline VkBuffer GetBufferObject() const { return buffer; }
     inline VkDeviceMemory GetDeviceMemoryObject() const { return bufferMemory; }
+    inline size_t GetSize() const {return bufferSize;}
 
     void Write(void* newData);
     void* Read();

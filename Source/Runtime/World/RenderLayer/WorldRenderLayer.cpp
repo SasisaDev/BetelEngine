@@ -4,6 +4,7 @@
 #include <Log/Logger.h>
 #include <RenderV/Utility.h>
 #include <World/World.h>
+#include <glm/ext.hpp>
 
 #include <RenderV/Composition.h>
 
@@ -184,7 +185,7 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
     SceneDataStorages.resize(GetParentComposition()->GetFramesInFlight());
     for(const WorldRenderLayerGPUStorage& storage : SceneDataStorages)
     {
-        SceneDataSSBOs.push_back(new Buffer(sizeof(WorldRenderLayerGPUStorage), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT));
+        SceneDataSSBOs.push_back(new Buffer(sizeof(WorldRenderLayerGPUStorage), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
     }
 
     return true;
@@ -430,8 +431,12 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
     }
 
     // TODO: Update GPU data
-
     const size_t imageID = ref->GetParentComposition()->GetCurrentImageIndex();
+
+    if(World* world = ref->GetWorld()) {
+        ref->SceneDataStorages[imageID].ProjectionMatrix = glm::ortho(0.0f, static_cast<float>(ref->viewport.width), 0.0f, static_cast<float>(ref->viewport.height), -100.f, 100.0f);;
+        ref->SceneDataStorages[imageID].ViewMatrix = glm::mat4(1);
+    }
     
     /*for(int i = 0; i < ref->SceneDataSSBOs.size(); ++i)
     {
