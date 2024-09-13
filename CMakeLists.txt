@@ -66,7 +66,7 @@ endif()
 
 add_executable(Game ${Sources})
 
-target_link_libraries(Game Vulkan-Headers SDL2 glm-header-only)
+target_link_libraries(Game Vulkan-Headers SDL2::SDL2-static glm-header-only)
 
 target_include_directories(Game PRIVATE "Source/Runtime")
 
@@ -81,7 +81,7 @@ set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} "Source/Editor/Asset
 
 add_executable(Editor ${Sources} ${EditorSources})
 
-target_link_libraries(Editor Vulkan-Headers SDL2 glm-header-only)
+target_link_libraries(Editor Vulkan-Headers SDL2::SDL2 glm-header-only)
 
 target_include_directories(Editor PRIVATE "Source/Runtime" "Source/Editor")
 
