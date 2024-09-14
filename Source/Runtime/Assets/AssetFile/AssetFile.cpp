@@ -69,6 +69,8 @@ void AssetFile::ReadFromDevice(IFile* _file)
     header.uTypeNameLength = *reinterpret_cast<uint16_t*>(buffer);
     header.pTypeName = file->Fetch(header.uTypeNameLength);
 
+    assetTypeName = std::string(header.pTypeName);
+
     // Body start
     CHECKREAD(2);
     body.uVariableCount = *reinterpret_cast<uint16_t*>(buffer);

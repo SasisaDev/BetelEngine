@@ -17,5 +17,7 @@ class MaterialAssetType : public AssetType
 {
     static bool bIsRegistered;
 public:
+    inline virtual std::string GetName() const override {return "Material";}
+
     virtual Asset* CreateInstance() override {return new ShaderAsset;}
 };

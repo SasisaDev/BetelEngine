@@ -21,7 +21,7 @@ class AssetType
 {
     static bool bIsRegistered;
 public:
-    std::string TypeName;
+    inline virtual std::string GetName() const {return "Asset";}
 
     virtual Asset* CreateInstance(){return new Asset;}
 };

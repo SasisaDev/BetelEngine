@@ -77,8 +77,10 @@ int GuardedMain(int argc, char* argv[])
 
 	IDirectory* directory = IPlatform::Get()->OpenDirectory("./Content", DIRECTORY_FLAG_RECURSIVE);
 
-	AssetFile assetFile("Editor/Content/AssetFile");
-	assetFile.ReadFromDevice();
+	/*AssetFile assetFile("Editor/Content/AssetFile");
+	assetFile.ReadFromDevice();*/
+
+	AssetLibrary::Get().LoadAsset("Editor/Content/Shaders/WidgetBrushDefault");
 
 	app.ApplicationLoop();
 

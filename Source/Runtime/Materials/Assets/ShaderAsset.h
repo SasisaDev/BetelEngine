@@ -21,5 +21,7 @@ class ShaderAssetType : public AssetType
 {
     static bool bIsRegistered;
 public:
+    inline virtual std::string GetName() const override {return "Shader";}
+
     virtual Asset* CreateInstance() override {return new ShaderAsset;}
 };

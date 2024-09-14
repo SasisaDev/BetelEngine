@@ -15,7 +15,7 @@ Asset* AssetLibrary::LoadAsset(std::string Path)
         return asset;
     }
 
-    AssetDescriptor* knownDescriptor;
+    AssetDescriptor* knownDescriptor = nullptr;
 
     for(auto desc : AssetList) {
         if(desc.Path == Path) {
@@ -23,10 +23,8 @@ Asset* AssetLibrary::LoadAsset(std::string Path)
         }
     }
 
-    IFile* deviceFile = IPlatform::Get()->OpenLocalFile(Path, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY);
-
-    AssetFile assetFile;
-    assetFile.ReadFromDevice(deviceFile);
+    AssetFile assetFile(Path);
+    assetFile.ReadFromDevice();
 
     Artifact assetArtifact;
     assetFile >> assetArtifact;
@@ -38,7 +36,7 @@ Asset* AssetLibrary::LoadAsset(std::string Path)
         assetType = knownDescriptor->Type;
     } else {
         for(AssetType* type : RegisteredAssetTypes) {
-            if(type->TypeName == assetTypeName) {
+            if(type->GetName() == assetTypeName) {
                 assetType = type;
                 break;
             }
@@ -47,9 +45,14 @@ Asset* AssetLibrary::LoadAsset(std::string Path)
 
     if(assetType == nullptr) {
         LOGF(Error, LogAsset, "Failed loading asset \"%s\". Type \"%s\" is unknown.", Path.c_str(), assetTypeName.c_str());
+        return nullptr;
     }
 
+    // TODO: Asset Data
     Asset* asset = assetType->CreateInstance();
+    asset->path = Path;
+    asset->className = assetTypeName;
+    asset->name = "";
     asset->Deserialize(assetArtifact);
 
     if(knownDescriptor) {
