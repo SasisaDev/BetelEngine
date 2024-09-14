@@ -19,9 +19,18 @@ enum class ArtifactType : uint8_t
 
 class ArtifactElement
 {
+public:
     ArtifactType type;
 
     ArtifactElement(ArtifactType nType) : type(nType) {}
+};
+
+class StringArtifactElement : public ArtifactElement
+{
+public:
+    std::string data;
+
+    StringArtifactElement(std::string string) : ArtifactElement(ArtifactType::String), data(string) {}
 };
 
 class Artifact
@@ -37,7 +46,7 @@ public:
     void AddByte(std::string key, unsigned char byte);
     void AddInt32(std::string key, int32_t value);
     void AddUInt32(std::string key, uint32_t value);
-    void AddString(std::string key, std::string value);
+    void AddString(std::string key, std::string value) {dataBank.insert_or_assign(key, new StringArtifactElement(value));}
     void AddCustom(std::string key, size_t size, void* data);
     void AddText(std::string key, Text value);
 };

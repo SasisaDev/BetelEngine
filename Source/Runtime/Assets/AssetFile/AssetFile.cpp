@@ -10,6 +10,17 @@ AssetFile& AssetFile::operator<<(const Artifact& input)
 
 AssetFile& AssetFile::operator>>(Artifact& output)
 {
+    for(uint16_t i = 0; i < body.uVariableCount; ++i) {
+        switch((EAssetVarType)body.pVariables[i].uVariableType) {
+            case EAssetVarType::String:
+                std::string string;
+                //string.resize(body.pVariables[i].uVariableDataLength);
+                string.append(reinterpret_cast<const char*>(body.pVariables[i].pVariableData), body.pVariables[i].uVariableDataLength);
+                artifact.AddString(body.pVariables[i].pVariableName, string);
+                break;
+        }
+    }
+
     output = artifact;
     return *this;
 }
