@@ -9,4 +9,6 @@ void ShaderAsset::Deserialize(Artifact& data)
     }
     VertexShaderPath = data.GetString("VertexShaderPath");
     FragmentShaderPath = data.GetString("FragmentShaderPath");
+
+    BlendEnable = data.GetBoolOrDefault("BlendEnable", true);
 }

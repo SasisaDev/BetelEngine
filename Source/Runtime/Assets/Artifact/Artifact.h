@@ -50,7 +50,7 @@ public:
 
     void AddArtifact(std::string key, const Artifact& value);
 
-    void AddBool(std::string key, bool value);
+    void AddBool(std::string key, bool value) {dataBank.insert_or_assign(key, new BoolArtifactElement(value));}
     void AddByte(std::string key, unsigned char byte);
     void AddInt32(std::string key, int32_t value);
     void AddUInt32(std::string key, uint32_t value);
@@ -62,5 +62,8 @@ public:
 
     // TODO: Make it better
     std::string GetString(std::string key) {return ((StringArtifactElement*)dataBank[key])->data;}
+    std::string GetStringOrDefault(std::string key, std::string def) {return Has(key) ? ((StringArtifactElement*)dataBank[key])->data : def;}
+
     bool GetBool(std::string key) {return ((BoolArtifactElement*)dataBank[key])->data;}
+    bool GetBoolOrDefault(std::string key, bool def) {return Has(key) ? ((BoolArtifactElement*)dataBank[key])->data : def;}
 };

@@ -13,10 +13,10 @@ AssetFile& AssetFile::operator>>(Artifact& output)
     for(uint16_t i = 0; i < body.uVariableCount; ++i) {
         switch((EAssetVarType)body.pVariables[i].uVariableType) {
             case EAssetVarType::String:
-                std::string string;
-                //string.resize(body.pVariables[i].uVariableDataLength);
-                string.append(reinterpret_cast<const char*>(body.pVariables[i].pVariableData), body.pVariables[i].uVariableDataLength);
-                artifact.AddString(body.pVariables[i].pVariableName, string);
+                artifact.AddString(body.pVariables[i].pVariableName, reinterpret_cast<const char*>(body.pVariables[i].pVariableData));
+                break;
+            case EAssetVarType::Bool:
+                artifact.AddBool(body.pVariables[i].pVariableName, *reinterpret_cast<bool*>(body.pVariables[i].pVariableData));
                 break;
         }
     }
@@ -101,6 +101,7 @@ void AssetFile::ReadFromDevice(IFile* _file)
         CHECKREAD(2);
         variable.uVariableNameLength = *reinterpret_cast<uint16_t*>(buffer);
         if(variable.uVariableNameLength < 2) {
+            ignored = true;
             LOGF(Error, LogAsset, "Error while reading asset file \"%s\". Impossible name. Will be ignored.", path.c_str(), variable.uVariableType);
         }
 
