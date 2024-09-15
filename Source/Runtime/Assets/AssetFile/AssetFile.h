@@ -14,8 +14,9 @@ enum class EAssetVarType : uint16_t
     Byte = 1,
     String = 2,
     Text = 3,
-    Struct = 4,
-    Custom = 5,
+    Bool = 4,
+    Struct = 5,
+    Custom = 6,
     // Used to check top bound when parsing 
     LAST
 };

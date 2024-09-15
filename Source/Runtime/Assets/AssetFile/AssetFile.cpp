@@ -116,6 +116,9 @@ void AssetFile::ReadFromDevice(IFile* _file)
             case EAssetVarType::Byte:
                 variable.uVariableDataLength = 1;
                 break;
+            case EAssetVarType::Bool:
+                variable.uVariableDataLength = 1;
+                break;
             default:
                 // If data length can't be deduced from type, next 4 bytes will specify it
                 CHECKREAD(4);

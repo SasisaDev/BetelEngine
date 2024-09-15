@@ -14,7 +14,7 @@ class Asset
 public:
 
     virtual Artifact Serialize() {return {};}
-    virtual void Deserialize(const Artifact& artifact) {}
+    virtual void Deserialize(Artifact& artifact) {}
 };
 
 class AssetType

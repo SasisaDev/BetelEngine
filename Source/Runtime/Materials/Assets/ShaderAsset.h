@@ -12,9 +12,11 @@ protected:
     
 public:
     std::string ShaderLayerType = "WorldRenderLayer";
+    std::string VertexShaderPath, FragmentShaderPath;
     bool SampleShadingEnable = false;
     bool BlendEnable = true;
     
+    virtual void Deserialize(Artifact& data) override;
 };
 
 class ShaderAssetType : public AssetType

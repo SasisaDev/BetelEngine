@@ -33,6 +33,14 @@ public:
     StringArtifactElement(std::string string) : ArtifactElement(ArtifactType::String), data(string) {}
 };
 
+class BoolArtifactElement : public ArtifactElement
+{
+public:
+    bool data;
+
+    BoolArtifactElement(bool b) : ArtifactElement(ArtifactType::Bool), data(b) {}
+};
+
 class Artifact
 {
 protected:
@@ -49,4 +57,10 @@ public:
     void AddString(std::string key, std::string value) {dataBank.insert_or_assign(key, new StringArtifactElement(value));}
     void AddCustom(std::string key, size_t size, void* data);
     void AddText(std::string key, Text value);
+
+    bool Has(std::string key) const {return dataBank.contains(key);}
+
+    // TODO: Make it better
+    std::string GetString(std::string key) {return ((StringArtifactElement*)dataBank[key])->data;}
+    bool GetBool(std::string key) {return ((BoolArtifactElement*)dataBank[key])->data;}
 };
