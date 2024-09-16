@@ -42,18 +42,18 @@ protected:
     Widget* parent;
 public:
 
-    virtual void UpdateTransform();
+    virtual void UpdateTransform() {}
 
     virtual void SetParent(Widget* widget) {parent = widget;}
     virtual Widget* GetParent() const {return parent;}
     
-    virtual void Tick(float deltaTime);
+    virtual void Tick(float deltaTime){}
 
     virtual Widget* SetTransform(WidgetSlotTransform slotTransform) {transform = slotTransform; return this;}
     virtual Widget* SetAlign(WidgetSlotAlignFlags flags) {align = flags; return this;}
     virtual Widget* SetStretch(WidgetSlotStretchFlags flags) {stretch = flags; return this;}
 
-    virtual Widget* AddChild(std::shared_ptr<Widget> child) {
+    virtual Widget* AddChild(std::shared_ptr<Widget>&& child) {
         child->GetParent()->RemoveChild(child.get());
         child->SetParent(this);
         children.push_back(child);

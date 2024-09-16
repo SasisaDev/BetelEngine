@@ -4,11 +4,9 @@ bool ShaderAssetType::bIsRegistered = AssetLibrary::RegisterAssetType<ShaderAsse
 
 void ShaderAsset::Deserialize(Artifact& data)
 {
-    if(!data.Has("VertexShaderPath") || !data.Has("VertexShaderPath")) {
-        return;
-    }
-    VertexShaderPath = data.GetString("VertexShaderPath");
-    FragmentShaderPath = data.GetString("FragmentShaderPath");
+    VertexShaderPath = data.GetStringOrDefault("VertexShaderPath");
+    FragmentShaderPath = data.GetStringOrDefault("FragmentShaderPath");
 
     BlendEnable = data.GetBoolOrDefault("BlendEnable", true);
+    SampleShadingEnable = data.GetBoolOrDefault("SampleShadingEnable", false);
 }

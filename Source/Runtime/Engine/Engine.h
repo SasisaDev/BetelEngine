@@ -17,9 +17,9 @@ protected:
 
     World* world;
 
-    Widget* canvasWidget;
+    std::shared_ptr<Widget> canvasWidget;
 #	ifdef EDITOR
-    Widget* edCanvasWidget;
+    std::shared_ptr<Widget> edCanvasWidget;
 #   endif
 public:
     Engine();
@@ -36,11 +36,11 @@ public:
 #pragma endregion "World API"
 
 #pragma region "UI API"
-    void SetCanvasWidget(Widget* newCanvasWidget) {canvasWidget = newCanvasWidget;}
-    inline Widget* GetCanvasWidget() const {return canvasWidget;}
+    void SetCanvasWidget(std::shared_ptr<Widget> newCanvasWidget) {canvasWidget = newCanvasWidget;}
+    inline Widget* GetCanvasWidget() const {return canvasWidget.get();}
 #	ifdef EDITOR
-    void SetEditorCanvasWidget(Widget* newCanvasWidget) {edCanvasWidget = newCanvasWidget;}
-    inline Widget* GetEditorCanvasWidget() const {return edCanvasWidget;}
+    void SetEditorCanvasWidget(std::shared_ptr<Widget> newCanvasWidget) {edCanvasWidget = newCanvasWidget;}
+    inline Widget* GetEditorCanvasWidget() const {return edCanvasWidget.get();}
 #   endif
 #pragma endregion "UI API"
 
