@@ -11,6 +11,7 @@
 Application* GApplication = nullptr;
 
 #if !defined(NDEBUG)
+
 VkBool32 __stdcall DebugMessageCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT           messageSeverity,
     VkDebugUtilsMessageTypeFlagsEXT                  messageTypes,
