@@ -30,6 +30,9 @@ jobs:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
+          - os: windows-10
+            c_compiler: cl
+            cpp_compiler: cl
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
@@ -44,6 +47,8 @@ jobs:
             cpp_compiler: clang++
         exclude:
           - os: windows-latest
+            c_compiler: gcc
+          - os: windows-10
             c_compiler: gcc
           - os: windows-latest
             c_compiler: clang
