@@ -70,10 +70,6 @@ void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef,
 {
     UIRenderLayerRef* uiRef = (UIRenderLayerRef*)layerRef;
     uint32_t CurrentFrame = layerRef->GetParentComposition()->GetCurrentImageIndex(); 
-    if(uiRef->widget)
-    {
-        // TODO: wrap all render logic in here 
-    }
 
     IRenderUtility::BeginDebugLabel(cmdBuffer, "User Interface", 0.35, 0.35, 0.85);
 
@@ -87,6 +83,34 @@ void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef,
     passInfo.renderArea.extent = layerRef->GetParentComposition()->GetExtent();
 
     vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+
+    // TODO: Make recursive children tree rendering
+    if(Widget* canvas = uiRef->widget)
+    {
+        VkViewport viewport;
+        viewport.x = 0;
+        viewport.y = 0;
+        viewport.width = canvas->GetExtent().x;
+        viewport.height = canvas->GetExtent().y;
+        //viewport.width = layerRef->GetParentComposition()->GetExtent().width;
+        //viewport.height = layerRef->GetParentComposition()->GetExtent().height;
+        viewport.minDepth = 0;
+        viewport.maxDepth = 1;
+
+        VkRect2D scissors;
+        VkExtent2D extent = {static_cast<uint32_t>(canvas->GetExtent().x), static_cast<uint32_t>(canvas->GetExtent().y)};
+        scissors.offset = {0, 0};
+        scissors.extent = extent;
+
+        vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+        vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
+
+        Widget* renderTargetWidget = uiRef->widget;
+        renderTargetWidget->Render(cmdBuffer);
+        for(std::shared_ptr<Widget>& children : renderTargetWidget->children) {
+            children->Render(cmdBuffer);
+        } 
+    }
 
     vkCmdEndRenderPass(cmdBuffer);
 

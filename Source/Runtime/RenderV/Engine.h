@@ -62,6 +62,15 @@ public:
     template <typename LayerType>
     uint32_t CreateLayer();
     IRenderLayer* GetLayer(uint32_t id);
+    template <typename LayerType>
+    IRenderLayer* GetLayerTyped() {
+        for(IRenderLayer* layer : Layers) {
+            if(layer->GetName() == LayerType::GetStaticName()) {
+                return layer;
+            }
+        }
+        return nullptr;
+    }
     std::vector<IRenderLayer*> GetLayers() const {return Layers;}
 
     uint32_t CreateComposition(IRenderCompositionInitializer* initializer);

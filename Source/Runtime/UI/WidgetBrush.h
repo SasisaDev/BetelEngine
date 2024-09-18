@@ -9,12 +9,12 @@
  * Set of data for graphical elements
  */
 struct WidgetBrush {
-    AssetPtr<MaterialAsset> material;
+    AssetPtr<ShaderAsset> shader;
     AssetPtr<Texture2DAsset> texture;
     Color color;
 
     WidgetBrush()
-    : material("Editor/Content/Default/Widgets/WidgetMaterial"),
+    : shader("Editor/Content/Default/Widgets/WidgetShader"),
       texture("Editor/Content/Default/Widgets/WidgetDefaultTexture"),
       color(1, 1, 1, 1) 
     {}

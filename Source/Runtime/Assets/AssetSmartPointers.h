@@ -9,7 +9,7 @@ class AssetPtr
     std::string path;
 public:
     AssetPtr(){}
-    AssetPtr(std::string defaultPath);
+    AssetPtr(std::string defaultPath) : path(defaultPath){}
 
     AssetTypeT* Load() 
     {
@@ -19,10 +19,7 @@ public:
 
         AssetLibrary& lib = AssetLibrary::Get();
         
-        assetPtr = dynamic_cast<AssetTypeT*>(lib.GetAsset(path));
-        if(assetPtr == nullptr) {
-            assetPtr = lib.LoadAsset(path);
-        }
+        assetPtr = dynamic_cast<AssetTypeT*>(lib.LoadAsset(path));
 
         return assetPtr;
     }

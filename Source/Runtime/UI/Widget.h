@@ -23,7 +23,7 @@ enum WidgetSlotStretchFlags {
 struct WidgetSlotTransform {
     float x, y;
     float offsetX, offsetY;
-    float z;
+    float z = 0;
 };
 
 class Widget
@@ -42,7 +42,7 @@ protected:
     Widget* parent;
 public:
 
-    virtual void UpdateTransform() {}
+    virtual void RecalculateChildrenTransforms() {}
 
     virtual void SetParent(Widget* widget) {parent = widget;}
     virtual Widget* GetParent() const {return parent;}
@@ -54,7 +54,9 @@ public:
     virtual Widget* SetStretch(WidgetSlotStretchFlags flags) {stretch = flags; return this;}
 
     virtual Widget* AddChild(std::shared_ptr<Widget>&& child) {
-        child->GetParent()->RemoveChild(child.get());
+        if(child->GetParent()) {
+            child->GetParent()->RemoveChild(child.get());
+        }
         child->SetParent(this);
         children.push_back(child);
         return this;
@@ -64,5 +66,8 @@ public:
         // TODO
     }
 
+    virtual Vec2 GetExtent(){return {1280, 720};}
+
+    virtual void CreateResources(){}
     virtual void Render(VkCommandBuffer cmdBuffer){}
 };

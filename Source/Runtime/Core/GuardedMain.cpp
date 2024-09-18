@@ -13,6 +13,7 @@
 #include <GameFramework/Entities/Test/TestEntity.h>
 #include <UI/Widget.h>
 #include <Assets/AssetFile/AssetFile.h>
+#include <UI/Widgets/Panel/Panel.h>
 
 int GuardedMain(int argc, char* argv[])
 {
@@ -75,12 +76,14 @@ int GuardedMain(int argc, char* argv[])
 	app.GetEngine()->GetWorld()->SetBackgroundColor(Vec3(0.75, 0.5, 0));
 	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());
 
+	app.GetEngine()->GetCanvasWidget()->AddChild(std::make_shared<PanelWidget>());
+
 	IDirectory* directory = IPlatform::Get()->OpenDirectory("./Content", DIRECTORY_FLAG_RECURSIVE);
 
 	/*AssetFile assetFile("Editor/Content/AssetFile");
 	assetFile.ReadFromDevice();*/
 
-	AssetLibrary::Get().LoadAsset("Editor/Content/Shaders/WidgetBrushDefault");
+	//AssetLibrary::Get().LoadAsset("Editor/Content/Shaders/WidgetBrushDefault");
 
 	app.ApplicationLoop();
 

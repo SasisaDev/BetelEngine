@@ -15,6 +15,8 @@ public:
     std::string VertexShaderPath, FragmentShaderPath;
     bool SampleShadingEnable = false;
     bool BlendEnable = true;
+
+    inline IShader* GetShader() const {return pShader.get();}
     
     virtual void Deserialize(Artifact& data) override;
 };
