@@ -90,7 +90,8 @@ public:
     virtual Widget* SetPaddingTop(uint16_t Padding) {PaddingT = Padding; return this;}
     virtual Widget* SetPaddingBottom(uint16_t Padding) {PaddingB = Padding; return this;}
 
-    
+    virtual Widget* SetWidth(WidgetUnit&& width) {Width = width; return this;}
+    virtual Widget* SetHeight(WidgetUnit&& height) {Height = height; return this;}
 
     virtual Widget* AddChild(std::shared_ptr<Widget>&& child) {
         if(child->GetParent()) {
