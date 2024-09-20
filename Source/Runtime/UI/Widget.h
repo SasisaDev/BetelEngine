@@ -52,7 +52,7 @@ protected:
     uint16_t MarginL = 0, MarginR = 0, MarginB = 0, MarginT = 0;
     uint16_t PaddingL = 0, PaddingR = 0, PaddingB = 0, PaddingT = 0;
 
-    WidgetUnit Width = 100per, Height = 100per;
+    WidgetUnit Width, Height;
 
     WidgetSlotTransform transform;
 
