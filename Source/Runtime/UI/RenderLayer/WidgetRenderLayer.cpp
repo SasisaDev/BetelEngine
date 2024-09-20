@@ -106,10 +106,7 @@ void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef,
         vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
 
         Widget* renderTargetWidget = uiRef->widget;
-        renderTargetWidget->Render(cmdBuffer);
-        for(std::shared_ptr<Widget>& children : renderTargetWidget->children) {
-            children->Render(cmdBuffer);
-        } 
+        RenderWidget(cmdBuffer, layerRef, previousLayer, renderTargetWidget);
     }
 
     vkCmdEndRenderPass(cmdBuffer);
@@ -117,6 +114,14 @@ void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef,
     IRenderUtility::EndDebugLabel(cmdBuffer);
 
 
+}
+
+void UIRenderLayer::RenderWidget(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer, Widget* widget)
+{
+    widget->Render(cmdBuffer);
+    for(auto& widgetChild : widget->children) {
+        RenderWidget(cmdBuffer, layerRef, previousLayer, widgetChild.get());
+    }
 }
 
 bool UIRenderLayer::Deinitialize()

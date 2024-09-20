@@ -8,14 +8,20 @@
 /*
  * Set of data for graphical elements
  */
-struct WidgetBrush {
+struct WidgetBrush 
+{
     AssetPtr<ShaderAsset> shader;
     AssetPtr<Texture2DAsset> texture;
     Color color;
 
     WidgetBrush()
-    : shader("Editor/Content/Default/Widgets/WidgetShader"),
-      texture("Editor/Content/Default/Widgets/WidgetDefaultTexture"),
-      color(1, 1, 1, 1) 
-    {}
+    {
+      static AssetPtr<ShaderAsset> DefaultBrushShader = AssetPtr<ShaderAsset>("Editor/Content/Default/Widgets/WidgetShader");
+      static AssetPtr<Texture2DAsset> DefaultBrushTexture = AssetPtr<Texture2DAsset>("Editor/Content/Default/Widgets/WidgetDefaultTexture");
+      static Color DefaultBrushColor = Color(1,1,1,1);
+
+      shader = DefaultBrushShader;
+      texture = DefaultBrushTexture;
+      color = DefaultBrushColor;
+    }
 };
