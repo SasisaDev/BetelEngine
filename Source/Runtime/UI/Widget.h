@@ -33,6 +33,7 @@ struct WidgetUnit {
     } type;
     float value;
 
+    WidgetUnit():type(WidgetUnit::Type::Pixel),value(0){}
     WidgetUnit(WidgetUnit::Type typ, float val):type(typ), value(val){}
 };
 
