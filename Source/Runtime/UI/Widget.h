@@ -1,4 +1,5 @@
 #pragma once
+#pragma warning(disable:4455)
 
 #include <vector>
 #include <memory>
@@ -20,6 +21,21 @@ enum WidgetSlotStretchFlags {
     WIDGET_SLOT_STRETCH_VERTICAL = (1 << 1),
 };
 
+enum WidgetDirections {
+    WIDGET_DIRECTION_CENTER,
+    WIDGET_DIRECTION_FIRST,
+    WIDGET_DIRECTION_LAST,
+    WIDGET_DIRECTION_LEFT,
+    WIDGET_DIRECTION_RIGHT,
+    WIDGET_DIRECTION_TOP,
+    WIDGET_DIRECTION_BOTTOM,
+    WIDGET_DIRECTION_ROW,
+    WIDGET_DIRECTION_COLUMN,
+    WIDGET_DIRECTION_FLEX,
+    WIDGET_DIRECTION_ABSOLUTE,
+    WIDGET_DIRECTION_RELATIVE,
+};
+
 struct WidgetSlotTransform {
     float x, y;
     float width, height;
@@ -33,8 +49,16 @@ struct WidgetUnit {
     } type;
     float value;
 
-    WidgetUnit():type(WidgetUnit::Type::Pixel),value(0){}
+    WidgetUnit(int value):type(WidgetUnit::Type::Pixel),value(value){}
+    WidgetUnit():type(WidgetUnit::Type::Percent),value(100){}
     WidgetUnit(WidgetUnit::Type typ, float val):type(typ), value(val){}
+
+    float GetPixelValue(float BaseValue) {
+        if(type == WidgetUnit::Type::Pixel) {
+            return value;
+        }
+        return BaseValue*value;
+    }
 };
 
 extern WidgetUnit operator "" per(long double value);
@@ -50,10 +74,14 @@ protected:
     WidgetSlotAlignFlags align;
     WidgetSlotStretchFlags stretch;
 
-    uint16_t MarginL = 0, MarginR = 0, MarginB = 0, MarginT = 0;
-    uint16_t PaddingL = 0, PaddingR = 0, PaddingB = 0, PaddingT = 0;
+    WidgetUnit MarginL = 0, MarginR = 0, MarginB = 0, MarginT = 0;
+    WidgetUnit PaddingL = 0, PaddingR = 0, PaddingB = 0, PaddingT = 0;
 
     WidgetUnit Width, Height;
+
+    uint8_t JustifyContent = WIDGET_DIRECTION_FIRST, AlignContent = WIDGET_DIRECTION_FIRST;
+    uint8_t Direction = WIDGET_DIRECTION_ROW;
+    uint8_t Position = WIDGET_DIRECTION_FLEX;
 
     WidgetSlotTransform transform;
 
@@ -75,21 +103,21 @@ public:
     virtual Widget* SetAlign(WidgetSlotAlignFlags flags) {align = flags; return this;}
     virtual Widget* SetStretch(WidgetSlotStretchFlags flags) {stretch = flags; return this;}
 
-    virtual Widget* SetMargin(uint16_t Margin) {MarginL = MarginR = MarginT = MarginB = Margin; return this;}
-    virtual Widget* SetMargin(uint16_t Left, uint16_t Right, uint16_t Top, uint16_t Bottom) {MarginL = Left; MarginR = Right; MarginT = Top; MarginB = Bottom; return this;}
-    virtual Widget* SetMargin(uint16_t Horizontal, uint16_t Vertical) {MarginL = MarginR = Horizontal; MarginT = MarginB = Vertical; return this;}
-    virtual Widget* SetMarginLeft(uint16_t Margin) {MarginL = Margin; return this;}
-    virtual Widget* SetMarginRight(uint16_t Margin) {MarginR = Margin; return this;}
-    virtual Widget* SetMarginTop(uint16_t Margin) {MarginT = Margin; return this;}
-    virtual Widget* SetMarginBottom(uint16_t Margin) {MarginB = Margin; return this;}
+    virtual Widget* SetMargin(WidgetUnit&& Margin) {MarginL = MarginR = MarginT = MarginB = Margin; return this;}
+    virtual Widget* SetMargin(WidgetUnit&& Left, WidgetUnit&& Right, WidgetUnit&& Top, WidgetUnit&& Bottom) {MarginL = Left; MarginR = Right; MarginT = Top; MarginB = Bottom; return this;}
+    virtual Widget* SetMargin(WidgetUnit&& Horizontal, WidgetUnit&& Vertical) {MarginL = MarginR = Horizontal; MarginT = MarginB = Vertical; return this;}
+    virtual Widget* SetMarginLeft(WidgetUnit&& Margin) {MarginL = Margin; return this;}
+    virtual Widget* SetMarginRight(WidgetUnit&& Margin) {MarginR = Margin; return this;}
+    virtual Widget* SetMarginTop(WidgetUnit&& Margin) {MarginT = Margin; return this;}
+    virtual Widget* SetMarginBottom(WidgetUnit&& Margin) {MarginB = Margin; return this;}
 
-    virtual Widget* SetPadding(uint16_t Padding) {PaddingL = PaddingR = PaddingT = PaddingB = Padding; return this;}
-    virtual Widget* SetPadding(uint16_t Left, uint16_t Right, uint16_t Top, uint16_t Bottom) {PaddingL = Left; PaddingR = Right; PaddingT = Top; PaddingB = Bottom; return this;}
-    virtual Widget* SetPadding(uint16_t Horizontal, uint16_t Vertical) {PaddingL = PaddingR = Horizontal; PaddingT = PaddingB = Vertical; return this;}
-    virtual Widget* SetPaddingLeft(uint16_t Padding) {PaddingL = Padding; return this;}
-    virtual Widget* SetPaddingRight(uint16_t Padding) {PaddingR = Padding; return this;}
-    virtual Widget* SetPaddingTop(uint16_t Padding) {PaddingT = Padding; return this;}
-    virtual Widget* SetPaddingBottom(uint16_t Padding) {PaddingB = Padding; return this;}
+    virtual Widget* SetPadding(WidgetUnit&& Padding) {PaddingL = PaddingR = PaddingT = PaddingB = Padding; return this;}
+    virtual Widget* SetPadding(WidgetUnit&& Left, WidgetUnit&& Right, WidgetUnit&& Top, WidgetUnit&& Bottom) {PaddingL = Left; PaddingR = Right; PaddingT = Top; PaddingB = Bottom; return this;}
+    virtual Widget* SetPadding(WidgetUnit&& Horizontal, WidgetUnit&& Vertical) {PaddingL = PaddingR = Horizontal; PaddingT = PaddingB = Vertical; return this;}
+    virtual Widget* SetPaddingLeft(WidgetUnit&& Padding) {PaddingL = Padding; return this;}
+    virtual Widget* SetPaddingRight(WidgetUnit&& Padding) {PaddingR = Padding; return this;}
+    virtual Widget* SetPaddingTop(WidgetUnit&& Padding) {PaddingT = Padding; return this;}
+    virtual Widget* SetPaddingBottom(WidgetUnit&& Padding) {PaddingB = Padding; return this;}
 
     virtual Widget* SetWidth(WidgetUnit&& width) {Width = width; return this;}
     virtual Widget* SetHeight(WidgetUnit&& height) {Height = height; return this;}

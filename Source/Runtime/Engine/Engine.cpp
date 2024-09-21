@@ -32,4 +32,10 @@ void Engine::Tick(float DeltaTime)
     world->Tick(DeltaTime);
 
     canvasWidget->Tick(DeltaTime);
+    canvasWidget->RecalculateChildrenTransforms();
+
+#ifdef EDITOR
+    edCanvasWidget->Tick(DeltaTime);
+    edCanvasWidget->RecalculateChildrenTransforms();
+#endif
 }

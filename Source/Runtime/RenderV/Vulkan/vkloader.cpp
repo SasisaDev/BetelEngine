@@ -1,5 +1,3 @@
-#pragma once
-
 #include "vkloader.h"
 #include "vkloader_symbols.cpp"
 
