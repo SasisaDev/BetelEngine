@@ -33,7 +33,7 @@ enum WidgetDirections {
     WIDGET_DIRECTION_COLUMN,
     WIDGET_DIRECTION_FLEX,
     WIDGET_DIRECTION_ABSOLUTE,
-    WIDGET_DIRECTION_RELATIVE,
+    WIDGET_DIRECTION_RELATIVE
 };
 
 struct WidgetSlotTransform {
@@ -45,13 +45,18 @@ struct WidgetSlotTransform {
 struct WidgetUnit {
     enum class Type : uint8_t {
         Pixel,
-        Percent
+        Percent,
+        FitContent
     } type;
     float value;
+
+    static WidgetUnit FitContent;
 
     WidgetUnit(int value):type(WidgetUnit::Type::Pixel),value(value){}
     WidgetUnit():type(WidgetUnit::Type::Percent),value(100){}
     WidgetUnit(WidgetUnit::Type typ, float val):type(typ), value(val){}
+
+    inline bool IsFitContent() const {return type == WidgetUnit::Type::FitContent;}
 
     float GetPixelValue(float BaseValue) {
         if(type == WidgetUnit::Type::Pixel) {
