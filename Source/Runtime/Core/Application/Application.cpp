@@ -161,6 +161,10 @@ window_t Application::CreateWindow(WindowCreateInfo& createInfo)
 	return window->WindowID;
 }
 
+Window* Application::GetWindow(window_t id) {
+	return Windows->GetWindow(id);
+}
+
 void Application::ApplicationLoop()
 {
 	auto frame_lifetime_start = std::chrono::high_resolution_clock::now();

@@ -39,6 +39,7 @@ public:
     inline bool ShouldTerminate() const {return bShouldTerminate || Windows->ShouldTerminate();}
 
     window_t CreateWindow(WindowCreateInfo& createInfo);
+    Window* GetWindow(window_t id);
 
     void ApplicationLoop();
 

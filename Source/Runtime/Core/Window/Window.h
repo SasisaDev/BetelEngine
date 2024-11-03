@@ -54,6 +54,8 @@ public:
 
     void Update(const SDL_WindowEvent& event);
 
+    inline SDL_Window* GetSDLWindowHandle() const {return window;}
+
     /*
      * Window Event handler
      * Handles resize, minmax, repos scenarios

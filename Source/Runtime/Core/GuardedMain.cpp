@@ -8,6 +8,7 @@
 #include <GameFramework/Settings/GameSettings.h>
 
 #include <RenderV/Objects/Buffers/Buffer.h>
+#include <ImGui/RenderLayer/ImGuiLayer.h>
 
 // TODO: Remove test boilerplate
 #include <GameFramework/Entities/Test/TestEntity.h>
@@ -29,6 +30,7 @@ int GuardedMain(int argc, char* argv[])
 
 	render->CreateLayer<WorldRenderLayer>();
 	render->CreateLayer<UIRenderLayer>();
+	render->CreateLayer<ImGuiRenderLayer>();
 
 	// Fetch settings
 	GameSettings* settings = app.GetSettings()->GetOrDefault<GameSettings>();
@@ -41,7 +43,7 @@ int GuardedMain(int argc, char* argv[])
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldLoad)
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldUnload),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
-		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetEditorCanvasWidget()),
+		IRenderFactory::CreateLayerRef<ImGuiRenderLayer, ImGuiRenderLayerRef>(render)
 	};
 
 	WindowCreateInfo editorWininfo = {
@@ -51,7 +53,9 @@ int GuardedMain(int argc, char* argv[])
 		.layerRefs=editorCompositionLayerRefs
 	};
 
-	app.CreateWindow(editorWininfo);
+	window_t edWinId = app.CreateWindow(editorWininfo);
+	// TODO: More robust host window setup for ImGui Layer
+	((ImGuiRenderLayerRef*)editorCompositionLayerRefs[2])->SetHostWindow(app.GetWindow(edWinId));
 #else
 	std::vector<IRenderLayerRef*> gameCompositionLayerRefs = {
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
