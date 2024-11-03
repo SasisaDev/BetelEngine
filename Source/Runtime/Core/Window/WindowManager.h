@@ -22,4 +22,10 @@ public:
     inline bool ShouldTerminate() const {return bShouldTerminate;}
 
     void Update(float deltaTime);
+
+    /*
+     * SDL Event Handler
+     * Used for global SDL events, untied to windows
+    */
+    static MulticastDelegate<SDL_Event> OnSDLEvent;
 };

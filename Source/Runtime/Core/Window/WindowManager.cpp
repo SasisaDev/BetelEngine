@@ -1,5 +1,7 @@
 #include "WindowManager.h"
 
+MulticastDelegate<SDL_Event> WindowManager::OnSDLEvent;
+
 Window* WindowManager::internal_GetBySDLWindow(SDL_Window* window)
 {
     for(Window* win : Windows)
@@ -37,6 +39,8 @@ Window* WindowManager::GetWindow(window_t id)
 void WindowManager::Update(float deltaTime)
 {
     SDL_PollEvent(&event);
+
+	OnSDLEvent.Broadcast(event);
 
     Window* emittedWindow = nullptr;
 	

@@ -1,4 +1,5 @@
 #include "BetelImGui.h"
+#include <Core/Window/WindowManager.h>
 
 BetelImGuiEngine::BetelImGuiEngine()
 {
@@ -14,7 +15,10 @@ BetelImGuiEngine::~BetelImGuiEngine()
 void BetelImGuiEngine::Initialize(SDL_Window* window, ImGui_ImplVulkan_InitInfo& initInfo, VkCommandBuffer singleTimeBuffer)
 {
     ImGui::CreateContext();
-    
+    volatile ImGuiIO &io = ImGui::GetIO(); (void)io;
+
+    WindowManager::OnSDLEvent.BindRaw([](SDL_Event event){ImGui_ImplSDL2_ProcessEvent(&event);});
+
     ImGui_ImplSDL2_InitForVulkan(window);
 
     ImGui_ImplVulkan_Init(&initInfo);
