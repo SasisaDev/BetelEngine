@@ -53,6 +53,7 @@ namespace vkloader {
 	extern bool IsFallback();
 
 	extern void SetPhysicalDevice(VkPhysicalDevice nPhysDev);
+	extern VkInstance GetInstance();
 	extern VkPhysicalDevice GetPhysicalDevice();
 	extern VkDevice GetLogicalDevice();
 	extern VkResult vkCreateInstance(const VkInstanceCreateInfo* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkInstance* pInstance);

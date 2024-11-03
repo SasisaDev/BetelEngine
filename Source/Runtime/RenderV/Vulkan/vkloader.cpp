@@ -33,6 +33,11 @@ namespace vkloader {
 	{
 		physDevice = nPhysDev;
 	}
+
+	VkInstance GetInstance()
+	{
+		return instance;
+	}
 	
 	VkPhysicalDevice GetPhysicalDevice() 
 	{

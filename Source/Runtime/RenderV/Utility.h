@@ -24,12 +24,14 @@ public:
     static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
     static VkDevice GetDevice();
     static VkPhysicalDevice GetPhysicalDevice();
+    static VkInstance GetInstance();
 
     static inline uint32_t GetFramesInFlight() {return framesInFlight;}
     static inline void SetFramesInFlight(uint32_t fif) {framesInFlight = fif;}
     
     static inline uint32_t GetCurrentFrameInFlight() {return currentFrameInFlight;}
     static inline void SetCurrentFrameInFlight(uint32_t curfif) {currentFrameInFlight = curfif;}
+     
 
     static inline void ImageBarrier(VkCommandBuffer cmdBuffer, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout,
                                     VkPipelineStageFlags src = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VkPipelineStageFlags dst = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,

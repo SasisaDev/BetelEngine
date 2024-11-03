@@ -14,6 +14,8 @@ class ImGuiRenderLayerRef : public IRenderLayerRef
 {
     friend class ImGuiRenderLayer;
 protected:
+    VkDescriptorPool imagesPool;
+
     BetelImGuiEngine* ImGuiE;
 public:
     Window* HostWindow;

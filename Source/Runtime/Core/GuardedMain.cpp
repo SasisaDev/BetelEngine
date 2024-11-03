@@ -8,7 +8,10 @@
 #include <GameFramework/Settings/GameSettings.h>
 
 #include <RenderV/Objects/Buffers/Buffer.h>
-#include <ImGui/RenderLayer/ImGuiLayer.h>
+
+#ifdef EDITOR
+#	include <ImGui/RenderLayer/ImGuiLayer.h>
+#endif
 
 // TODO: Remove test boilerplate
 #include <GameFramework/Entities/Test/TestEntity.h>
@@ -30,8 +33,9 @@ int GuardedMain(int argc, char* argv[])
 
 	render->CreateLayer<WorldRenderLayer>();
 	render->CreateLayer<UIRenderLayer>();
+#ifdef EDITOR
 	render->CreateLayer<ImGuiRenderLayer>();
-
+#endif
 	// Fetch settings
 	GameSettings* settings = app.GetSettings()->GetOrDefault<GameSettings>();
 

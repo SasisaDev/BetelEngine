@@ -8,6 +8,21 @@ ImGuiRenderLayerRef::ImGuiRenderLayerRef()
 
 bool ImGuiRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList)
 {
+    VkDescriptorPoolCreateInfo descPoolInfo{};
+    descPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    descPoolInfo.maxSets = IRenderUtility::GetFramesInFlight();
+    descPoolInfo.poolSizeCount = 1;
+
+    VkDescriptorPoolSize descPoolSize;
+    descPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    descPoolSize.descriptorCount = IRenderUtility::GetFramesInFlight();
+
+    descPoolInfo.pPoolSizes = &descPoolSize;
+
+    if(vkCreateDescriptorPool(IRenderUtility::GetDevice(), &descPoolInfo, 0, &imagesPool) != VK_SUCCESS) {
+        LOG(Fatal, LogImGui, "Failed to create descriptor pool for ImGui.");
+    }
+
     return true;
 }
 
@@ -17,15 +32,59 @@ ImGuiRenderLayerRef* ImGuiRenderLayerRef::SetHostWindow(Window* window) {
         LOG(Fatal, LogImGui, "Host window for ImGui engine is not specified");
     }
 
+    VkQueue queue;
+
+    vkGetDeviceQueue(IRenderUtility::GetDevice(), IRenderUtility::FindQueueFamilies(IRenderUtility::GetPhysicalDevice()).graphicsFamily.value(), 0, &queue);
+
     ImGui_ImplVulkan_InitInfo info{};
-    //TODO: DescriptorPool Management
-    //info.DescriptorPool = 
+    info.DescriptorPool = imagesPool;
+    info.Device = IRenderUtility::GetDevice();
+    info.PhysicalDevice = IRenderUtility::GetPhysicalDevice();
+    info.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+    info.MinImageCount = info.ImageCount = IRenderUtility::GetFramesInFlight();
+    info.RenderPass = GetParentLayer()->GetRenderPass();
+    info.Instance = IRenderUtility::GetInstance();
+    info.Queue = queue;
+    
     ImGuiE->Initialize(HostWindow->GetSDLWindowHandle(), info);
     return this;
 }
 
 bool ImGuiRenderLayer::Initialize(VkDevice device)
 {
+
+    // Create Stretch Render Pass
+    VkAttachmentDescription colorAttachment{};
+    colorAttachment.format = VK_FORMAT_B8G8R8A8_SRGB;
+    colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+    colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+    colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    colorAttachment.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    //colorAttachment.initialLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+    VkAttachmentReference colorAttachmentRef{};
+    colorAttachmentRef.attachment = 0;
+    colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+    VkSubpassDescription subpass{};
+    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    subpass.colorAttachmentCount = 1;
+    subpass.pColorAttachments = &colorAttachmentRef;
+
+    VkRenderPassCreateInfo renderPassInfo{};
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+    renderPassInfo.attachmentCount = 1;
+    renderPassInfo.pAttachments = &colorAttachment;
+    renderPassInfo.subpassCount = 1;
+    renderPassInfo.pSubpasses = &subpass;
+
+    if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
+        LOG(Fatal, LogImGui, "failed to create render pass!");
+    }
+
     return true;
 }
 
@@ -41,6 +100,17 @@ void ImGuiRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
     IRenderUtility::BeginDebugLabel(cmdBuffer, "ImGui User Interface", 0.85, 0.35, 0.35);
 
+    VkRenderPassBeginInfo passInfo;
+    passInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    passInfo.pNext = nullptr;
+    passInfo.renderPass = renderPass;
+    passInfo.clearValueCount = 0;
+    passInfo.framebuffer = layerRef->GetParentComposition()->GetCurrentFramebuffer();
+    passInfo.renderArea.offset = {0, 0};
+    passInfo.renderArea.extent = layerRef->GetParentComposition()->GetExtent();
+
+    vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
+
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
@@ -49,6 +119,8 @@ void ImGuiRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmdBuffer);
+
+    vkCmdEndRenderPass(cmdBuffer);
 
     IRenderUtility::EndDebugLabel(cmdBuffer);
 

@@ -67,3 +67,8 @@ VkPhysicalDevice IRenderUtility::GetPhysicalDevice()
 {
     return vkloader::GetPhysicalDevice();
 }
+
+VkInstance IRenderUtility::GetInstance()
+{
+return vkloader::GetInstance();
+}
