@@ -547,8 +547,15 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
         vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, upscaleShader->GetPipeline());
 
+#       ifdef EDITOR
+        viewport.x = layerRef->GetParentComposition()->GameViewport.offset.x;
+        viewport.y = layerRef->GetParentComposition()->GameViewport.offset.y;
+        viewport.width = layerRef->GetParentComposition()->GameViewport.extent.width;
+        viewport.height = layerRef->GetParentComposition()->GameViewport.extent.height;
+#       else
         viewport.width = layerRef->GetParentComposition()->GetExtent().width;
         viewport.height = layerRef->GetParentComposition()->GetExtent().height;
+#       endif
         vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
 
         // TODO: Maybe there's better way

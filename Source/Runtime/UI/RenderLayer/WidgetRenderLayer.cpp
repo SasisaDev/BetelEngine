@@ -88,6 +88,13 @@ void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef,
     if(Widget* canvas = uiRef->widget)
     {
         VkViewport viewport;
+
+#       ifdef EDITOR
+        viewport.x = layerRef->GetParentComposition()->GameViewport.offset.x;
+        viewport.y = layerRef->GetParentComposition()->GameViewport.offset.y;
+        viewport.width = layerRef->GetParentComposition()->GameViewport.extent.width;
+        viewport.height = layerRef->GetParentComposition()->GameViewport.extent.height;
+#       else
         viewport.x = 0;
         viewport.y = 0;
         viewport.width = canvas->GetExtent().x;
@@ -96,7 +103,7 @@ void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef,
         //viewport.height = layerRef->GetParentComposition()->GetExtent().height;
         viewport.minDepth = 0;
         viewport.maxDepth = 1;
-
+#       endif
 
         VkRect2D scissors;
         VkExtent2D extent = {static_cast<uint32_t>(canvas->GetExtent().x), static_cast<uint32_t>(canvas->GetExtent().y)};
