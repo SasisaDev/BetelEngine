@@ -5,11 +5,13 @@
 #include <Log/Logger.h>
 
 #include "Windows/SceneOutliner/SceneOutliner.h"
+#include "Windows/Viewport/Viewport.h"
 
 class EditorToolkitBase : public EditorToolkit {
     EditorSceneOutliner sceneOutliner;
+    EditorViewport gameViewport;
 public:
-    virtual void OnGUI() override {
+    virtual void OnGUI(Window* window) override {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 if (ImGui::MenuItem("Create")) { 
@@ -24,6 +26,7 @@ public:
             }
             if (ImGui::BeginMenu("View")) {
                 if (ImGui::MenuItem("Viewport")) { 
+                    gameViewport.Visible = !gameViewport.Visible;
                 }
                 if (ImGui::MenuItem("Asset Explorer")) { 
                 }
@@ -58,6 +61,7 @@ public:
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
         ImGui::End();
 
-        sceneOutliner.DrawGUI();
+        sceneOutliner.DrawGUI(window);
+        gameViewport.DrawGUI(window);
     }
 };

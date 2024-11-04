@@ -6,5 +6,5 @@ class EditorToolkit
 {
 public:
 
-    virtual void OnGUI(){}
+    virtual void OnGUI(Window* window){}
 };

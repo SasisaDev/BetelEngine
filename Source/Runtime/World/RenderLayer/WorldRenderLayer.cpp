@@ -489,7 +489,7 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
         //viewport.height = layerRef->GetParentComposition()->GetExtent().height;
         viewport.minDepth = 0;
         viewport.maxDepth = 1;
-
+        
         VkRect2D scissors;
         scissors.offset = {0, 0};
         scissors.extent = ((WorldRenderLayerRef*)layerRef)->viewport;
@@ -551,7 +551,13 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
         viewport.height = layerRef->GetParentComposition()->GetExtent().height;
         vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
 
+        // TODO: Maybe there's better way
+#       ifdef EDITOR
+        scissors = layerRef->GetParentComposition()->GameViewport;
+#       else
         scissors.extent = layerRef->GetParentComposition()->GetExtent();
+#       endif
+
         vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
 
         vkCmdDraw(cmdBuffer, 3, 1, 0, 0);

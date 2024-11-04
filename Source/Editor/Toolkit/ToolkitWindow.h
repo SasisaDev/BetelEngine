@@ -2,13 +2,15 @@
 
 #include <imgui.h>
 
+class Window;
+
 class EditorToolkitWindow
 {
 public:
     bool Visible = true;
 
-    virtual void DrawGUI(){if(Visible){this->OnGUI();}}
+    virtual void DrawGUI(Window* window){if(Visible){this->OnGUI(window);}}
 
     // Should not be called by toolkits
-    virtual void OnGUI(){}
+    virtual void OnGUI(Window* window){}
 };

@@ -67,7 +67,7 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
     createInfo.imageColorSpace = surfaceFormat.colorSpace;
     createInfo.imageExtent = extent;
     createInfo.imageArrayLayers = 1;
-    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 
     auto queueFamilyIndices = IRenderUtility::FindQueueFamilies(physDevice, surface);
 
@@ -265,7 +265,23 @@ void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
     //vkCmdPipelineBarrier(cmdbuffer);
 
     // Get image ready for render pass chain
+
+#   ifdef EDITOR
+
+    IRenderUtility::ImageBarrier(cmdBuffer, GetCurrentImage(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+    VkClearColorValue clearValue {{0.015f, 0.015f, 0.015f, 1.0f}};
+    VkImageSubresourceRange clearRange{ .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                                        .baseMipLevel = 0,
+                                        .levelCount = 1,
+                                        .baseArrayLayer = 0,
+                                        .layerCount = 1};
+    vkCmdClearColorImage(cmdBuffer, GetCurrentImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &clearValue, 1, &clearRange);
+
+    IRenderUtility::ImageBarrier(cmdBuffer, GetCurrentImage(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+#   else
     IRenderUtility::ImageBarrier(cmdBuffer, GetCurrentImage(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+#   endif
 
     for(size_t layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
     {

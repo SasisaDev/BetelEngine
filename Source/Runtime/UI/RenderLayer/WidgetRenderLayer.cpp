@@ -97,10 +97,17 @@ void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef,
         viewport.minDepth = 0;
         viewport.maxDepth = 1;
 
+
         VkRect2D scissors;
         VkExtent2D extent = {static_cast<uint32_t>(canvas->GetExtent().x), static_cast<uint32_t>(canvas->GetExtent().y)};
+
+        // TODO: Maybe there's better way
+#       ifdef EDITOR
+        scissors = layerRef->GetParentComposition()->GameViewport;
+#       else
         scissors.offset = {0, 0};
         scissors.extent = extent;
+#       endif
 
         vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
         vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);

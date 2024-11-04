@@ -56,6 +56,9 @@ public:
 
     inline SDL_Window* GetSDLWindowHandle() const {return window;}
 
+    uint32_t GetCompositionID() const {return RendererCompositionID;}
+    window_t GetID() const {return WindowID;}
+
     /*
      * Window Event handler
      * Handles resize, minmax, repos scenarios

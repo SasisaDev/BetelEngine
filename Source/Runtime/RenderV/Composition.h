@@ -105,4 +105,8 @@ public:
     void EndFrame(VkCommandBuffer cmdBuffer){}
 
     bool Deinitialize();
+
+#   ifdef EDITOR
+    VkRect2D GameViewport = {0, 0, 0, 0};
+#   endif
 };

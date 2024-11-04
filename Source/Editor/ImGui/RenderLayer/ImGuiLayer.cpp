@@ -117,7 +117,7 @@ void ImGuiRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
     //ImGui::ShowDemoWindow();
     if(((ImGuiRenderLayerRef*)layerRef)->CurrentToolkit) {
-        ((ImGuiRenderLayerRef*)layerRef)->CurrentToolkit->OnGUI();
+        ((ImGuiRenderLayerRef*)layerRef)->CurrentToolkit->OnGUI(((ImGuiRenderLayerRef*)layerRef)->HostWindow);
     }
 
     ImGui::Render();
