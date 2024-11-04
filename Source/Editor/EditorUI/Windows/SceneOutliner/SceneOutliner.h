@@ -7,7 +7,7 @@ class EditorSceneOutliner : public EditorToolkitWindow
 {
 public:
 
-    virtual void OnGUI(){
+    virtual void OnGUI(Window* window){
         World* world = GApplication->GetEngine()->GetWorld();
         if(world == nullptr) {
             return;

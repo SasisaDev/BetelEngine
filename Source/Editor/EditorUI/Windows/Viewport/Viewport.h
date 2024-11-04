@@ -7,6 +7,15 @@ class EditorViewport : public EditorToolkitWindow
 {
 public:
 
+    virtual void DrawGUI(Window* window) override { 
+        if(Visible){
+            this->OnGUI(window);
+        } else {
+            IRenderComposition* comp = GApplication->GetRender()->GetComposition(window->GetCompositionID());
+            comp->GameViewport = {0};
+        }
+    }
+
     virtual void OnGUI(Window* window){
         IRenderComposition* comp = GApplication->GetRender()->GetComposition(window->GetCompositionID());
 
