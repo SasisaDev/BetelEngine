@@ -5,6 +5,8 @@
 #include <Assets/Asset.h>
 #include <Assets/AssetFile/AssetFile.h>
 
+#include <cassert>
+
 class UseAssetFactoryArgumentEvent : public ArgumentEvent
 {
     static bool isRegistered;
@@ -23,7 +25,7 @@ public:
             IPath input = collection.Get("Input");
             IPath output = collection.Get("Output");
 
-            IAssetFactory* factory;
+            IAssetFactory* factory = nullptr;
 
             for(IAssetFactory* object : AssetFactoryLibrary::Get()->GetFactories()) {
                 if(object->GetName() == FactoryName) {
@@ -33,7 +35,7 @@ public:
             }
 
             if(!factory) {
-                LOG(Error, LogFactoryCommand, "Specified factory doesn't exist.");
+                assert(!"Specified factory doesn't exist.");
                 return false;
             }
 
@@ -41,7 +43,7 @@ public:
             IFile* outputFile = IPlatform::Get()->OpenFile(output, FILE_ACCESS_FLAG_WRITE | FILE_ACCESS_FLAG_BINARY);
 
             if(!factory->SuitableFor(inputFile)) {
-                LOG(Error, LogFactoryCommand, "Specified factory doesn't support this file type.");
+                assert(!"Specified factory doesn't support this file type.");
                 return false;
             }
 

@@ -15,6 +15,8 @@ protected:
     bool BackgroundGradient = false;
     Vec3 BackgroundColor;
     std::pair<Vec3, Vec3> BackgroundGradientColor;
+
+    std::string Name = "Persistent World";
 public:
     World();
 
@@ -22,6 +24,9 @@ public:
     MulticastDelegate<Entity*> OnEntityDestroyed;
 
     void SetBackgroundColor(const Vec3& color) {BackgroundColor = color;}
+
+    void SetWorldName(std::string name) {Name = name;}
+    std::string GetWorldName() const {return Name;}
 
     template<EntityClass EntityType>
     EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo)

@@ -4,9 +4,11 @@
 #include <imgui.h>
 #include <Log/Logger.h>
 
-class EditorToolkitBase : public EditorToolkit {
-public:
+#include "Windows/SceneOutliner/SceneOutliner.h"
 
+class EditorToolkitBase : public EditorToolkit {
+    EditorSceneOutliner sceneOutliner;
+public:
     virtual void OnGUI() override {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
@@ -20,12 +22,13 @@ public:
                 }
                 ImGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Window")) {
+            if (ImGui::BeginMenu("View")) {
                 if (ImGui::MenuItem("Viewport")) { 
                 }
                 if (ImGui::MenuItem("Asset Explorer")) { 
                 }
-                if (ImGui::MenuItem("World Outliner")) { 
+                if (ImGui::MenuItem("Scene Outliner")) { 
+                    sceneOutliner.Visible = !sceneOutliner.Visible;
                 }
                 if (ImGui::MenuItem("Details")) { 
                 }
@@ -55,16 +58,6 @@ public:
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
         ImGui::End();
 
-        ImGui::SetNextWindowBgAlpha(0.75f);
-        ImGui::SetNextWindowSize(ImVec2(350, 200), ImGuiCond_Once);
-        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.75f));
-        if(ImGui::Begin("Test Window", 0, ImGuiWindowFlags_NoCollapse)){
-            ImGui::Text("Some random text");
-            if(ImGui::Button("Random Function")) {
-                LOG(Log, LogTest, "ImGui button pressed");
-            }
-        }
-        ImGui::End();
-        ImGui::PopStyleColor();
+        sceneOutliner.DrawGUI();
     }
 };
