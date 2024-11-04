@@ -115,7 +115,10 @@ void ImGuiRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::ShowDemoWindow();
+    //ImGui::ShowDemoWindow();
+    if(((ImGuiRenderLayerRef*)layerRef)->CurrentToolkit) {
+        ((ImGuiRenderLayerRef*)layerRef)->CurrentToolkit->OnGUI();
+    }
 
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmdBuffer);

@@ -8,6 +8,8 @@
 
 #include <Core/Window/Window.h>
 
+#include <Toolkit/Toolkit.h>
+
 class BetelImGuiEngine;
 
 class ImGuiRenderLayerRef : public IRenderLayerRef
@@ -19,12 +21,14 @@ protected:
     BetelImGuiEngine* ImGuiE;
 public:
     Window* HostWindow;
+    EditorToolkit* CurrentToolkit;
 
     ImGuiRenderLayerRef();
 
     virtual bool Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList) override;
 
     ImGuiRenderLayerRef* SetHostWindow(Window* window);
+    ImGuiRenderLayerRef* SetToolkit(EditorToolkit* toolkit) {CurrentToolkit = toolkit; return this;}
 
     void onCanvasWidgetBind(){}
 };

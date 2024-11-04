@@ -15,7 +15,7 @@ BetelImGuiEngine::~BetelImGuiEngine()
 void BetelImGuiEngine::Initialize(SDL_Window* window, ImGui_ImplVulkan_InitInfo& initInfo, VkCommandBuffer singleTimeBuffer)
 {
     ImGui::CreateContext();
-    volatile ImGuiIO &io = ImGui::GetIO(); (void)io;
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable; 
 
     WindowManager::OnSDLEvent.BindRaw([](SDL_Event event){ImGui_ImplSDL2_ProcessEvent(&event);});
 

@@ -32,13 +32,7 @@ FetchContent_Declare(
   GIT_TAG        release-2.30.3 # release-2.30.3
 )
 
-FetchContent_Declare(
-  imgui
-  GIT_REPOSITORY https://github.com/SasisaDev/imgui.git
-  GIT_TAG        1.91.4V
-)
-
-FetchContent_MakeAvailable(vulkan sdl glm lua imgui)
+FetchContent_MakeAvailable(vulkan sdl glm lua)
 
 # Disable reserved literals error
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -88,10 +82,10 @@ target_include_directories(Game PRIVATE "Source/Runtime")
 set_property(TARGET Game PROPERTY CXX_STANDARD 20)
 
 # Editor
-set(ImguiSrc "${FETCHCONTENT_BASE_DIR}/imgui-src/imgui_demo.cpp" "${FETCHCONTENT_BASE_DIR}/imgui-src/imgui_tables.cpp" 
-             "${FETCHCONTENT_BASE_DIR}/imgui-src/imgui_draw.cpp" "${FETCHCONTENT_BASE_DIR}/imgui-src/imgui_widgets.cpp" 
-             "${FETCHCONTENT_BASE_DIR}/imgui-src/imgui.cpp" "${FETCHCONTENT_BASE_DIR}/imgui-src/backends/imgui_impl_sdl2.cpp"
-             "${FETCHCONTENT_BASE_DIR}/imgui-src/backends/imgui_impl_vulkan.cpp")
+set(ImguiSrc "Source/ThirdParty/imgui/imgui_demo.cpp" "Source/ThirdParty/imgui/imgui_tables.cpp" 
+             "Source/ThirdParty/imgui/imgui_draw.cpp" "Source/ThirdParty/imgui/imgui_widgets.cpp" 
+             "Source/ThirdParty/imgui/imgui.cpp" "Source/ThirdParty/imgui/backends/imgui_impl_sdl2.cpp"
+             "Source/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp")
 set(ImguiBetelSrc "Source/Editor/ImGui/RenderLayer/ImGuiLayer.cpp" "Source/Editor/ImGui/BetelImGui.cpp")
 
 set(AssetFactoriesSrc "Source/Editor/AssetFactory/Default/ShaderFactory.cpp" )
@@ -106,7 +100,7 @@ target_link_libraries(Editor Vulkan-Headers SDL2::SDL2 glm-header-only)
 
 target_include_directories(Editor PRIVATE "Source/Runtime" "Source/Editor")
 
-target_include_directories(Editor PRIVATE "${FETCHCONTENT_BASE_DIR}/imgui-src")
+target_include_directories(Editor PRIVATE "Source/ThirdParty/imgui")
 
 target_compile_definitions(Editor PUBLIC EDITOR)
 

@@ -11,6 +11,7 @@
 
 #ifdef EDITOR
 #	include <ImGui/RenderLayer/ImGuiLayer.h>
+#	include <EditorUI/EditorToolkit.h> 
 #endif
 
 // TODO: Remove test boilerplate
@@ -45,13 +46,14 @@ int GuardedMain(int argc, char* argv[])
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
 			->SetViewportSize({settings->PixelPerfectViewportWidth, settings->PixelPerfectViewportHeight})
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldLoad)
-			->SubscribeWorldLoad(&EngineDelegates::OnWorldUnload),
+			->SubscribeWorldUnload(&EngineDelegates::OnWorldUnload),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
 		IRenderFactory::CreateLayerRef<ImGuiRenderLayer, ImGuiRenderLayerRef>(render)
+			->SetToolkit(new EditorToolkitBase)
 	};
 
 	WindowCreateInfo editorWininfo = {
-		.title="Betel Editor [" + settings->GameTitle + "]",
+		.title="Betel Editor | " + settings->GameTitle,
 		.width=1280,
 		.height=720,
 		.layerRefs=editorCompositionLayerRefs
