@@ -14,6 +14,7 @@ public:
         }
 
         ImGui::SetNextWindowSize(ImVec2(350, 200), ImGuiCond_Once);
+        ImGui::SetNextWindowBgAlpha(1);
         if(ImGui::Begin("World Outliner", 0, ImGuiWindowFlags_NoCollapse)){
             ImGui::Text("%s", world->GetWorldName().c_str());
         }

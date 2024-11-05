@@ -58,10 +58,15 @@ public:
         ImGui::PopStyleVar(3);
 
         ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+        ImGui::SetNextWindowBgAlpha(.0f);
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
         ImGui::End();
 
         sceneOutliner.DrawGUI(window);
         gameViewport.DrawGUI(window);
+
+
+        ImGui::Begin("Assets Explorer", 0, ImGuiWindowFlags_NoCollapse);ImGui::End();
+        ImGui::Begin("Details", 0, ImGuiWindowFlags_NoCollapse);ImGui::End();
     }
 };

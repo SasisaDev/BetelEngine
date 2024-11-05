@@ -94,6 +94,8 @@ void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef,
         viewport.y = layerRef->GetParentComposition()->GameViewport.offset.y;
         viewport.width = layerRef->GetParentComposition()->GameViewport.extent.width;
         viewport.height = layerRef->GetParentComposition()->GameViewport.extent.height;
+        viewport.minDepth = 0;
+        viewport.maxDepth = 1;
 #       else
         viewport.x = 0;
         viewport.y = 0;

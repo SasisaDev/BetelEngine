@@ -16,6 +16,7 @@ void BetelImGuiEngine::Initialize(SDL_Window* window, ImGui_ImplVulkan_InitInfo&
 {
     ImGui::CreateContext();
     ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable; 
+    ImGui::GetIO().ConfigDockingTransparentPayload = true;
 
     WindowManager::OnSDLEvent.BindRaw([](SDL_Event event){ImGui_ImplSDL2_ProcessEvent(&event);});
 

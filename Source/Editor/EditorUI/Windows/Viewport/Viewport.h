@@ -19,13 +19,27 @@ public:
     virtual void OnGUI(Window* window){
         IRenderComposition* comp = GApplication->GetRender()->GetComposition(window->GetCompositionID());
 
-        ImGui::SetNextWindowBgAlpha(.0f);
-        ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_Once);
+        // Fix docked window background being different from the undocked
+        static ImGuiWindowClass vpClass;
+        vpClass.ClassId = ImGui::GetID("GameViewport");
+        vpClass.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoUndocking;
+
+        ImGui::SetNextWindowClass(&vpClass);
+        //ImGui::SetNextWindowBgAlpha(1.f);
+        ImGui::SetNextWindowSize(ImVec2(500, 500), ImGuiCond_Once);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
         if(ImGui::Begin("Game", 0, ImGuiWindowFlags_NoCollapse)){
-            ImVec2 Pos = ImGui::GetWindowPos();
-            ImVec2 Size = ImGui::GetWindowSize();
-            comp->GameViewport = {{(int)Pos.x, (int)Pos.y}, {(unsigned int)Size.x, (unsigned int)Size.y}};
+            if(ImGui::IsWindowDocked()) {
+                ImGuiID dockID = ImGui::GetWindowDockID();
+                
+            }
+
+            ImRect workRect = ImGui::GetCurrentWindow()->WorkRect;
+            comp->GameViewport = {{(int)workRect.GetTL().x, (int)workRect.GetTL().y}, {(unsigned int)workRect.GetWidth(), (unsigned int)workRect.GetHeight()}};
         }
+        ImGui::PopStyleColor(1);
+        ImGui::PopStyleVar(1);
         ImGui::End();
     }
 };
