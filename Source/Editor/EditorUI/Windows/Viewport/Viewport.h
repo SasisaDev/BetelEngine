@@ -12,7 +12,7 @@ public:
             this->OnGUI(window);
         } else {
             IRenderComposition* comp = GApplication->GetRender()->GetComposition(window->GetCompositionID());
-            comp->GameViewport = {0};
+            comp->SetGameViewport({0});
         }
     }
 
@@ -36,7 +36,7 @@ public:
             }
 
             ImRect workRect = ImGui::GetCurrentWindow()->WorkRect;
-            comp->GameViewport = {{(int)workRect.GetTL().x, (int)workRect.GetTL().y}, {(unsigned int)workRect.GetWidth(), (unsigned int)workRect.GetHeight()}};
+            comp->SetGameViewport({{(int)workRect.GetTL().x, (int)workRect.GetTL().y}, {(unsigned int)workRect.GetWidth(), (unsigned int)workRect.GetHeight()}});
         }
         ImGui::PopStyleColor(1);
         ImGui::PopStyleVar(1);

@@ -28,10 +28,7 @@ protected:
     VkFormat imageFormat;
 
     std::vector<EntityRenderProxy*> renderProxies;
-#   ifdef EDITOR
-    std::vector<EntityRenderProxy*> editorRenderProxies;
-    friend class Editor;
-#   endif
+    std::vector<EntityRenderProxy*> postRenderProxies;
 
     std::vector<VkImage> pixelPerfectImages;
     std::vector<VkDeviceMemory> pixelPerfectImageMemories;

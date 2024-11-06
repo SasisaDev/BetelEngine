@@ -123,6 +123,12 @@ void ImGuiRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmdBuffer);
 
+    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+    }
+
     vkCmdEndRenderPass(cmdBuffer);
 
     IRenderUtility::EndDebugLabel(cmdBuffer);

@@ -26,6 +26,8 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
         }
     }
 
+    composition->GameViewport = {composition->offset, composition->extent};
+
     composition->AddLayerRefs(layerRefs);
 
     VkPhysicalDevice physDevice = IRenderUtility::GetPhysicalDevice();

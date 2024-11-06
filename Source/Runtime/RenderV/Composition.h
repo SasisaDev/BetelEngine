@@ -58,7 +58,10 @@ protected:
     VkSurfaceKHR surface;
 
     VkFormat imageFormat;
+    VkOffset2D offset = {0, 0};
     VkExtent2D extent;
+
+    VkRect2D GameViewport = {0};
 
     std::vector<VkSemaphore> aquireSemaphores;
 
@@ -93,20 +96,26 @@ public:
 
     inline VkSurfaceKHR GetSurface() const {return surface;}
     inline VkSwapchainKHR GetSwapchain() const {return swapchain;}
-
+    
+    /*
+     * Some elements of rendering may go beyond the game viewport
+     * For such cases Rendering Viewport and Game Viewport are separate
+     * This is mostly used by Editor features, but it will work in Runtime as well 
+    */
+    inline VkRect2D GetGameViewport() const {return GameViewport;}
+    inline VkOffset2D GetOffset() const {return offset;}
     inline VkExtent2D GetExtent() const {return extent;}
     inline VkFramebuffer GetCurrentFramebuffer() const {return framebuffers[targetImageId];}
     inline VkImage GetCurrentImage() const {return images[targetImageId];}
     inline uint32_t GetCurrentImageIndex() const {return targetImageId;}
 
+    inline void SetGameViewport(VkRect2D newValue) {GameViewport = newValue;}
+    inline void SetOffset(VkOffset2D newValue) {offset = newValue;}
+    inline void SetExtent(VkExtent2D newValue) {extent = newValue;}
 
     void StartFrame(VkCommandBuffer cmdBuffer){}
     void Render(VkCommandBuffer cmdBuffer);
     void EndFrame(VkCommandBuffer cmdBuffer){}
 
     bool Deinitialize();
-
-#   ifdef EDITOR
-    VkRect2D GameViewport = {0, 0, 0, 0};
-#   endif
 };

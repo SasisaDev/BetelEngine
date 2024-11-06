@@ -5,6 +5,7 @@
 class World;
 class Asset;
 class AssetLibrary;
+struct InputEvent;
 
 class EngineDelegates
 {
@@ -14,4 +15,6 @@ public:
 
     static MulticastDelegate<Asset*> OnAssetLoaded;
     static MulticastDelegate<AssetLibrary*> OnAssetCrawlingFinished;
+
+    static MulticastDelegate<InputEvent*> OnInputRaw;
 };

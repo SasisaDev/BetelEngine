@@ -502,6 +502,11 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
             proxy->Render(cmdBuffer, (WorldRenderLayerRef*)layerRef);
         }
 
+        for(EntityRenderProxy* postProxy : ((WorldRenderLayerRef*)layerRef)->postRenderProxies)
+        {
+            postProxy->Render(cmdBuffer, (WorldRenderLayerRef*)layerRef);
+        }
+
         vkCmdEndRenderPass(cmdBuffer);
         IRenderUtility::EndDebugLabel(cmdBuffer);
         // Render End
@@ -547,23 +552,15 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
         vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, upscaleShader->GetPipeline());
 
-#       ifdef EDITOR
-        viewport.x = layerRef->GetParentComposition()->GameViewport.offset.x;
-        viewport.y = layerRef->GetParentComposition()->GameViewport.offset.y;
-        viewport.width = layerRef->GetParentComposition()->GameViewport.extent.width;
-        viewport.height = layerRef->GetParentComposition()->GameViewport.extent.height;
-#       else
-        viewport.width = layerRef->GetParentComposition()->GetExtent().width;
-        viewport.height = layerRef->GetParentComposition()->GetExtent().height;
-#       endif
+        viewport.x = layerRef->GetParentComposition()->GetGameViewport().offset.x;
+        viewport.y = layerRef->GetParentComposition()->GetGameViewport().offset.y;
+        viewport.width = layerRef->GetParentComposition()->GetGameViewport().extent.width;
+        viewport.height = layerRef->GetParentComposition()->GetGameViewport().extent.height;
+
         vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
 
-        // TODO: Maybe there's better way
-#       ifdef EDITOR
-        scissors = layerRef->GetParentComposition()->GameViewport;
-#       else
-        scissors.extent = layerRef->GetParentComposition()->GetExtent();
-#       endif
+        scissors.offset = layerRef->GetParentComposition()->GetGameViewport().offset;
+        scissors.extent = layerRef->GetParentComposition()->GetGameViewport().extent;
 
         vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
 

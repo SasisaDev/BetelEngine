@@ -6,10 +6,12 @@
 
 #include "Windows/SceneOutliner/SceneOutliner.h"
 #include "Windows/Viewport/Viewport.h"
+#include "Windows/LogViewer/LogViewer.h"
 
 class EditorToolkitBase : public EditorToolkit {
     EditorSceneOutliner sceneOutliner;
     EditorViewport gameViewport;
+    EditorLogViewer logViewer;
 public:
     virtual void OnGUI(Window* window) override {
         if (ImGui::BeginMainMenuBar()) {
@@ -34,6 +36,9 @@ public:
                     sceneOutliner.Visible = !sceneOutliner.Visible;
                 }
                 if (ImGui::MenuItem("Details")) { 
+                }
+                if (ImGui::MenuItem("Log Viewer")) { 
+                    logViewer.Visible = !logViewer.Visible;
                 }
                 ImGui::EndMenu();
             }
@@ -64,7 +69,7 @@ public:
 
         sceneOutliner.DrawGUI(window);
         gameViewport.DrawGUI(window);
-
+        logViewer.DrawGUI(window);
 
         ImGui::Begin("Assets Explorer", 0, ImGuiWindowFlags_NoCollapse);ImGui::End();
         ImGui::Begin("Details", 0, ImGuiWindowFlags_NoCollapse);ImGui::End();

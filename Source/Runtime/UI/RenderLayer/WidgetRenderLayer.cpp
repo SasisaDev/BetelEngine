@@ -79,8 +79,8 @@ void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef,
     passInfo.renderPass = renderPass;
     passInfo.clearValueCount = 0;
     passInfo.framebuffer = layerRef->GetParentComposition()->GetCurrentFramebuffer();
-    passInfo.renderArea.offset = {0, 0};
-    passInfo.renderArea.extent = layerRef->GetParentComposition()->GetExtent();
+    passInfo.renderArea.offset = layerRef->GetParentComposition()->GetGameViewport().offset;
+    passInfo.renderArea.extent = layerRef->GetParentComposition()->GetGameViewport().extent;
 
     vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
 
@@ -89,34 +89,35 @@ void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef,
     {
         VkViewport viewport;
 
-#       ifdef EDITOR
-        viewport.x = layerRef->GetParentComposition()->GameViewport.offset.x;
-        viewport.y = layerRef->GetParentComposition()->GameViewport.offset.y;
-        viewport.width = layerRef->GetParentComposition()->GameViewport.extent.width;
-        viewport.height = layerRef->GetParentComposition()->GameViewport.extent.height;
+        viewport.x = layerRef->GetParentComposition()->GetGameViewport().offset.x;
+        viewport.y = layerRef->GetParentComposition()->GetGameViewport().offset.y;
+        viewport.width = layerRef->GetParentComposition()->GetGameViewport().extent.width;
+        viewport.height = layerRef->GetParentComposition()->GetGameViewport().extent.height;
         viewport.minDepth = 0;
         viewport.maxDepth = 1;
-#       else
+
+        /* TODO: Widget Viewport Based Rendering
         viewport.x = 0;
         viewport.y = 0;
-        viewport.width = canvas->GetExtent().x;
-        viewport.height = canvas->GetExtent().y;
-        //viewport.width = layerRef->GetParentComposition()->GetExtent().width;
-        //viewport.height = layerRef->GetParentComposition()->GetExtent().height;
+        viewport.width = canvas->GetGameViewport().extent.x;
+        viewport.height = canvas->GetGameViewport().extent.y;
+        //viewport.width = layerRef->GetParentComposition()->GetGameViewport().extent.width;
+        //viewport.height = layerRef->GetParentComposition()->GetGameViewport().extent.height;
         viewport.minDepth = 0;
         viewport.maxDepth = 1;
-#       endif
+        */
 
         VkRect2D scissors;
-        VkExtent2D extent = {static_cast<uint32_t>(canvas->GetExtent().x), static_cast<uint32_t>(canvas->GetExtent().y)};
+        // TODO: Widget Viewport Based Rendering
+        /*
+        VkExtent2D extent = {static_cast<uint32_t>(canvas->GetGameViewport().extent.x), static_cast<uint32_t>(canvas->GetGameViewport().extent.y)};
 
-        // TODO: Maybe there's better way
-#       ifdef EDITOR
-        scissors = layerRef->GetParentComposition()->GameViewport;
-#       else
         scissors.offset = {0, 0};
         scissors.extent = extent;
-#       endif
+        */
+
+        scissors.offset = layerRef->GetParentComposition()->GetGameViewport().offset;
+        scissors.extent = layerRef->GetParentComposition()->GetGameViewport().extent;
 
         vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
         vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
