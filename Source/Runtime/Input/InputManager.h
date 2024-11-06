@@ -1,21 +1,28 @@
 #pragma once
 
 #include <Delegate/Delegate.h>
-#include <Core/Window/Window.h>
+#include <Core/Window/WindowManager.h>
 
+#include "InputEvent.h"
+
+/*
+ * InGame Input Event Manager
+ * Only handles game events, everything aside them can be hooked by Window event handler. 
+ */
 class InputManager
 {
+    void InternalHandleEvent(SDL_Event e);
+protected:
+    bool IsActive = true;
 public:
+    InputManager() {
+        WindowManager::OnSDLEvent.BindMember(this, &InputManager::InternalHandleEvent);
+    }
+
     /*
     * Multicast delegate, bound functions will be called each time
     * an input event has occured.
-    *
-    * Arguments:
-    *   window_t    WindowID
-    *   uint8_t     EventType
-    *   uint32_t    EventKey
-    *   void*       EventData
     */
-    MulticastDelegate<window_t, uint8_t, uint32_t, void*> OnInputEvent;
+    MulticastDelegate<InputEvent> OnInputEvent;
     
 };

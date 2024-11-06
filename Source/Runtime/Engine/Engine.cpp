@@ -8,10 +8,6 @@ Engine::Engine()
     // Create default world
     world = new World;
     canvasWidget = std::make_shared<CanvasWidget>();
-#ifdef EDITOR
-    // TODO: Toolkit auto-builder
-    edCanvasWidget = std::make_shared<CanvasWidget>();
-#endif
 
     // Crawl all assets
     for(std::string& domain : IPlatform::Get()->GetLocalDomains()) {
@@ -33,9 +29,4 @@ void Engine::Tick(float DeltaTime)
 
     canvasWidget->Tick(DeltaTime);
     canvasWidget->RecalculateChildrenTransforms();
-
-#ifdef EDITOR
-    edCanvasWidget->Tick(DeltaTime);
-    edCanvasWidget->RecalculateChildrenTransforms();
-#endif
 }

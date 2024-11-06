@@ -7,6 +7,7 @@
 #include <Assets/AssetSmartPointers.h>
 #include <World/World.h>
 #include <UI/Widget.h>
+#include <Input/InputManager.h>
 
 class Engine
 {
@@ -14,19 +15,23 @@ protected:
     TickableManager tickManager;
     TimerManager timerManager;
     AssetLibrary assetLibrary;
+    InputManager inputManager;
 
     World* world;
 
     std::shared_ptr<Widget> canvasWidget;
-#	ifdef EDITOR
-    std::shared_ptr<Widget> edCanvasWidget;
-#   endif
+
+    bool IsGameFocused = true;
 public:
     Engine();
 
     TickableManager& GetTickManager() {return tickManager;}
     TimerManager& GetTimer() {return timerManager;}
     AssetLibrary& GetAssetLibrary() {return assetLibrary;}
+    InputManager& GetInputManager() {return inputManager;}
+
+    void SetGameFocused(bool bIsFocused) {IsGameFocused = bIsFocused;} 
+    bool GetGameFocused() {return IsGameFocused;}
 
 #pragma region "World API"
     // Shouldn't be used, instead use Engine::LoadWorld
@@ -38,10 +43,6 @@ public:
 #pragma region "UI API"
     void SetCanvasWidget(std::shared_ptr<Widget> newCanvasWidget) {canvasWidget = newCanvasWidget;}
     inline Widget* GetCanvasWidget() const {return canvasWidget.get();}
-#	ifdef EDITOR
-    void SetEditorCanvasWidget(std::shared_ptr<Widget> newCanvasWidget) {edCanvasWidget = newCanvasWidget;}
-    inline Widget* GetEditorCanvasWidget() const {return edCanvasWidget.get();}
-#   endif
 #pragma endregion "UI API"
 
     void Tick(float DeltaTime);

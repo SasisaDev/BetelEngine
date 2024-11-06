@@ -59,10 +59,12 @@ set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp" "Source/Run
 
 set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp" "Source/Runtime/UI/Widget.cpp" "Source/Runtime/UI/Widgets/Panel/Panel.cpp")
 
+set(SrcInput "Source/Runtime/Input/InputManager.cpp")
+
 set(SrcPlatform "Source/Runtime/Platform/Interface/Files/IFile.cpp" "Source/Runtime/Platform/Interface/Files/IDirectory.cpp" "Source/Runtime/Platform/Platform.cpp"
                 "Source/Runtime/Platform/Interface/Files/IPath.cpp" "Source/Runtime/Platform/Interface/IPlatform.cpp")
 
-set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGameFramework} ${SrcAssets} ${SrcPlatform}
+set(Sources ${SrcRenderV} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGameFramework} ${SrcAssets} ${SrcPlatform} ${SrcInput}
     "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
     "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Core/Window/WindowManager.cpp")

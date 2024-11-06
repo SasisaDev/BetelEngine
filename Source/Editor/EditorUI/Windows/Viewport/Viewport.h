@@ -13,6 +13,8 @@ public:
         } else {
             IRenderComposition* comp = GApplication->GetRender()->GetComposition(window->GetCompositionID());
             comp->SetGameViewport({0});
+            if(GApplication && GApplication->GetEngine())
+                GApplication->GetEngine()->SetGameFocused(false);
         }
     }
 
@@ -37,6 +39,10 @@ public:
 
             ImRect workRect = ImGui::GetCurrentWindow()->WorkRect;
             comp->SetGameViewport({{(int)workRect.GetTL().x, (int)workRect.GetTL().y}, {(unsigned int)workRect.GetWidth(), (unsigned int)workRect.GetHeight()}});
+
+            // In editor mod set, if the game is focused or not
+            if(GApplication && GApplication->GetEngine())
+                GApplication->GetEngine()->SetGameFocused(ImGui::IsWindowFocused());
         }
         ImGui::PopStyleColor(1);
         ImGui::PopStyleVar(1);
