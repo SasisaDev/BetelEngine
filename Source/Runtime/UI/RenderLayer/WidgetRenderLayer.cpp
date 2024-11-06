@@ -79,8 +79,8 @@ void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef,
     passInfo.renderPass = renderPass;
     passInfo.clearValueCount = 0;
     passInfo.framebuffer = layerRef->GetParentComposition()->GetCurrentFramebuffer();
-    passInfo.renderArea.offset = layerRef->GetParentComposition()->GetGameViewport().offset;
-    passInfo.renderArea.extent = layerRef->GetParentComposition()->GetGameViewport().extent;
+    passInfo.renderArea.offset = uiRef->GetParentComposition()->GetOffset();
+    passInfo.renderArea.extent = uiRef->GetParentComposition()->GetExtent();
 
     vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
 

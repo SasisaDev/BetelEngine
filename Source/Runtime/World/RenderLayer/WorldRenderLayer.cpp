@@ -542,7 +542,7 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
         passInfo.clearValueCount = 0;
         passInfo.renderPass = upscaleRenderPass;
         passInfo.framebuffer = layerRef->GetParentComposition()->GetCurrentFramebuffer();
-        passInfo.renderArea.offset = {0, 0};
+        passInfo.renderArea.offset = layerRef->GetParentComposition()->GetOffset();
         passInfo.renderArea.extent = layerRef->GetParentComposition()->GetExtent();
 
         vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
