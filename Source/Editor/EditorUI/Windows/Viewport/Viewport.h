@@ -31,7 +31,7 @@ public:
         ImGui::SetNextWindowSize(ImVec2(500, 500), ImGuiCond_Once);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
-        if(ImGui::Begin("Game", 0, ImGuiWindowFlags_NoCollapse)){
+        if(ImGui::Begin("Game", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar)){
             if(ImGui::IsWindowDocked()) {
                 ImGuiID dockID = ImGui::GetWindowDockID();
                 
@@ -43,6 +43,9 @@ public:
             // In editor mod set, if the game is focused or not
             if(GApplication && GApplication->GetEngine())
                 GApplication->GetEngine()->SetGameFocused(ImGui::IsWindowFocused());
+
+            // Draw Toolbar Elements
+            
         }
         ImGui::PopStyleColor(1);
         ImGui::PopStyleVar(1);

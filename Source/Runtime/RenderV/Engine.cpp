@@ -216,6 +216,8 @@ std::vector<VkSemaphore> IRenderEngine::GetCompositionsWaitSemaphores() const
 
 void IRenderEngine::Render()
 {
+    vkDeviceWaitIdle(device);
+    
     currentFrameAquireSemaphores = GetCompositionsWaitSemaphores();
 
     VkCommandBufferAllocateInfo allocInfo = {};

@@ -68,6 +68,11 @@ void UIRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef
 
 void UIRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
+    if( layerRef->GetParentComposition()->GetGameViewport().extent.width == 0 || 
+        layerRef->GetParentComposition()->GetGameViewport().extent.height == 0) {
+            return;
+    }
+
     UIRenderLayerRef* uiRef = (UIRenderLayerRef*)layerRef;
     uint32_t CurrentFrame = layerRef->GetParentComposition()->GetCurrentImageIndex(); 
 

@@ -456,7 +456,9 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
 
 void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
-    if(((WorldRenderLayerRef*)layerRef)->world)
+    if(((WorldRenderLayerRef*)layerRef)->world && 
+        layerRef->GetParentComposition()->GetGameViewport().extent.width > 0 && 
+        layerRef->GetParentComposition()->GetGameViewport().extent.height > 0)
     {
         uint32_t CurrentFrame = ((WorldRenderLayerRef*)layerRef)->GetParentComposition()->GetCurrentImageIndex(); 
         WorldRenderLayerRef* worldRef = (WorldRenderLayerRef*)layerRef;
