@@ -143,6 +143,9 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
         
         // TODO: Make more robust system
+        // At the current time initial composition framebuffer creation
+        // Requires a render pass, which we get from one of the existing layers,
+        // Hoping for it to exist and be valid. If it's not, the crush will occur.
         VkRenderPass pass;
         for(IRenderLayerRef* ref : composition->GetLayerRefs()) {
             if (ref->GetParentLayer()->GetRenderPass() != VK_NULL_HANDLE) {

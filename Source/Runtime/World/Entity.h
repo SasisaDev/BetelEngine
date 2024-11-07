@@ -18,6 +18,7 @@ struct EntitySpawnInfo
 
 class Entity
 {
+    friend class World;
 protected:
     Transform transform;
 
@@ -52,7 +53,7 @@ class EntityRenderProxy
 {
 public:
     Entity* Parent;
-    
+
     // Specifies whether entity gets automatically loaded/unloaded from memory
     bool bPersistent = false;
 public:

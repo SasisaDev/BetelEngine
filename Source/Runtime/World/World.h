@@ -32,6 +32,7 @@ public:
     EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo)
     {
         EntityType* spawnedEntity = new EntityType();
+        spawnedEntity->DisplayName = name;
         entities.push_back(spawnedEntity);
 
         OnEntitySpawned.Broadcast(spawnedEntity);

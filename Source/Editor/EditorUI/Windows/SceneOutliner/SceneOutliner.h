@@ -10,7 +10,9 @@ protected:
         ImGui::Checkbox("##Visible", &entity->Visible);
 
         ImGui::SameLine();
-        ImGui::Button(entity->GetDisplayName().c_str());
+        ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, {0, 0.5});
+        ImGui::Button(entity->GetDisplayName().c_str(), {ImGui::GetContentRegionAvail().x, 0});
+        ImGui::PopStyleVar();
     }
 public:
 

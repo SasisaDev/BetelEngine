@@ -80,6 +80,7 @@ add_executable(Game ${Sources})
 target_link_libraries(Game Vulkan-Headers SDL2::SDL2-static glm-header-only)
 
 target_include_directories(Game PRIVATE "Source/Runtime")
+target_include_directories(Game PRIVATE "Source/ThirdParty")
 
 set_property(TARGET Game PROPERTY CXX_STANDARD 20)
 
@@ -90,11 +91,13 @@ set(ImguiSrc "Source/ThirdParty/imgui/imgui_demo.cpp" "Source/ThirdParty/imgui/i
              "Source/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp")
 set(ImguiBetelSrc "Source/Editor/ImGui/RenderLayer/ImGuiLayer.cpp" "Source/Editor/ImGui/BetelImGui.cpp")
 
+set(SrcStb "Source/ThirdParty/stb/stb_implementation.cpp")
+
 set(AssetFactoriesSrc "Source/Editor/AssetFactory/Default/ShaderFactory.cpp" )
 
 set(ArgumentEventsSrc "Source/Editor/ArgumentEvents/UseAssetFactoryEvent.cpp")
 
-set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc} "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" ) 
+set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc} ${SrcStb} "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" ) 
 
 add_executable(Editor ${Sources} ${EditorSources})
 
@@ -102,6 +105,7 @@ target_link_libraries(Editor Vulkan-Headers SDL2::SDL2 glm-header-only)
 
 target_include_directories(Editor PRIVATE "Source/Runtime" "Source/Editor")
 
+target_include_directories(Editor PRIVATE "Source/ThirdParty")
 target_include_directories(Editor PRIVATE "Source/ThirdParty/imgui")
 
 target_compile_definitions(Editor PUBLIC EDITOR)
