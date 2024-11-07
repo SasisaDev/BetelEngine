@@ -501,7 +501,10 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
         for(EntityRenderProxy* proxy : ((WorldRenderLayerRef*)layerRef)->renderProxies)
         {
-            proxy->Render(cmdBuffer, (WorldRenderLayerRef*)layerRef);
+            if(proxy->Parent->Visible) 
+            {
+                proxy->Render(cmdBuffer, (WorldRenderLayerRef*)layerRef);
+            }
         }
 
         for(EntityRenderProxy* postProxy : ((WorldRenderLayerRef*)layerRef)->postRenderProxies)

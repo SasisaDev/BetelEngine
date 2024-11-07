@@ -4,6 +4,7 @@
 #include <set>
 #include <concepts>
 #include <type_traits>
+#include <string>
 
 #include <Math/Transform.h>
 
@@ -24,7 +25,11 @@ protected:
     Entity* Parent;
     std::set<Entity*> Children;
     EntityRenderProxy* RenderProxy;
+
+    std::string DisplayName = "Entity";
 public:
+    bool Visible = true;
+
     virtual EntityRenderProxy* CreateRenderProxy(){return RenderProxy = nullptr;}
     virtual EntityRenderProxy* GetRenderProxy() {return RenderProxy;}
 
@@ -37,14 +42,17 @@ public:
 
     virtual Vec3 GetLocation();
     virtual const Vec3& GetRelativeLocation() const {return transform.Location;}
+
+    virtual std::string GetDisplayName() {return DisplayName;} 
 };
 
 class WorldRenderLayerRef;
 
 class EntityRenderProxy
 {
-    Entity* Parent;
 public:
+    Entity* Parent;
+    
     // Specifies whether entity gets automatically loaded/unloaded from memory
     bool bPersistent = false;
 public:

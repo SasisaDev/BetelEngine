@@ -5,6 +5,13 @@
 
 class EditorSceneOutliner : public EditorToolkitWindow
 {
+protected:
+    virtual void EntityContainer(Entity* entity) {
+        ImGui::Checkbox("##Visible", &entity->Visible);
+
+        ImGui::SameLine();
+        ImGui::Button(entity->GetDisplayName().c_str());
+    }
 public:
 
     virtual void OnGUI(Window* window){
@@ -17,6 +24,10 @@ public:
         ImGui::SetNextWindowBgAlpha(1);
         if(ImGui::Begin("World Outliner", 0, ImGuiWindowFlags_NoCollapse)){
             ImGui::Text("%s", world->GetWorldName().c_str());
+            
+            for(Entity* entity : world->GetEntities()) {
+                EntityContainer(entity);
+            }
         }
         ImGui::End();
     }

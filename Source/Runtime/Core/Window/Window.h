@@ -28,6 +28,7 @@ struct WindowCreateInfo
     std::string title;
     uint32_t width, height;
 
+    // Renderer
     std::vector<IRenderLayerRef*> layerRefs;
 };
 
