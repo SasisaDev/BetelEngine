@@ -3,8 +3,11 @@
 #include <Toolkit/ToolkitWindow.h>
 #include <Core/Application/Application.h>
 
+#include <i18n/Text.h>
+
 class EditorSceneOutliner : public EditorToolkitWindow
 {
+    Text TabName = Text("EditorUI", "SceneOutliner", "TabName");
 protected:
     virtual void EntityContainer(Entity* entity, bool indent = false) {
         if(indent) 
@@ -38,7 +41,7 @@ public:
 
         ImGui::SetNextWindowSize(ImVec2(350, 200), ImGuiCond_Once);
         ImGui::SetNextWindowBgAlpha(1);
-        if(ImGui::Begin("World Outliner", 0, ImGuiWindowFlags_NoCollapse)){
+        if(ImGui::Begin(TabName.Get().c_str(), 0, ImGuiWindowFlags_NoCollapse)){
             ImGui::Text("%s", world->GetWorldName().c_str());
             
             for(Entity* entity : world->GetEntities()) {

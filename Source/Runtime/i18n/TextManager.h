@@ -22,6 +22,20 @@ public:
     }
 
     std::string Fetch(std::string domain, std::string subdomain, std::string name) {
-        
+        LocaleFile* targetLocale = nullptr;
+
+        for(LocaleFile* locale : locales) {
+            if(locale->localeID == currentLocale) {
+                targetLocale = locale;
+                break;
+            }
+        }
+
+        if(targetLocale == nullptr) {
+            return domain + "." + subdomain + "." + name;
+        }
+
+        // TODO: Add translation search logic
+        return domain + "." + subdomain + "." + name;
     }
 };

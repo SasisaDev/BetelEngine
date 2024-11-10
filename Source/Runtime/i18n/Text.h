@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <optional>
 
 class Text
 {
@@ -8,7 +9,11 @@ class Text
     std::string Domain;
     std::string Subdomain;
     std::string Name;
+
+    std::optional<std::string> TranslationMemoize;
 public:
+    Text() {}
+    Text(std::string domain, std::string subdomain, std::string name) : Domain(domain), Subdomain(subdomain), Name(name) {}
     
     std::string Get();
 
