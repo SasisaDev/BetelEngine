@@ -14,6 +14,7 @@ BetelImGuiEngine::~BetelImGuiEngine()
 
 void BetelImGuiEngine::Initialize(SDL_Window* window, ImGui_ImplVulkan_InitInfo& initInfo, VkCommandBuffer singleTimeBuffer)
 {
+    // TODO: I18N integration
     ImGui::CreateContext();
     ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable /*| ImGuiConfigFlags_ViewportsEnable*/; 
     ImGui::GetIO().ConfigDockingTransparentPayload = true;

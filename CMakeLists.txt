@@ -43,6 +43,9 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-literal-suffix -Wliteral-suffix")
 endif()
 
+add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+
 # Modules Sources
 set(SrcGameFramework "Source/Runtime/GameFramework/Entities/Test/TestEntity.cpp" "Source/Runtime/GameFramework/Entities/Sprite/SpriteEntity.cpp"
     "Source/Runtime/Materials/Assets/MaterialAsset.cpp" "Source/Runtime/Materials/Assets/ShaderAsset.cpp") 

@@ -37,7 +37,7 @@ IPath::IPath(const char* path)
 
 }
 
-std::string IPath::GetPath()
+std::string IPath::GetPath() const
 {
     std::string path;
     

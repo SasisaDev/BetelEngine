@@ -16,7 +16,7 @@ struct IPath
     void MakeRelative(std::string relTo);
     void MakeRelative(const IPath& relTo);
 
-    std::string GetPath();
+    std::string GetPath() const;
     inline char GetDisc() const {return disc;}
 
     // Add subdirectory

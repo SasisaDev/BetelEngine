@@ -10,6 +10,30 @@ protected:
     std::string currentLocale = "en_US";
 public:
 
+    const std::vector<LocaleFile*>& GetLocales() const {return locales;}
+
+    void Initialize() {
+        // Fetch Current Locale
+
+        IDirectory* gameDir = IPlatform::Get()->OpenDirectory("./Content/i18n/");
+        IDirectory* editorDir = nullptr;
+        #ifdef EDITOR
+        editorDir = IPlatform::Get()->OpenLocalDirectory("Editor/Content/i18n/");
+        #endif
+
+        for(IDirectory* dir : gameDir->GetChildren()) {
+            if(dir->IsDirectory()) continue;
+
+            if(IFile* file = IPlatform::Get()->OpenFile(dir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY)) {
+                LOGF(Log, LogI18N, "Found translation file: %s", dir->GetPath().GetPath().c_str());
+
+                LocaleFile* locale = new LocaleFile();
+                locale->Load({file});
+                locales.push_back(locale);
+            }
+        }
+    }
+
     bool SetLocale(std::string locale) {
         // Check if this locale is present
         for(LocaleFile* file : locales) {

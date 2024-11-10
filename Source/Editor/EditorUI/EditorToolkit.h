@@ -7,11 +7,13 @@
 #include "Windows/SceneOutliner/SceneOutliner.h"
 #include "Windows/Viewport/Viewport.h"
 #include "Windows/LogViewer/LogViewer.h"
+#include "Windows/Translator/Translator.h"
 
 class EditorToolkitBase : public EditorToolkit {
     EditorSceneOutliner sceneOutliner;
     EditorViewport gameViewport;
     EditorLogViewer logViewer;
+    EditorTranslator translator;
 public:
     virtual void OnGUI(Window* window) override {
         if (ImGui::BeginMainMenuBar()) {
@@ -23,6 +25,12 @@ public:
                 if (ImGui::MenuItem("Save", "Ctrl+S")) {
                 }
                 if (ImGui::MenuItem("Save as..")) { 
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Tools")) {
+                if (ImGui::MenuItem("Translator")) { 
+                    translator.Visible = !translator.Visible;
                 }
                 ImGui::EndMenu();
             }
@@ -70,6 +78,9 @@ public:
         sceneOutliner.DrawGUI(window);
         gameViewport.DrawGUI(window);
         logViewer.DrawGUI(window);
+
+
+        translator.DrawGUI(window);
 
         ImGui::Begin("Assets Explorer", 0, ImGuiWindowFlags_NoCollapse);ImGui::End();
         ImGui::Begin("Details", 0, ImGuiWindowFlags_NoCollapse);ImGui::End();

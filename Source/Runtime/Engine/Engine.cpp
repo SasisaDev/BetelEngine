@@ -9,6 +9,9 @@ Engine::Engine()
 {
     GEngine = this;
 
+    // Initialize i18n
+    textManager.Initialize();
+
     // Create default world
     world = new World;
     canvasWidget = std::make_shared<CanvasWidget>();

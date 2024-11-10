@@ -50,7 +50,7 @@ char* IFile::Peek(size_t count)
 
 char* IFile::Fetch(size_t count)
 {
-    if(file.eof()) {
+    if(file.eof() || file.peek() == EOF) {
         return nullptr;
     }
 

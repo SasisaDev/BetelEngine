@@ -37,9 +37,7 @@ const std::vector<IDirectory*>& IDirectory::GetChildren()
     }
 
     for(const Entry& e : entry.nodes) {
-        if(e.isDirectory) {
         nestedDirectories.push_back(new IDirectory(e));
-        }
     }
 
     return nestedDirectories;

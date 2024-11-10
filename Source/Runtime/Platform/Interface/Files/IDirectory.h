@@ -32,7 +32,7 @@ public:
     virtual inline const Entry& GetEntry() const {return entry;}
     virtual inline const IPath& GetPath() const {return entry.path;}
     virtual inline bool IsDirectory() const {return entry.isDirectory;}
-    virtual inline bool Exists() const {return entry.exists;}
+    virtual inline bool Exists() const {return entry.exists;} 
 
     virtual const std::vector<IDirectory*>& GetChildren(); 
     virtual const std::vector<IDirectory*>& FetchChildren();
