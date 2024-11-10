@@ -2,7 +2,6 @@
 
 #include <string>
 
-// TODO
 class Text
 {
     // Domain.Subdomain.Name
@@ -10,5 +9,10 @@ class Text
     std::string Subdomain;
     std::string Name;
 public:
+    
+    std::string Get();
 
+    std::string operator *() {
+        return Get();
+    }
 };

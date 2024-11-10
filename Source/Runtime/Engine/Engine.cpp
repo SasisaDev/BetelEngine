@@ -3,8 +3,12 @@
 #include <Platform/Platform.h>
 #include <UI/Widgets/Canvas/Canvas.h>
 
+Engine* GEngine = nullptr;
+
 Engine::Engine()
 {
+    GEngine = this;
+
     // Create default world
     world = new World;
     canvasWidget = std::make_shared<CanvasWidget>();

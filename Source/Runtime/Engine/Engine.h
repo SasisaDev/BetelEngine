@@ -8,6 +8,7 @@
 #include <World/World.h>
 #include <UI/Widget.h>
 #include <Input/InputManager.h>
+#include <i18n/TextManager.h>
 
 class Engine
 {
@@ -16,6 +17,7 @@ protected:
     TimerManager timerManager;
     AssetLibrary assetLibrary;
     InputManager inputManager;
+    TextManager textManager;
 
     World* world;
 
@@ -29,6 +31,7 @@ public:
     TimerManager& GetTimer() {return timerManager;}
     AssetLibrary& GetAssetLibrary() {return assetLibrary;}
     InputManager& GetInputManager() {return inputManager;}
+    TextManager& GetTextManager() {return textManager;}
 
     void SetGameFocused(bool bIsFocused) {IsGameFocused = bIsFocused;} 
     bool GetGameFocused() {return IsGameFocused;}
