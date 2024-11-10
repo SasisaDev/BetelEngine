@@ -5,6 +5,8 @@
 
 #include <i18n/Text.h>
 
+class Artifact;
+
 enum class ArtifactType : uint8_t
 {
     Bool,
@@ -38,6 +40,7 @@ DefineArtifactElement(BoolArtifactElement, bool, ArtifactType::Bool);
 DefineArtifactElement(ByteArtifactElement, unsigned char, ArtifactType::Byte);
 DefineArtifactElement(Int32ArtifactElement, int32_t, ArtifactType::Int32);
 DefineArtifactElement(UInt32ArtifactElement, uint32_t, ArtifactType::UInt32);
+DefineArtifactElement(NestedArtifactElement, Artifact*, ArtifactType::Artifact);
 
 class Artifact
 {
@@ -46,13 +49,12 @@ protected:
 public:
     Artifact operator+(const Artifact& otherArtifact);
 
-    void AddArtifact(std::string key, const Artifact& value);
-
     void AddBool(std::string key, bool value) {dataBank.insert_or_assign(key, new BoolArtifactElement(value));}
     void AddByte(std::string key, unsigned char value) {dataBank.insert_or_assign(key, new ByteArtifactElement(value));}
     void AddInt32(std::string key, int32_t value) {dataBank.insert_or_assign(key, new Int32ArtifactElement(value));}
     void AddUInt32(std::string key, uint32_t value) {dataBank.insert_or_assign(key, new UInt32ArtifactElement(value));}
     void AddString(std::string key, std::string value) {dataBank.insert_or_assign(key, new StringArtifactElement(value));}
+    void AddArtifact(std::string key, Artifact* value) {dataBank.insert_or_assign(key, new NestedArtifactElement(value));}
     void AddCustom(std::string key, size_t size, void* data);
     void AddText(std::string key, Text value);
 

@@ -6,13 +6,27 @@
 class EditorSceneOutliner : public EditorToolkitWindow
 {
 protected:
-    virtual void EntityContainer(Entity* entity) {
+    virtual void EntityContainer(Entity* entity, bool indent = false) {
+        if(indent) 
+            ImGui::Indent();
+
+        if(entity->GetChildren().size() > 0) {
+            if(ImGui::Button(">")) {
+
+            }
+        } else {
+            ImGui::Button(" ");
+        }
+        ImGui::SameLine();
         ImGui::Checkbox("##Visible", &entity->Visible);
 
         ImGui::SameLine();
         ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, {0, 0.5});
         ImGui::Button(entity->GetDisplayName().c_str(), {ImGui::GetContentRegionAvail().x, 0});
         ImGui::PopStyleVar();
+        
+        if(indent) 
+            ImGui::Unindent();
     }
 public:
 

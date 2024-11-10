@@ -3,6 +3,8 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
+#include <i18n/Text.h>
+
 class Window;
 
 class EditorToolkitWindow

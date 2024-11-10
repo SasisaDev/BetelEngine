@@ -44,6 +44,8 @@ public:
     virtual Vec3 GetLocation();
     virtual const Vec3& GetRelativeLocation() const {return transform.Location;}
 
+    virtual const std::set<Entity*>& GetChildren() const {return Children;}
+
     virtual std::string GetDisplayName() {return DisplayName;} 
 };
 

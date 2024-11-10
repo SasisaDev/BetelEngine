@@ -1,14 +1,23 @@
 #pragma once
 
-#include "Asset/LocaleTableAsset.h"
-#include <Assets/AssetSmartPointers.h>
+#include "Files/LocaleFile.h"
 #include <vector>
 
 class TextManager
 {
 protected:
-    std::vector<AssetPtr<LocaleTableAsset>> locales;
-
+    std::vector<LocaleFile*> locales;
+    std::string currentLocale = "en_US";
 public:
+    bool SetLocale(std::string locale) {
+        // Check if this locale is present
+        for(LocaleFile* file : locales) {
+            if(file->localeID == locale) {
+                currentLocale = locale;
+                return true;
+            }
+        }
+        return false;
+    }
 
 };
