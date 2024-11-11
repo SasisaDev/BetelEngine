@@ -43,3 +43,17 @@ IFile* IPlatform::OpenLocalFile(std::string path, uint8_t flags)
 
     return OpenFile(realFilePath, flags);
 }
+
+IDirectory* IPlatform::OpenLocalDirectory(std::string path, uint8_t flags)
+{
+    std::string localPath = {};
+    std::string domain = Internal_SeparateLocalPathDomain(path, &localPath);
+
+    if(!PathAliases.contains(domain)) {
+        return nullptr;
+    }
+
+    IPath realDirPath = PathAliases[domain] + localPath; 
+
+    return OpenDirectory(realDirPath, flags);
+}

@@ -62,11 +62,9 @@ void Application::Initialize()
 	ApplicationPath = IPlatform::Get()->GetExecutablePath();
 
 	// Create Virtual Filesystem handler
-	if(IsEditor()) {
+	if(IsEditor() && Arguments.Has("project")) {
 		IPlatform::Get()->AddLocalPath("Editor", IPath(IPlatform::Get()->GetExecutablePath()).StepBack());
-		if(Arguments.Has("project")) {
-			IPlatform::Get()->AddLocalPath("Game", Arguments.Get("project"));
-		}
+		IPlatform::Get()->AddLocalPath("Game", Arguments.Get("project"));
 	} else {
 		IPlatform::Get()->AddLocalPath("Game", IPath(IPlatform::Get()->GetExecutablePath()).StepBack());
 		IPlatform::Get()->AddLocalPath("Editor", IPath(IPlatform::Get()->GetExecutablePath()).StepBack());

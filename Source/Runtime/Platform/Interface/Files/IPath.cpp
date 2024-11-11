@@ -50,6 +50,14 @@ std::string IPath::GetName() const {
     return member.substr(0, tokenPos);
 }
 
+std::string IPath::GetNameExt() const {
+    if(pathMembers.size() <= 0) {
+        return "";
+    }
+    
+    return pathMembers[pathMembers.size()-1];
+}
+
 std::string IPath::GetPath() const
 {
     std::string path;

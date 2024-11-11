@@ -15,11 +15,11 @@ public:
     void Initialize() {
         // Fetch Current Locale
 
-        IDirectory* gameDir = IPlatform::Get()->OpenDirectory("./Content/i18n/");
+        IDirectory* gameDir = IPlatform::Get()->OpenLocalDirectory("Game/Content/i18n/");
         IDirectory* editorDir = nullptr;
-        #ifdef EDITOR
-        editorDir = IPlatform::Get()->OpenLocalDirectory("Editor/Content/i18n/");
-        #endif
+#       ifdef EDITOR
+        editorDir = IPlatform::Get()->OpenLocalDirectory("Editor/Content/Editor/i18n/");
+#       endif
 
         for(IDirectory* dir : gameDir->GetChildren()) {
             if(dir->IsDirectory()) continue;
@@ -27,8 +27,20 @@ public:
             if(IFile* file = IPlatform::Get()->OpenFile(dir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY)) {
                 LOGF(Log, LogI18N, "Found translation file: %s", dir->GetPath().GetPath().c_str());
 
+                std::vector<IFile*> files {file};
+
+                // Load Editor Translations if we're in Editor Mode
+                if(editorDir != nullptr) {
+                    for(IDirectory* edDir : editorDir->GetChildren()) {
+                        if(edDir->GetPath().GetName() == dir->GetPath().GetName()) {
+                            LOGF(Log, LogI18N, "Found editor translation file: %s", edDir->GetPath().GetPath().c_str());
+                            files.push_back(IPlatform::Get()->OpenFile(edDir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY));
+                        }
+                    }
+                }
+
                 LocaleFile* locale = new LocaleFile();
-                locale->Load({file});
+                locale->Load(files);
                 locale->localeID = dir->GetPath().GetName();
                 locales.push_back(locale);
             }

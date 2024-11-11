@@ -46,7 +46,7 @@ public:
      * Takes aliased path.
      * Usage: OpenLocalDirectory("Editor/Content/Path/To/Directory/")
      */
-    virtual IDirectory* OpenLocalDirectory(std::string path, uint8_t flags = 0) {return nullptr;}
+    virtual IDirectory* OpenLocalDirectory(std::string path, uint8_t flags = 0);
 
     /*
      * Tries to fetch requested file from all known path aliases
