@@ -87,6 +87,9 @@ void Application::Initialize()
 		LOG(Fatal, SDL, "SDL Initialization failed");
 	}
 
+	// Native IME only appears if this hint is set to "1" before SDL_CreateWindow
+	SDL_SetHint(SDL_HINT_IME_SHOW_UI, "1");
+
 	// Boilerplate for GetInstanceExtensions, until window handle is dropped in new SDL 
 	SDL_Window* window;
 	window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1, 1, SDL_WINDOW_HIDDEN | SDL_WINDOW_VULKAN);

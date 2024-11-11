@@ -32,6 +32,8 @@ FetchContent_Declare(
   GIT_TAG        release-2.30.3 # release-2.30.3
 )
 
+add_compile_definitions(SDL_DISABLE_WINDOWS_IME)
+
 FetchContent_MakeAvailable(vulkan sdl glm lua)
 
 # Disable reserved literals error

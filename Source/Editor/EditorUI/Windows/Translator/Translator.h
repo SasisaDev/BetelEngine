@@ -19,8 +19,8 @@ public:
     virtual void OnGUI(Window* window) {
         ImGui::SetNextWindowSize(ImVec2(350, 200), ImGuiCond_Once);
         ImGui::SetNextWindowBgAlpha(1);
-        if(ImGui::Begin("Translation example : 例えば、日本語", 0, ImGuiWindowFlags_NoCollapse)){
-            ImGui::InputText("test", utf8Japanese.data(), utf8Japanese.size(), ImGuiInputTextFlags_CharsHexadecimal);
+        if(ImGui::Begin("Translation example : 例えば、日本語", &Visible)){
+            ImGui::InputText("test", utf8Japanese.data(), 10);
         }
         ImGui::End();
     }
