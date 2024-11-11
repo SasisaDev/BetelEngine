@@ -191,6 +191,13 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
     return true;
 }
 
+bool WorldRenderLayerRef::Recreate() 
+{
+    // Recreate viewport framebuffers ?
+    // Update GPU Data SSBO
+    return true;
+}
+
 WorldRenderLayerRef* WorldRenderLayerRef::SetWorld(World* newWorld)
 {
     world = newWorld;

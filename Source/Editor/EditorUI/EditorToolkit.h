@@ -8,12 +8,14 @@
 #include "Windows/Viewport/Viewport.h"
 #include "Windows/LogViewer/LogViewer.h"
 #include "Windows/Translator/Translator.h"
+#include "Windows/MainToolbar/MainToolbar.h"
 
 class EditorToolkitBase : public EditorToolkit {
     EditorSceneOutliner sceneOutliner;
     EditorViewport gameViewport;
     EditorLogViewer logViewer;
     EditorTranslator translator;
+    EditorMainToolbar mainToolbar;
 public:
     virtual void OnGUI(Window* window) override {
         if (ImGui::BeginMainMenuBar()) {
@@ -74,6 +76,9 @@ public:
         ImGui::SetNextWindowBgAlpha(.0f);
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
         ImGui::End();
+
+        // Must be drawn always?
+        mainToolbar.DrawGUI(window);
 
         sceneOutliner.DrawGUI(window);
         gameViewport.DrawGUI(window);

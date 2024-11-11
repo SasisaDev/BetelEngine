@@ -252,6 +252,13 @@ std::pair<uint32_t, uint32_t> IRenderComposition::AddLayerRefs(std::vector<IRend
     return std::pair<uint32_t, uint32_t>(firstID, static_cast<uint32_t>(Layers.size() - 1));
 }
 
+void IRenderComposition::NotifyLayersRecreateResources() 
+{
+    for(IRenderLayerRef* layer : Layers) {
+        layer->Recreate();
+    }
+}
+
 void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 {
     if(bPauseRender) {

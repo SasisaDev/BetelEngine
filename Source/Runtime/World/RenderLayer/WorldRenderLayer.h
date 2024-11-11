@@ -46,6 +46,7 @@ public:
     ~WorldRenderLayerRef();
 
     virtual bool Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList) override;
+    virtual bool Recreate() override;
 
     inline Buffer* GetSceneDataBuffer() const {return SceneDataSSBOs[GetParentComposition()->GetCurrentImageIndex()];}
 

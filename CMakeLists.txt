@@ -106,7 +106,7 @@ set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiB
 
 add_executable(Editor ${Sources} ${EditorSources})
 
-target_link_libraries(Editor Vulkan-Headers SDL2::SDL2 glm-header-only)
+target_link_libraries(Editor Vulkan-Headers SDL2::SDL2-static glm-header-only)
 
 target_include_directories(Editor PRIVATE "Source/Runtime" "Source/Editor")
 
