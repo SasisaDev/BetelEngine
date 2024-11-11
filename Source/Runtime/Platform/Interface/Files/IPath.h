@@ -18,6 +18,7 @@ struct IPath
 
     std::string GetPath() const;
     inline char GetDisc() const {return disc;}
+    std::string GetName() const;
 
     // Add subdirectory
     IPath operator+(const IPath& path);

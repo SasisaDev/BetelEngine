@@ -37,6 +37,19 @@ IPath::IPath(const char* path)
 
 }
 
+// FIXME: This will return substring before the first dot, which may be incorrect for files with multiple level extensions
+// For example "Filename.sub.ext"
+std::string IPath::GetName() const {
+    if(pathMembers.size() <= 0) {
+        return "";
+    }
+    
+    std::string member = pathMembers[pathMembers.size()-1];
+    size_t tokenPos = member.find('.');
+
+    return member.substr(0, tokenPos);
+}
+
 std::string IPath::GetPath() const
 {
     std::string path;

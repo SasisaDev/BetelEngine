@@ -29,6 +29,7 @@ public:
 
                 LocaleFile* locale = new LocaleFile();
                 locale->Load({file});
+                locale->localeID = dir->GetPath().GetName();
                 locales.push_back(locale);
             }
         }
@@ -60,6 +61,6 @@ public:
         }
 
         // TODO: Add translation search logic
-        return domain + "." + subdomain + "." + name;
+        return targetLocale->Get( domain + "." + subdomain + "." + name);
     }
 };
