@@ -8,6 +8,7 @@
 class EditorSceneOutliner : public EditorToolkitWindow
 {
     Text TabName = Text("EditorUI", "SceneOutliner", "TabName");
+    std::string TranslatedName;
 protected:
     virtual void EntityContainer(Entity* entity, bool indent = false) {
         if(indent) 
@@ -32,6 +33,11 @@ protected:
             ImGui::Unindent();
     }
 public:
+    EditorSceneOutliner() {
+        TranslatedName = TabName.Get();
+    }
+
+    virtual const char* GetName() override {return TranslatedName.c_str();}
 
     virtual void OnGUI(Window* window){
         World* world = GApplication->GetEngine()->GetWorld();
@@ -41,7 +47,7 @@ public:
 
         ImGui::SetNextWindowSize(ImVec2(350, 200), ImGuiCond_Once);
         ImGui::SetNextWindowBgAlpha(1);
-        if(ImGui::Begin(TabName.Get().c_str(), 0, ImGuiWindowFlags_NoCollapse)){
+        if(ImGui::Begin(GetName(), 0, ImGuiWindowFlags_NoCollapse)){
             ImGui::Text("%s", world->GetWorldName().c_str());
             
             for(Entity* entity : world->GetEntities()) {

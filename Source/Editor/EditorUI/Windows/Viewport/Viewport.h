@@ -6,6 +6,7 @@
 class EditorViewport : public EditorToolkitWindow
 {
 public:
+    const char* GetName()override{return "Game";}
 
     virtual void DrawGUI(Window* window) override { 
         if(Visible){
@@ -31,7 +32,7 @@ public:
         ImGui::SetNextWindowSize(ImVec2(500, 500), ImGuiCond_Once);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 0));
-        if(ImGui::Begin("Game", 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar)){
+        if(ImGui::Begin(GetName(), 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar)){
             if(ImGui::IsWindowDocked()) {
                 ImGuiID dockID = ImGui::GetWindowDockID();
                 

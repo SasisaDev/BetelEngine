@@ -13,7 +13,7 @@ public:
     bool Visible = true;
 
     virtual void DrawGUI(Window* window){if(Visible){this->OnGUI(window);}}
-
+    virtual const char* GetName(){return "";}
     // Should not be called by toolkits
     virtual void OnGUI(Window* window){}
 };

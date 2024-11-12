@@ -10,11 +10,15 @@
 #include "Windows/Translator/Translator.h"
 #include "Windows/MainToolbar/MainToolbar.h"
 #include "Windows/Settings/GameSettings.h"
+#include "Windows/AssetExplorer/AssetExplorer.h"
 
 class EditorToolkitBase : public EditorToolkit {
+    bool firstInitialization = true;
+
     EditorSceneOutliner sceneOutliner;
     EditorViewport gameViewport;
     EditorLogViewer logViewer;
+    EditorAssetExplorer assetExplorer;
 
     EditorTranslator translator;
 
@@ -52,6 +56,7 @@ public:
                     gameViewport.Visible = !gameViewport.Visible;
                 }
                 if (ImGui::MenuItem("Asset Explorer")) { 
+                    assetExplorer.Visible = !assetExplorer.Visible;
                 }
                 if (ImGui::MenuItem("Scene Outliner")) { 
                     sceneOutliner.Visible = !sceneOutliner.Visible;
@@ -88,6 +93,31 @@ public:
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
         ImGui::End();
 
+        // TODO: Save layouts
+        if (firstInitialization)
+        {
+            firstInitialization = false;
+
+            ImGui::DockBuilderRemoveNode(dockspace_id);
+            ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
+            ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
+
+            auto dock_id_top = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Up, 0.075f, nullptr, &dockspace_id);
+            auto dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.25f, nullptr, &dockspace_id);
+            auto dock_id_right_bottom = ImGui::DockBuilderSplitNode(dock_id_right, ImGuiDir_Down, 0.65f, nullptr, &dock_id_right);
+            auto dock_id_bottom = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.25f, nullptr, &dockspace_id);
+
+            // we now dock our windows into the docking node we made above
+            ImGui::DockBuilderDockWindow(gameViewport.GetName(), dockspace_id);
+            ImGui::DockBuilderDockWindow(mainToolbar.GetName(), dock_id_top);
+            ImGui::DockBuilderDockWindow(sceneOutliner.GetName(), dock_id_right);
+            ImGui::DockBuilderDockWindow("Details", dock_id_right_bottom);
+            ImGui::DockBuilderDockWindow(logViewer.GetName(), dock_id_bottom);
+            ImGui::DockBuilderDockWindow(assetExplorer.GetName(), dock_id_bottom);
+
+            ImGui::DockBuilderFinish(dockspace_id);
+        }
+
         // Must be drawn always?
         mainToolbar.DrawGUI(window);
 
@@ -95,12 +125,12 @@ public:
         sceneOutliner.DrawGUI(window);
         gameViewport.DrawGUI(window);
         logViewer.DrawGUI(window);
+        assetExplorer.DrawGUI(window);
 
         // Windows
         translator.DrawGUI(window);
         gameSettings.DrawGUI(window);
 
-        ImGui::Begin("Assets Explorer", 0, ImGuiWindowFlags_NoCollapse);ImGui::End();
         ImGui::Begin("Details", 0, ImGuiWindowFlags_NoCollapse);ImGui::End();
     }
 };

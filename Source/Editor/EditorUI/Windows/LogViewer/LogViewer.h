@@ -5,20 +5,22 @@
 
 class EditorLogViewer : public EditorToolkitWindow
 {
-    std::vector<const char*> messages;
+    std::vector<std::string> messages;
 public:
     EditorLogViewer() {
         Logger::OnLogMessage.BindMember(this, &EditorLogViewer::MessageCallback);
     }
 
+    virtual const char* GetName() override {return "Log Viewer";}
+
     void MessageCallback(const char* type, const char* space, const char* text) {
-        messages.push_back(text);
+        messages.push_back(std::string("[") + space + "] " + text);
     }
 
     virtual void OnGUI(Window* window) {
         ImGui::SetNextWindowSize(ImVec2(350, 200), ImGuiCond_Once);
         ImGui::SetNextWindowBgAlpha(1);
-        if(ImGui::Begin("Log Viewer", 0, ImGuiWindowFlags_NoCollapse)){
+        if(ImGui::Begin(GetName(), 0, ImGuiWindowFlags_NoCollapse)){
             
             ImGui::SameLine();
             std::string buffer;
@@ -35,12 +37,13 @@ public:
                 messages.clear();
             }
 
-            ImGui::BeginListBox("##LogBox", {ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y});
-            for(const char* message : messages) {
-                // TODO: Text with selection
-                ImGui::Text(message);
+            if(ImGui::BeginListBox("##LogBox", {ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y})) {
+                for(std::string message : messages) {
+                    // TODO: Text with selection
+                    ImGui::Text(message.c_str());
+                }
+                ImGui::EndListBox();
             }
-            ImGui::EndListBox();
         }
         ImGui::End();
     }
