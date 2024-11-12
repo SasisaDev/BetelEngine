@@ -35,7 +35,7 @@ public:
                 if(cur[0] == '=') {
                     recordingValue = true;
                     continue;
-                } else if(cur[0] == '\n' || cur[0] == '\0' || cur[0] == EOF) {
+                } else if(cur[0] == '\n' || cur[0] == '\r' || cur[0] == '\0' || cur[0] == EOF) {
                     LocaleMap[key] = value;
                     key.clear();
                     value.clear();

@@ -9,13 +9,18 @@
 #include "Windows/LogViewer/LogViewer.h"
 #include "Windows/Translator/Translator.h"
 #include "Windows/MainToolbar/MainToolbar.h"
+#include "Windows/Settings/GameSettings.h"
 
 class EditorToolkitBase : public EditorToolkit {
     EditorSceneOutliner sceneOutliner;
     EditorViewport gameViewport;
     EditorLogViewer logViewer;
+
     EditorTranslator translator;
+
     EditorMainToolbar mainToolbar;
+
+    EditorGameSettings gameSettings;
 public:
     virtual void OnGUI(Window* window) override {
         if (ImGui::BeginMainMenuBar()) {
@@ -27,6 +32,12 @@ public:
                 if (ImGui::MenuItem("Save", "Ctrl+S")) {
                 }
                 if (ImGui::MenuItem("Save as..")) { 
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("Edit")) {
+                if (ImGui::MenuItem("Game Settings")) { 
+                    gameSettings.Visible = !gameSettings.Visible;
                 }
                 ImGui::EndMenu();
             }
@@ -80,12 +91,14 @@ public:
         // Must be drawn always?
         mainToolbar.DrawGUI(window);
 
+        // Utility
         sceneOutliner.DrawGUI(window);
         gameViewport.DrawGUI(window);
         logViewer.DrawGUI(window);
 
-
+        // Windows
         translator.DrawGUI(window);
+        gameSettings.DrawGUI(window);
 
         ImGui::Begin("Assets Explorer", 0, ImGuiWindowFlags_NoCollapse);ImGui::End();
         ImGui::Begin("Details", 0, ImGuiWindowFlags_NoCollapse);ImGui::End();

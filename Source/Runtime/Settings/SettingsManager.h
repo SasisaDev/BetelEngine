@@ -28,6 +28,7 @@ public:
         }
         
         SettingsType* defaultSettings = new SettingsType();
+        // TODO: Load Settings
 
         LoadedSettings.insert({SettingsType::GetName(), dynamic_cast<Settings*>(defaultSettings)});
 
