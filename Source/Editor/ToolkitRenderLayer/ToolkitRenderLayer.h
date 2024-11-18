@@ -6,39 +6,35 @@
 #include <RenderV/Objects/Material.h>
 #include <RenderV/Objects/Buffers/Buffer.h>
 
-#include <Core/Window/Window.h>
-
-#include <Toolkit/Toolkit.h>
-
-class BetelImGuiEngine;
-
-class ImGuiRenderLayerRef : public IRenderLayerRef
+struct ToolsRenderLayerGPUStorage
 {
-    friend class ImGuiRenderLayer;
+    glm::mat4 ProjectionMatrix;
+    glm::mat4 ViewMatrix;
+};
+
+class ToolkitRenderLayerRef : public IRenderLayerRef
+{
+    friend class UIRenderLayer;
 protected:
-    VkDescriptorPool imagesPool;
-
-    BetelImGuiEngine* ImGuiE;
+    // GPU Storage Buffer Binding 0
+    std::vector<ToolsRenderLayerGPUStorage> SceneDataStorages;
+    std::vector<Buffer*> SceneDataSSBOs;
 public:
-    Window* HostWindow;
-    EditorToolkit* CurrentToolkit;
-
-    ImGuiRenderLayerRef();
+    ToolkitRenderLayerRef();
 
     virtual bool Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList) override;
 
-    ImGuiRenderLayerRef* SetHostWindow(Window* window);
-    ImGuiRenderLayerRef* SetToolkit(EditorToolkit* toolkit) {CurrentToolkit = toolkit; return this;}
+    inline Buffer* GetSceneDataBuffer() const {return SceneDataSSBOs[GetParentComposition()->GetCurrentImageIndex()];}
 
     void onCanvasWidgetBind(){}
 };
 
-class ImGuiRenderLayer : public IRenderLayer
+class ToolkitRenderLayer : public IRenderLayer
 {
 public:
-    static IRenderLayerRef* CreateRef() {return new ImGuiRenderLayerRef;}
+    static IRenderLayerRef* CreateRef() {return new ToolkitRenderLayerRef;}
 
-    static std::string GetStaticName() {return "ImGuiRenderLayer";}
+    static std::string GetStaticName() {return "ToolkitRenderLayer";}
 
     virtual bool Initialize(VkDevice device) override;
 

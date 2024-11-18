@@ -16,7 +16,7 @@ bool ImGuiRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
     VkDescriptorPoolSize descPoolSize;
     descPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     descPoolSize.descriptorCount = IRenderUtility::GetFramesInFlight();
-
+    descPoolInfo.poolSizeCount = 1;
     descPoolInfo.pPoolSizes = &descPoolSize;
 
     if(vkCreateDescriptorPool(IRenderUtility::GetDevice(), &descPoolInfo, 0, &imagesPool) != VK_SUCCESS) {
@@ -135,8 +135,6 @@ void ImGuiRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
 
 }
-
-//TODO: void ImGuiRenderLayer::RenderWidget(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer, Widget* widget){}
 
 bool ImGuiRenderLayer::Deinitialize()
 {

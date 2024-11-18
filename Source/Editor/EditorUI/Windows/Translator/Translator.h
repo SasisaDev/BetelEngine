@@ -13,6 +13,7 @@ class EditorTranslator : public EditorToolkitWindow
     std::string utf8Japanese;
 public:
     EditorTranslator() {
+        Visible = false;
         utf8Japanese = GEngine->GetTextManager().GetLocales()[1]->Get("LocaleName");
     }
 

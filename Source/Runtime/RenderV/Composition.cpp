@@ -272,10 +272,6 @@ void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 
     IRenderLayerRef* previousLayer = nullptr;
 
-    // TODO: Fix this mess
-
-    //vkCmdPipelineBarrier(cmdbuffer);
-
     // Get image ready for render pass chain
 
 #   ifdef EDITOR

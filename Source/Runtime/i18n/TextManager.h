@@ -11,6 +11,14 @@ protected:
 public:
 
     const std::vector<LocaleFile*>& GetLocales() const {return locales;}
+    LocaleFile* GetLocale(std::string locale) {
+        for(LocaleFile* locFile : locales) {
+            if(locFile->localeID == locale) { 
+                return locFile;
+            }
+        }
+        return nullptr;
+    }
 
     void Initialize() {
         // Fetch Current Locale
@@ -18,7 +26,11 @@ public:
         IDirectory* gameDir = IPlatform::Get()->OpenLocalDirectory("Game/Content/i18n/");
         IDirectory* editorDir = nullptr;
 #       ifdef EDITOR
-        editorDir = IPlatform::Get()->OpenLocalDirectory("Editor/Content/Editor/i18n/");
+        if(IPlatform::Get()->GetPathAlias("Game").GetPath() == IPlatform::Get()->GetPathAlias("Editor").GetPath()) {
+            editorDir = IPlatform::Get()->OpenLocalDirectory("Editor/Content/Editor/i18n/");
+        } else {
+            editorDir = IPlatform::Get()->OpenLocalDirectory("Editor/Content/i18n/");
+        }
 #       endif
 
         for(IDirectory* dir : gameDir->GetChildren()) {

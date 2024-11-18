@@ -99,6 +99,24 @@ void AssetLibrary::CrawlAssetsTyped(AssetType type)
 
 void AssetLibrary::CrawlAssetsAll(std::string LocalDomain)
 {
-    // TODO
-    CrawlAssetsTyped(AssetType());
+    IDirectory* directory = IPlatform::Get()->OpenLocalDirectory(LocalDomain + "/Content/", DIRECTORY_FLAG_RECURSIVE);
+
+    if (!directory->Exists()) {
+        LOG(Error, LogAsset, "Failed attempt at crawling local domain");
+        return;
+    }
+
+    // FIXME: Current asset loading causes exception 
+    //CrawlAssetsRecursive(directory);
+}
+
+void AssetLibrary::CrawlAssetsRecursive(IDirectory* directory) 
+{
+    for(IDirectory* dir : directory->GetChildren()) { 
+        if(dir->IsDirectory()) {
+            CrawlAssetsRecursive(dir);
+        } else {
+            LoadAsset(dir->GetPath().GetPath());
+        }
+    }
 }

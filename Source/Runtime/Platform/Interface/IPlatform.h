@@ -62,5 +62,12 @@ public:
      */
     virtual std::vector<IDirectory*> FetchLocalDirectories(std::string path, uint8_t flags = 0) {return {};}
 
-    virtual std::vector<std::string> GetLocalDomains(){return {};}
+    virtual IPath GetPathAlias(std::string alias){return PathAliases[alias];}
+
+    virtual std::vector<std::string> GetLocalDomains() {
+        if(GetPathAlias("Game").GetPath() == GetPathAlias("Editor").GetPath()) {
+            return {"Game"};
+        }
+        return {"Game", "Editor"};
+    }
 };

@@ -7,6 +7,7 @@
 #include <string>
 
 #include "Asset.h"
+#include <Platform/Platform.h>
 
 struct AssetDescriptor
 {
@@ -35,4 +36,6 @@ public:
     
     void CrawlAssetsTyped(AssetType type);
     void CrawlAssetsAll(std::string LocalDomain);
+
+    void CrawlAssetsRecursive(IDirectory* directory);
 };

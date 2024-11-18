@@ -102,7 +102,8 @@ set(AssetFactoriesSrc "Source/Editor/AssetFactory/Default/ShaderFactory.cpp" )
 
 set(ArgumentEventsSrc "Source/Editor/ArgumentEvents/UseAssetFactoryEvent.cpp")
 
-set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc} ${SrcStb} "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" ) 
+set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc} ${SrcStb} 
+    "Source/Editor/ToolkitRenderLayer/ToolkitRenderLayer.cpp" "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" ) 
 
 add_executable(Editor ${Sources} ${EditorSources})
 

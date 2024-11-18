@@ -12,6 +12,7 @@
 #ifdef EDITOR
 #	include <ImGui/RenderLayer/ImGuiLayer.h>
 #	include <EditorUI/EditorToolkit.h> 
+#	include <ToolkitRenderLayer/ToolkitRenderLayer.h>
 #endif
 
 // TODO: Remove test boilerplate
@@ -35,6 +36,7 @@ int GuardedMain(int argc, char* argv[])
 	render->CreateLayer<WorldRenderLayer>();
 	render->CreateLayer<UIRenderLayer>();
 #ifdef EDITOR
+	render->CreateLayer<ToolkitRenderLayer>();
 	render->CreateLayer<ImGuiRenderLayer>();
 #endif
 	// Fetch settings
@@ -48,6 +50,7 @@ int GuardedMain(int argc, char* argv[])
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldLoad)
 			->SubscribeWorldUnload(&EngineDelegates::OnWorldUnload),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
+		IRenderFactory::CreateLayerRef<ToolkitRenderLayer, ToolkitRenderLayerRef>(render),
 		IRenderFactory::CreateLayerRef<ImGuiRenderLayer, ImGuiRenderLayerRef>(render)
 			->SetToolkit(new EditorToolkitBase)
 	};
@@ -61,7 +64,7 @@ int GuardedMain(int argc, char* argv[])
 
 	window_t edWinId = app.CreateWindow(editorWininfo);
 	// TODO: More robust host window setup for ImGui Layer
-	((ImGuiRenderLayerRef*)editorCompositionLayerRefs[2])->SetHostWindow(app.GetWindow(edWinId));
+	((ImGuiRenderLayerRef*)editorCompositionLayerRefs[3])->SetHostWindow(app.GetWindow(edWinId));
 #else
 	std::vector<IRenderLayerRef*> gameCompositionLayerRefs = {
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)

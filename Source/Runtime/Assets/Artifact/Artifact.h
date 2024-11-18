@@ -60,7 +60,6 @@ public:
 
     bool Has(std::string key) const {return dataBank.contains(key);}
 
-    // TODO: Make it better
     std::string GetStringOrDefault(std::string key, std::string def = "") {return Has(key) ? ((StringArtifactElement*)dataBank[key])->data : def;}
     bool GetBoolOrDefault(std::string key, bool def = false) {return Has(key) ? ((BoolArtifactElement*)dataBank[key])->data : def;}
     bool GetByteOrDefault(std::string key, unsigned char def = '\0') {return Has(key) ? ((ByteArtifactElement*)dataBank[key])->data : def;}
