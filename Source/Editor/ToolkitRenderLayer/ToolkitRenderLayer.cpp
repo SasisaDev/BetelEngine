@@ -1,17 +1,38 @@
 #include "ToolkitRenderLayer.h"
 #include <Engine/EngineDelegates.h>
+#include <Editor/EditorDelegates.h>
 
 #include <functional>
 #include <Log/Logger.h>
 #include <RenderV/Composition.h>
 #include <RenderV/Utility.h>
+#include <Editor/Tools/Tool.h>
+
+void ToolkitRenderLayerRef::AddToolCallback(EditorTool* tool) 
+{
+    if(tool) {
+        Proxies.insert(tool);
+        tool->CreateResources(this);
+    }
+}
+
+void ToolkitRenderLayerRef::RemoveToolCallback(EditorTool* tool) 
+{
+    if(Proxies.contains(tool)) {
+        Proxies.erase(Proxies.find(tool));
+    }
+}
 
 ToolkitRenderLayerRef::ToolkitRenderLayerRef()
 {
+
 }
 
 bool ToolkitRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef> &DependencyList)
 {
+    // Register for Editor Delegates
+    EditorDelegates::ToolCreated.BindMember(this, &ToolkitRenderLayerRef::AddToolCallback);
+    EditorDelegates::ToolBeginDestroy.BindMember(this, &ToolkitRenderLayerRef::RemoveToolCallback);
 
     return true;
 }
@@ -57,6 +78,8 @@ bool ToolkitRenderLayer::Initialize(VkDevice device)
 
 void ToolkitRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef *layerRef, IRenderLayerRef *previousLayer)
 {
+    ToolkitRenderLayerRef *tkRef = (ToolkitRenderLayerRef *)layerRef;
+
 }
 
 void ToolkitRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef *layerRef, IRenderLayerRef *previousLayer)
@@ -67,7 +90,7 @@ void ToolkitRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef *laye
         return;
     }
 
-    ToolkitRenderLayerRef *uiRef = (ToolkitRenderLayerRef *)layerRef;
+    ToolkitRenderLayerRef *tkRef = (ToolkitRenderLayerRef *)layerRef;
     uint32_t CurrentFrame = layerRef->GetParentComposition()->GetCurrentImageIndex();
 
     IRenderUtility::BeginDebugLabel(cmdBuffer, "Editor Toolkit", 0.35, 0.35, 0.85);
@@ -78,8 +101,8 @@ void ToolkitRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef *laye
     passInfo.renderPass = renderPass;
     passInfo.clearValueCount = 0;
     passInfo.framebuffer = layerRef->GetParentComposition()->GetCurrentFramebuffer();
-    passInfo.renderArea.offset = uiRef->GetParentComposition()->GetOffset();
-    passInfo.renderArea.extent = uiRef->GetParentComposition()->GetExtent();
+    passInfo.renderArea.offset = tkRef->GetParentComposition()->GetOffset();
+    passInfo.renderArea.extent = tkRef->GetParentComposition()->GetExtent();
 
     vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
 
@@ -101,6 +124,10 @@ void ToolkitRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef *laye
     vkCmdSetScissor(cmdBuffer, 0, 1, &scissors);
 
     // TODO: RENDER HERE
+    for(EditorTool* proxy : tkRef->Proxies) 
+    {
+        proxy->Render(cmdBuffer, tkRef);
+    }
 
     vkCmdEndRenderPass(cmdBuffer);
 

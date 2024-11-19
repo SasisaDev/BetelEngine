@@ -12,5 +12,8 @@ void InputManager::InternalHandleEvent(SDL_Event e) {
         case SDL_KEYDOWN:
             LOGF(Log, LogInput, "Key down: %s", SDL_GetKeyName(e.key.keysym.sym));
             break;
+        case SDL_MOUSEMOTION:
+            //LOGF(Log, LogInput, "Mouse motion: %i, %i", e.motion.xrel, e.motion.yrel);
+            break;
     };
 }

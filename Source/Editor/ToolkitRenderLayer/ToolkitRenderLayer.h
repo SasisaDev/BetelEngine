@@ -1,10 +1,14 @@
 #pragma once
 
+#include <set>
+
 #include <glm/glm.hpp>
 
 #include <RenderV/Composition.h>
 #include <RenderV/Objects/Material.h>
 #include <RenderV/Objects/Buffers/Buffer.h>
+
+class EditorTool;
 
 struct ToolsRenderLayerGPUStorage
 {
@@ -14,19 +18,22 @@ struct ToolsRenderLayerGPUStorage
 
 class ToolkitRenderLayerRef : public IRenderLayerRef
 {
-    friend class UIRenderLayer;
+    friend class ToolkitRenderLayer;
+
+    void AddToolCallback(EditorTool* tool);
+    void RemoveToolCallback(EditorTool* tool);
 protected:
     // GPU Storage Buffer Binding 0
     std::vector<ToolsRenderLayerGPUStorage> SceneDataStorages;
     std::vector<Buffer*> SceneDataSSBOs;
+
+    std::set<EditorTool*> Proxies;
 public:
     ToolkitRenderLayerRef();
 
     virtual bool Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList) override;
 
     inline Buffer* GetSceneDataBuffer() const {return SceneDataSSBOs[GetParentComposition()->GetCurrentImageIndex()];}
-
-    void onCanvasWidgetBind(){}
 };
 
 class ToolkitRenderLayer : public IRenderLayer

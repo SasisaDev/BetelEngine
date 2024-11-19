@@ -1,13 +1,15 @@
 #pragma once
 
+#include <vector>
+
 class World;
 class Entity;
 class Component;
-class EditorGizmo;
+class EditorTool;
 
 class Editor {
 protected:
-    EditorGizmo* Gizmo;
+    std::vector<EditorTool*> Tools;
 protected:
     World* CurrentWorld;
     Entity* SelectedEntity;
