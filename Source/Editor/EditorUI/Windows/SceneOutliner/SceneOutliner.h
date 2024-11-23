@@ -15,14 +15,14 @@ protected:
             ImGui::Indent();
 
         if(entity->GetChildren().size() > 0) {
-            if(ImGui::Button(">")) {
+            if(ImGui::Button((">##" + entity->GetDisplayName()).c_str())) {
 
             }
         } else {
             ImGui::Button(" ");
         }
         ImGui::SameLine();
-        ImGui::Checkbox("##Visible", &entity->Visible);
+        ImGui::Checkbox(("##Visible" + entity->GetDisplayName()).c_str(), &entity->Visible);
 
         ImGui::SameLine();
         ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, {0, 0.5});

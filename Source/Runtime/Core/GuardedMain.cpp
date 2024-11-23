@@ -88,10 +88,12 @@ int GuardedMain(int argc, char* argv[])
 	EngineDelegates::OnWorldLoad.Broadcast(app.GetEngine()->GetWorld());
 	app.GetEngine()->GetWorld()->SetBackgroundColor(Vec3(0.75, 0.5, 0));
 	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());
+	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity2", EntitySpawnInfo());
 
 	app.GetEngine()->GetCanvasWidget()->AddChild(std::make_shared<PanelWidget>());
 
 	IDirectory* directory = IPlatform::Get()->OpenDirectory("./Content", DIRECTORY_FLAG_RECURSIVE);
+	IDirectory* contentDirectory = IPlatform::Get()->OpenContentDirectory("Editor/");
 
 	/*AssetFile assetFile("Editor/Content/AssetFile");
 	assetFile.ReadFromDevice();*/

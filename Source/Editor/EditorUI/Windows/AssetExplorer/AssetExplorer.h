@@ -1,5 +1,7 @@
 #pragma once
 
+#include <set>
+
 #include <Toolkit/ToolkitWindow.h>
 #include <Core/Application/Application.h>
 
@@ -16,6 +18,10 @@ struct HierarchyNode
 
 class EditorAssetExplorer : public EditorToolkitWindow
 {
+    std::set<std::string> InvisibleDirectoryNames = {
+        "i18n"
+    };
+protected:
     Text TabName = Text("EditorUI", "AssetExplorer", "TabName");
     std::string TranslatedName;
 
@@ -41,6 +47,9 @@ public:
         for (IDirectory *child : dir->GetChildren())
         {
             if (!child->IsDirectory())
+                continue;
+
+            if(InvisibleDirectoryNames.contains(child->GetPath().GetName()))
                 continue;
 
             HierarchyNode *newNode = new HierarchyNode();

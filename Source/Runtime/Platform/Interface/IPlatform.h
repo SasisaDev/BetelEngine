@@ -49,6 +49,20 @@ public:
     virtual IDirectory* OpenLocalDirectory(std::string path, uint8_t flags = 0);
 
     /*
+     * If file is found, return IFile*, and nullptr if not 
+     * Takes aliased path.
+     * Usage: OpenContentFile("Editor/Path/To/File")
+     */
+    virtual IFile* OpenContentFile(std::string path, uint8_t flags = EFileAccessFlags::FILE_ACCESS_FLAG_READ);
+
+    /*
+     * If directory is found, return IDirectory*, and nullptr if not 
+     * Takes aliased path.
+     * Usage: OpenContentDirectory("Editor/Path/To/Directory/")
+     */
+    virtual IDirectory* OpenContentDirectory(std::string path, uint8_t flags = 0);
+
+    /*
      * Tries to fetch requested file from all known path aliases
      * Doesn't take alias.
      * Usage: FetchLocalFiles("Content/Path/To/File")
@@ -63,6 +77,8 @@ public:
     virtual std::vector<IDirectory*> FetchLocalDirectories(std::string path, uint8_t flags = 0) {return {};}
 
     virtual IPath GetPathAlias(std::string alias){return PathAliases[alias];}
+    
+    virtual IPath GetContentPathAlias(std::string alias);
 
     virtual std::vector<std::string> GetLocalDomains() {
         if(GetPathAlias("Game").GetPath() == GetPathAlias("Editor").GetPath()) {
