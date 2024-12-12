@@ -8,6 +8,10 @@
 
 #include <Math/Transform.h>
 
+#ifdef EDITOR
+#   include <Reflection/IPropertyProvider.h>
+#endif
+
 class EntityRenderProxy;
 class World;
 
@@ -17,6 +21,9 @@ struct EntitySpawnInfo
 };
 
 class Entity
+#ifdef EDITOR
+    : public IPropertyProvider
+#endif
 {
     friend class World;
 protected:
@@ -28,8 +35,12 @@ protected:
     EntityRenderProxy* RenderProxy;
 
     std::string DisplayName = "Entity";
+
+    bool bBeginDestroy = false;
 public:
     bool Visible = true;
+
+    void BeginDestroy() {bBeginDestroy = true;}
 
     virtual EntityRenderProxy* CreateRenderProxy(){return RenderProxy = nullptr;}
     virtual EntityRenderProxy* GetRenderProxy() {return RenderProxy;}

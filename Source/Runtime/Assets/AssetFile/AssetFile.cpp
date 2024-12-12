@@ -1,6 +1,7 @@
 #include "AssetFile.h"
 #include <Platform/Platform.h>
 #include <Log/Logger.h>
+#include <sstream>
 
 AssetFile& AssetFile::operator<<(const Artifact& input)
 {
@@ -25,16 +26,25 @@ AssetFile& AssetFile::operator>>(Artifact& output)
     return *this;
 }
 
-#ifdef EDITOR
 void AssetFile::WriteToDevice(IFile* file)
 {
     if(file == nullptr) {
         file = IPlatform::Get()->OpenLocalFile(path + ".asset", FILE_ACCESS_FLAG_WRITE | FILE_ACCESS_FLAG_BINARY);
     }
 
+    if(file == nullptr || !file->IsOpen()) {
+        LOGF(Error, LogAsset, "Failed writing asset file \"%s\".", path.c_str());
+        return;
+    }
 
+    std::stringstream buf;
+
+    buf << header.pSignature << *reinterpret_cast<char*>(header.uMagic) << *reinterpret_cast<char*>(header.uVersion) << *reinterpret_cast<char*>(header.uFactoryVersion);
+
+    buf << *reinterpret_cast<char*>(header.uTypeNameLength) << header.pTypeName;
+
+    file->Write(buf.str());
 }
-#endif
 
 void AssetFile::ReadFromDevice(IFile* _file)
 {

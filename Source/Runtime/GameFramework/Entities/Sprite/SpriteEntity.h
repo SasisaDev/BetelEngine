@@ -20,6 +20,9 @@ public:
 class SpriteEntity : public Entity
 {
 public:
+    SpriteEntity() {
+        DisplayName = "Sprite";
+    }
 
     virtual EntityRenderProxy* CreateRenderProxy() override {return RenderProxy = new SpriteRenderProxy(this);}
 };

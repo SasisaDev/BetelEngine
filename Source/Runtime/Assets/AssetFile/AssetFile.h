@@ -64,8 +64,6 @@ public:
     AssetFile& operator<<(const Artifact& input);
     AssetFile& operator>>(Artifact& output);
 
-#ifdef EDITOR
     void WriteToDevice(IFile* file = nullptr);
-#endif
     void ReadFromDevice(IFile* file = nullptr);
 };
