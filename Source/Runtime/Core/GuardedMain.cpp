@@ -93,7 +93,6 @@ int GuardedMain(int argc, char* argv[])
 	app.GetEngine()->GetWorld()->Spawn<SpriteEntity>("Sprite", EntitySpawnInfo());
 	CameraEntity* camera = app.GetEngine()->GetWorld()->Spawn<CameraEntity>("Camera", EntitySpawnInfo());
 	camera->SetCameraActive();
-	camera->SetRelativeLocation({10, 198, 0});
 
 	app.GetEngine()->GetCanvasWidget()->AddChild(std::make_shared<PanelWidget>());
 

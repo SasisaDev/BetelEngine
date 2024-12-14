@@ -17,7 +17,14 @@ class EntityRenderProxy;
 struct WorldRenderLayerGPUStorage
 {
     glm::mat4 ProjectionMatrix;
+    // View Matrix should only be used for Rotation
     glm::mat4 ViewMatrix;
+    glm::vec2 Position;
+};
+
+struct UpscaleGPUStorage
+{
+    glm::vec2 AspectRationCompensation = {1, 1};
 };
 
 class WorldRenderLayerRef : public IRenderLayerRef
@@ -39,6 +46,10 @@ protected:
     // GPU Storage Buffer Binding 0
     std::vector<WorldRenderLayerGPUStorage> SceneDataStorages;
     std::vector<Buffer*> SceneDataSSBOs;
+
+    // Upscale Buffer Binding 1
+    UpscaleGPUStorage UpscaleDataStorage;
+    Buffer* UpscaleDataSSBO;
 
     friend class WorldRenderLayer;
 public:

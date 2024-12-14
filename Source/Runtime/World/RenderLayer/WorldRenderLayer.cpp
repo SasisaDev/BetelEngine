@@ -188,6 +188,10 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
         SceneDataSSBOs.push_back(new Buffer(sizeof(WorldRenderLayerGPUStorage), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
     }
 
+    // Create Upscale Data SSBO
+    UpscaleDataSSBO = new Buffer(sizeof(UpscaleGPUStorage), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT);
+    UpscaleDataSSBO->Write(&UpscaleDataStorage);
+
     return true;
 }
 
@@ -196,6 +200,23 @@ bool WorldRenderLayerRef::Recreate()
     // TODO
     // Recreate viewport framebuffers ?
     // Update GPU Data SSBO
+
+    // TODO: Update Upscale Buffer
+    // Currently it's obviously broken. Need to develop a UV calculation technique
+    float OriginalViewportAspect = ((float)viewport.width / (float)viewport.height);
+    float CurrentViewportAspect =  (float)GetParentComposition()->GetGameViewport().extent.width / (float)GetParentComposition()->GetGameViewport().extent.height;
+    
+    if(CurrentViewportAspect > OriginalViewportAspect) {
+        // Compensate for lack of Y
+        UpscaleDataStorage.AspectRationCompensation.x = 1;
+        UpscaleDataStorage.AspectRationCompensation.y = 1 - (CurrentViewportAspect - OriginalViewportAspect);
+    } else {
+        // Compensate for lack of X
+        UpscaleDataStorage.AspectRationCompensation.y = 1;
+        UpscaleDataStorage.AspectRationCompensation.x = 1 + (CurrentViewportAspect - OriginalViewportAspect);
+    }
+
+    UpscaleDataSSBO->Write(&UpscaleDataStorage);
     
     return true;
 }
@@ -347,6 +368,7 @@ void WorldRenderLayer::CreateUpscaleMaterial()
 
     ShaderDescriptorLayout descriptorsLayout;
     descriptorsLayout.GenerateBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+    descriptorsLayout.GenerateBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 
     upscaleShader = std::make_shared<IShader>(upscaleRenderPass, VertFile->FetchAllBinary(), FragFile->FetchAllBinary(), descriptorsLayout);
 
@@ -443,8 +465,9 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
     const size_t imageID = ref->GetParentComposition()->GetCurrentImageIndex();
 
     if(World* world = ref->GetWorld()) {
-        ref->SceneDataStorages[imageID].ProjectionMatrix = glm::ortho(0.0f, static_cast<float>(ref->viewport.width), 0.0f, static_cast<float>(ref->viewport.height), -100.f, 100.0f);;
-        ref->SceneDataStorages[imageID].ViewMatrix = glm::translate(glm::mat4(1), glm::vec3(world->CameraPosition.x/ref->viewport.width, world->CameraPosition.y/ref->viewport.height, 0));
+        ref->SceneDataStorages[imageID].ProjectionMatrix = glm::ortho(0.0f, static_cast<float>(ref->viewport.width), 0.0f, static_cast<float>(ref->viewport.height), -100.f, 100.0f);
+        ref->SceneDataStorages[imageID].ViewMatrix = glm::mat4(1);
+        ref->SceneDataStorages[imageID].Position = glm::vec2(world->CameraPosition.x, world->CameraPosition.y);
     }
     
     /*for(int i = 0; i < ref->SceneDataSSBOs.size(); ++i)
@@ -561,6 +584,7 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
         vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
 
+        upscaleMaterial->SetBuffer(1, ((WorldRenderLayerRef*)layerRef)->UpscaleDataSSBO->GetBufferObject(), ((WorldRenderLayerRef*)layerRef)->UpscaleDataSSBO->GetSize());
         const VkDescriptorSet upscaleDescSet = upscaleMaterial->Get(CurrentFrame);
         vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, upscaleShader->GetPipelineLayout(), 0, 1, &upscaleDescSet, 0, nullptr);
 

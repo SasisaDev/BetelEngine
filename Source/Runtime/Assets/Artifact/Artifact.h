@@ -51,12 +51,14 @@ protected:
 public:
     Artifact operator+(const Artifact& otherArtifact);
 
-    void AddBool(std::string key, bool value)                   {dataBank.insert_or_assign(key, new BoolArtifactElement(value));}
-    void AddByte(std::string key, unsigned char value)          {dataBank.insert_or_assign(key, new ByteArtifactElement(value));}
-    void AddInt32(std::string key, int32_t value)               {dataBank.insert_or_assign(key, new Int32ArtifactElement(value));}
-    void AddUInt32(std::string key, uint32_t value)             {dataBank.insert_or_assign(key, new UInt32ArtifactElement(value));}
-    void AddString(std::string key, std::string value)          {dataBank.insert_or_assign(key, new StringArtifactElement(value));}
-    void AddArtifact(std::string key, Artifact* value)          {dataBank.insert_or_assign(key, new NestedArtifactElement(value));}
+    const std::unordered_map<std::string, ArtifactElement*>& GetArtifactsMap() const {return dataBank;}
+
+    void AddBool(std::string key, bool value)                               {dataBank.insert_or_assign(key, new BoolArtifactElement(value));}
+    void AddByte(std::string key, unsigned char value)                      {dataBank.insert_or_assign(key, new ByteArtifactElement(value));}
+    void AddInt32(std::string key, int32_t value)                           {dataBank.insert_or_assign(key, new Int32ArtifactElement(value));}
+    void AddUInt32(std::string key, uint32_t value)                         {dataBank.insert_or_assign(key, new UInt32ArtifactElement(value));}
+    void AddString(std::string key, std::string value)                      {dataBank.insert_or_assign(key, new StringArtifactElement(value));}
+    void AddArtifact(std::string key, Artifact* value)                      {dataBank.insert_or_assign(key, new NestedArtifactElement(value));}
     void AddCustom(std::string key, size_t size, void* data);
     void AddText(std::string key, Text value);
 

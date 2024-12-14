@@ -109,7 +109,15 @@ public:
     inline VkImage GetCurrentImage() const {return images[targetImageId];}
     inline uint32_t GetCurrentImageIndex() const {return targetImageId;}
 
-    inline void SetGameViewport(VkRect2D newValue) {GameViewport = newValue; NotifyLayersRecreateResources(); }
+    inline void SetGameViewport(VkRect2D newValue) 
+    {
+        if( newValue.extent.width != GameViewport.extent.width || newValue.extent.height != GameViewport.extent.height ||
+            newValue.offset.x != GameViewport.offset.x || newValue.offset.y != GameViewport.offset.y) 
+        {
+            GameViewport = newValue; 
+            NotifyLayersRecreateResources();
+        }
+    }
     inline void SetOffset(VkOffset2D newValue) {offset = newValue;}
     inline void SetExtent(VkExtent2D newValue) {extent = newValue;}
 
