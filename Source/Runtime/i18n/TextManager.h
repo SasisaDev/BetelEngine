@@ -23,7 +23,7 @@ public:
     void Initialize() {
         // Fetch Current Locale
 
-        IDirectory* gameDir = IPlatform::Get()->OpenContentDirectory("Game/i18n/");
+        IDirectory* gameDir = IPlatform::Get()->OpenContentDirectory("i18n/");
         IDirectory* editorDir = nullptr;
 #       ifdef EDITOR
         editorDir = IPlatform::Get()->OpenContentDirectory("Editor/i18n/");

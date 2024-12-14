@@ -17,9 +17,7 @@ Engine::Engine()
     canvasWidget = std::make_shared<CanvasWidget>();
 
     // Crawl all assets
-    for(std::string& domain : IPlatform::Get()->GetLocalDomains()) {
-        AssetLibrary::Get().CrawlAssetsAll(domain);
-    }
+    AssetLibrary::Get().CrawlAssetsAll("./Content");
 }
 
 void Engine::SetWorld(World* nWorld)

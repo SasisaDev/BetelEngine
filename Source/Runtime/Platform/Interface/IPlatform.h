@@ -14,7 +14,7 @@ protected:
 	std::string Internal_SeparateLocalPathDomain(std::string in, std::string* purePath);
 protected:
 	std::vector<std::string> ExecVariables;
-	std::map<std::string, IPath> PathAliases;
+	IPath ExecutableLocalPath = "./";
 public:
 
 	static IPlatform* Get();
@@ -32,33 +32,29 @@ public:
 	virtual IFile* OpenFile(IPath path, uint8_t accessFlags) { return new IFile(path, accessFlags); }
 	virtual IDirectory* OpenDirectory(IPath path, uint8_t flags = 0) { return new IDirectory(IPath(path), flags); }
 
-	virtual void AddLocalPath(std::string localPath, IPath globalPath){PathAliases.insert_or_assign(localPath, globalPath);}
-
-	    /*
+	/*
      * If file is found, return IFile*, and nullptr if not 
-     * Takes aliased path.
-     * Usage: OpenLocalFile("Editor/Content/Path/To/File")
+     * Same Root folder as executable's folder.
+     * Usage: OpenLocalFile("Content/Path/To/File")
      */
     virtual IFile* OpenLocalFile(std::string path, uint8_t flags = EFileAccessFlags::FILE_ACCESS_FLAG_READ);
 
     /*
      * If directory is found, return IDirectory*, and nullptr if not 
-     * Takes aliased path.
-     * Usage: OpenLocalDirectory("Editor/Content/Path/To/Directory/")
+     * Same Root folder as executable's folder.
+     * Usage: OpenLocalDirectory("Content/Path/To/Directory/")
      */
     virtual IDirectory* OpenLocalDirectory(std::string path, uint8_t flags = 0);
 
     /*
      * If file is found, return IFile*, and nullptr if not 
-     * Takes aliased path.
-     * Usage: OpenContentFile("Editor/Path/To/File")
+     * Usage: OpenContentFile("Path/To/File")
      */
     virtual IFile* OpenContentFile(std::string path, uint8_t flags = EFileAccessFlags::FILE_ACCESS_FLAG_READ);
 
     /*
      * If directory is found, return IDirectory*, and nullptr if not 
-     * Takes aliased path.
-     * Usage: OpenContentDirectory("Editor/Path/To/Directory/")
+     * Usage: OpenContentDirectory("Path/To/Directory/")
      */
     virtual IDirectory* OpenContentDirectory(std::string path, uint8_t flags = 0);
 
@@ -75,15 +71,4 @@ public:
      * Usage: FetchLocalDirectories("Content/Path/To/Directory/")
      */
     virtual std::vector<IDirectory*> FetchLocalDirectories(std::string path, uint8_t flags = 0) {return {};}
-
-    virtual IPath GetPathAlias(std::string alias){return PathAliases[alias];}
-    
-    virtual IPath GetContentPathAlias(std::string alias);
-
-    virtual std::vector<std::string> GetLocalDomains() {
-        if(GetPathAlias("Game").GetPath() == GetPathAlias("Editor").GetPath()) {
-            return {"Game"};
-        }
-        return {"Game", "Editor"};
-    }
 };

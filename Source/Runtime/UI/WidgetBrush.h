@@ -16,8 +16,8 @@ struct WidgetBrush
 
     WidgetBrush()
     {
-      static AssetPtr<ShaderAsset> DefaultBrushShader = AssetPtr<ShaderAsset>("Editor/Content/Default/Widgets/WidgetShader");
-      static AssetPtr<Texture2DAsset> DefaultBrushTexture = AssetPtr<Texture2DAsset>("Editor/Content/Default/Widgets/WidgetDefaultTexture");
+      static AssetPtr<ShaderAsset> DefaultBrushShader = AssetPtr<ShaderAsset>("Content/Default/Widgets/WidgetShader");
+      static AssetPtr<Texture2DAsset> DefaultBrushTexture = AssetPtr<Texture2DAsset>("Content/Default/Widgets/WidgetDefaultTexture");
       static Color DefaultBrushColor = Color(1,1,1,1);
 
       shader = DefaultBrushShader;

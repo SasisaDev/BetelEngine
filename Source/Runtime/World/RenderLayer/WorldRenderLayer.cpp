@@ -338,8 +338,8 @@ void WorldRenderLayer::CreateUpscalePipeline()
 void WorldRenderLayer::CreateUpscaleMaterial()
 {
     //IFile* VertFile = IPlatform::Get()->OpenFile("./Shaders/TriangleUpscale/TriangleUpscale.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
-    IFile* VertFile = IPlatform::Get()->OpenLocalFile("Editor/Shaders/TriangleUpscale/TriangleUpscale.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
-    IFile* FragFile = IPlatform::Get()->OpenLocalFile("Editor/Shaders/TriangleUpscale/TriangleUpscale.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+    IFile* VertFile = IPlatform::Get()->OpenLocalFile("Shaders/TriangleUpscale/TriangleUpscale.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+    IFile* FragFile = IPlatform::Get()->OpenLocalFile("Shaders/TriangleUpscale/TriangleUpscale.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
 
     if(!VertFile->IsOpen() || !FragFile->IsOpen()) {
         LOG(Fatal, LogWorldRenderLayer, "Upscale shaders not found in folder \"Editor/Shaders/TriangleUpscale/\", can't run layer!");

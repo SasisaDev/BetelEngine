@@ -32,73 +32,28 @@ std::string IPlatform::Internal_SeparateLocalPathDomain(std::string in, std::str
 
 IFile* IPlatform::OpenLocalFile(std::string path, uint8_t flags) 
 {
-    std::string localPath = {};
-    std::string domain = Internal_SeparateLocalPathDomain(path, &localPath);
-
-    if(!PathAliases.contains(domain)) {
-        return nullptr;
-    }
-
-    IPath realFilePath = PathAliases[domain] + localPath; 
+    IPath realFilePath = ExecutableLocalPath + path;
 
     return OpenFile(realFilePath, flags);
 }
 
 IDirectory* IPlatform::OpenLocalDirectory(std::string path, uint8_t flags)
 {
-    std::string localPath = {};
-    std::string domain = Internal_SeparateLocalPathDomain(path, &localPath);
-
-    if(!PathAliases.contains(domain)) {
-        return nullptr;
-    }
-
-    IPath realDirPath = PathAliases[domain] + localPath; 
+    IPath realDirPath = ExecutableLocalPath + path;
 
     return OpenDirectory(realDirPath, flags);
 }
 
-IPath IPlatform::GetContentPathAlias(std::string alias) 
-{
-    IPath mainAlias = PathAliases[alias] + std::string("Content/");
-    if(alias == "Game") {
-        return mainAlias;
-    }
-
-    // In case Editor & Project are in the same directory
-    // This usually happens when project is already shipped, 
-    // And the content is already packed inside the ./Content/Editor folder
-    if(GetPathAlias("Game").GetPath() == GetPathAlias("Editor").GetPath()) {
-        mainAlias = mainAlias + std::string("Editor/");
-    }
-
-    return mainAlias;
-}
-
 IFile* IPlatform::OpenContentFile(std::string path, uint8_t flags)
 {
-    std::string localPath = {};
-    std::string domain = Internal_SeparateLocalPathDomain(path, &localPath);
+    IPath realFilePath = ExecutableLocalPath + IPath("./Content/") + path; 
 
-    if(!PathAliases.contains(domain)) {
-        return nullptr;
-    }
-
-    IPath realDirPath = GetContentPathAlias(domain) + localPath; 
-
-    return OpenFile(realDirPath, flags);
+    return OpenFile(realFilePath, flags);
 }
 
 IDirectory* IPlatform::OpenContentDirectory(std::string path, uint8_t flags)
 {
-    std::string localPath = {};
-    std::string domain = Internal_SeparateLocalPathDomain(path, &localPath);
-
-    if(!PathAliases.contains(domain)) {
-        return nullptr;
-    }
-
-    IPath realDirPath = GetContentPathAlias(domain) + localPath; 
+    IPath realDirPath = ExecutableLocalPath + IPath("./Content/") + path;
 
     return OpenDirectory(realDirPath, flags);
 }

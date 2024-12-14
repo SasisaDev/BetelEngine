@@ -98,8 +98,8 @@ int GuardedMain(int argc, char* argv[])
 	app.GetEngine()->GetCanvasWidget()->AddChild(std::make_shared<PanelWidget>());
 
 	IDirectory* directory = IPlatform::Get()->OpenDirectory("./Content");
-	IDirectory* localDirectory = IPlatform::Get()->OpenLocalDirectory("Editor/");
-	IDirectory* contentDirectory = IPlatform::Get()->OpenContentDirectory("Editor/");
+	IDirectory* localDirectory = IPlatform::Get()->OpenLocalDirectory("./");
+	IDirectory* contentDirectory = IPlatform::Get()->OpenContentDirectory("./");
 
 	/*AssetFile assetFile("Editor/Content/AssetFile");
 	assetFile.ReadFromDevice();*/
