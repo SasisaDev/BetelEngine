@@ -209,11 +209,16 @@ bool WorldRenderLayerRef::Recreate()
     if(CurrentViewportAspect > OriginalViewportAspect) {
         // Compensate for lack of Y
         UpscaleDataStorage.AspectRationCompensation.x = 1;
-        UpscaleDataStorage.AspectRationCompensation.y = 1 - (CurrentViewportAspect - OriginalViewportAspect);
-    } else {
+        // kY = Xc / ((Xo/Yo) * Yc)
+        UpscaleDataStorage.AspectRationCompensation.y = (float)GetParentComposition()->GetGameViewport().extent.width / (OriginalViewportAspect * (float)GetParentComposition()->GetGameViewport().extent.height);
+    } else if(CurrentViewportAspect < OriginalViewportAspect) {
         // Compensate for lack of X
         UpscaleDataStorage.AspectRationCompensation.y = 1;
-        UpscaleDataStorage.AspectRationCompensation.x = 1 + (CurrentViewportAspect - OriginalViewportAspect);
+        // kX = ((Xo/Yo) * Yc) / Xc
+        UpscaleDataStorage.AspectRationCompensation.x = (OriginalViewportAspect * (float)GetParentComposition()->GetGameViewport().extent.height) / (float)GetParentComposition()->GetGameViewport().extent.width;
+    } else {
+        UpscaleDataStorage.AspectRationCompensation.y = 1;
+        UpscaleDataStorage.AspectRationCompensation.x = 1;
     }
 
     UpscaleDataSSBO->Write(&UpscaleDataStorage);
