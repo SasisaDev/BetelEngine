@@ -15,6 +15,11 @@ protected:
     bool BackgroundGradient = false;
     Vec3 BackgroundColor;
     std::pair<Vec3, Vec3> BackgroundGradientColor;
+    
+    IVec2 CameraPosition = {};
+    IVec2 CameraRotation = {};
+    float CameraNearPlane = -100;
+    float CameraFarPlane = 100;
 
     std::string Name = "Persistent World";
 public:
@@ -33,6 +38,7 @@ public:
     {
         EntityType* spawnedEntity = new EntityType();
         spawnedEntity->DisplayName = name;
+        spawnedEntity->OwnerWorld = this;
         entities.push_back(spawnedEntity);
 
         OnEntitySpawned.Broadcast(spawnedEntity);
@@ -41,6 +47,11 @@ public:
     }
 
     inline std::vector<Entity*> GetEntities() const {return entities;}
+
+    void SetWorldCameraPosition(IVec2 pos) {CameraPosition = pos;}
+    void SetWorldCameraRotation(IVec2 rot) {CameraRotation = rot;}
+
+    virtual void StartPlay();
 
     virtual void Tick(float DeltaTime);
 };

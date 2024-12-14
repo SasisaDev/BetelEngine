@@ -5,6 +5,11 @@ World::World()
     
 }
 
+void World::StartPlay()
+{
+
+}
+
 void World::Tick(float DeltaTime)
 {
     for(int entID = 0; entID < entities.size(); entID++) {

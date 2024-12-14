@@ -5,7 +5,7 @@
 
 struct Transform
 {
-    Vec3 Location;
+    IVec3 Location;
     Vec3 Scale;
     Quat Rotator;
 

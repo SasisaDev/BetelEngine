@@ -21,6 +21,7 @@
 #include <Assets/AssetFile/AssetFile.h>
 #include <UI/Widgets/Panel/Panel.h>
 #include <GameFramework/Entities/Sprite/SpriteEntity.h>
+#include <World/Entities/Camera/Camera.h>
 
 int GuardedMain(int argc, char* argv[])
 {
@@ -90,6 +91,9 @@ int GuardedMain(int argc, char* argv[])
 	app.GetEngine()->GetWorld()->SetBackgroundColor(Vec3(0.75, 0.5, 0));
 	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());
 	app.GetEngine()->GetWorld()->Spawn<SpriteEntity>("Sprite", EntitySpawnInfo());
+	CameraEntity* camera = app.GetEngine()->GetWorld()->Spawn<CameraEntity>("Camera", EntitySpawnInfo());
+	camera->SetCameraActive();
+	camera->SetRelativeLocation({10, 198, 0});
 
 	app.GetEngine()->GetCanvasWidget()->AddChild(std::make_shared<PanelWidget>());
 

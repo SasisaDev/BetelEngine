@@ -52,8 +52,12 @@ public:
     virtual Transform GetTransform();
     virtual const Transform& GetRelativeTransform() const {return transform;}
 
-    virtual Vec3 GetLocation();
-    virtual const Vec3& GetRelativeLocation() const {return transform.Location;}
+    virtual IVec3 GetLocation();
+    virtual const IVec3& GetRelativeLocation() const {return transform.Location;}
+
+    // TODO
+    virtual void SetLocation(const IVec3& loc){}
+    virtual void SetRelativeLocation(const IVec3& loc) {transform.Location = loc;}
 
     virtual const std::set<Entity*>& GetChildren() const {return Children;}
 

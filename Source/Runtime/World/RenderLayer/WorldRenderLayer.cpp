@@ -444,7 +444,7 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
 
     if(World* world = ref->GetWorld()) {
         ref->SceneDataStorages[imageID].ProjectionMatrix = glm::ortho(0.0f, static_cast<float>(ref->viewport.width), 0.0f, static_cast<float>(ref->viewport.height), -100.f, 100.0f);;
-        ref->SceneDataStorages[imageID].ViewMatrix = glm::mat4(1);
+        ref->SceneDataStorages[imageID].ViewMatrix = glm::translate(glm::mat4(1), glm::vec3(world->CameraPosition.x/ref->viewport.width, world->CameraPosition.y/ref->viewport.height, 0));
     }
     
     /*for(int i = 0; i < ref->SceneDataSSBOs.size(); ++i)

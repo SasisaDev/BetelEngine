@@ -47,3 +47,51 @@ struct Vec2
         return ret;
     }
 };
+
+struct IVec4
+{
+    int x = 0, y = 0, z = 0, w = 0;
+
+    IVec4(){}
+    IVec4(int _x, int _y, int _z, int _w) : x(_x), y(_y), z(_z), w(_w) {}
+
+    IVec4 operator+(const IVec4& other) {
+        IVec4 ret;
+        ret.x = x + other.x;
+        ret.y = y + other.y;
+        ret.z = z + other.z;
+        ret.w = w + other.w;
+        return ret;
+    }
+};
+
+struct IVec3
+{
+    int x = 0, y = 0, z = 0;
+
+    IVec3(){}
+    IVec3(int _x, int _y, int _z) :x(_x), y(_y), z(_z) {}
+
+    IVec3 operator+(const IVec3& other) {
+        IVec3 ret;
+        ret.x = x + other.x;
+        ret.y = y + other.y;
+        ret.z = z + other.z;
+        return ret;
+    }
+};
+
+struct IVec2
+{
+    int x = 0, y = 0;
+
+    IVec2(){}
+    IVec2(int _x, int _y) :x(_x), y(_y) {}
+
+    IVec2 operator+(const IVec2& other) {
+        IVec2 ret;
+        ret.x = x + other.x;
+        ret.y = y + other.y;
+        return ret;
+    }
+};

@@ -14,7 +14,7 @@ Transform Entity::GetTransform()
     }
 }
 
-Vec3 Entity::GetLocation()
+IVec3 Entity::GetLocation()
 {
     if(Parent) {
         return transform.Location + Parent->transform.Location;
