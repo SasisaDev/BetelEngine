@@ -201,8 +201,7 @@ bool WorldRenderLayerRef::Recreate()
     // Recreate viewport framebuffers ?
     // Update GPU Data SSBO
 
-    // TODO: Update Upscale Buffer
-    // Currently it's obviously broken. Need to develop a UV calculation technique
+    // Update Upscale Buffer
     float OriginalViewportAspect = ((float)viewport.width / (float)viewport.height);
     float CurrentViewportAspect =  (float)GetParentComposition()->GetGameViewport().extent.width / (float)GetParentComposition()->GetGameViewport().extent.height;
     
