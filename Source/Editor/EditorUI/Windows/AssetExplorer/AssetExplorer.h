@@ -62,15 +62,12 @@ public:
 
     void UpdateHierarchy()
     {
-        IDirectory *hierarchyDir = IPlatform::Get()->OpenLocalDirectory("Game/Content", DIRECTORY_FLAG_RECURSIVE);
-        IDirectory *edHierarchyDir = IPlatform::Get()->OpenLocalDirectory("Editor/Content", DIRECTORY_FLAG_RECURSIVE);
+        IDirectory *hierarchyDir = IPlatform::Get()->OpenLocalDirectory("Content", DIRECTORY_FLAG_RECURSIVE);
 
-        if (!hierarchyDir || !edHierarchyDir)
+        if (!hierarchyDir || !hierarchyDir->Exists())
         {
             LOG(Fatal, LogAssetExplorer, "Failed to open ./Content/ folder, you should create it yourself if it doesn't exist!");
         }
-
-        bool sameDirs = (hierarchyDir->GetPath().GetPath() == edHierarchyDir->GetPath().GetPath());
 
         hierarchy.clear();
 
@@ -79,15 +76,6 @@ public:
         gameNode->Path = hierarchyDir->GetPath();
         PopulateNodeRecursive(gameNode, hierarchyDir);
         hierarchy.push_back(gameNode);
-
-        if (!sameDirs)
-        {
-            HierarchyNode *edNode = new HierarchyNode();
-            edNode->Name = "Editor";
-            edNode->Path = edHierarchyDir->GetPath();
-            PopulateNodeRecursive(edNode, edHierarchyDir);
-            hierarchy.push_back(edNode);
-        }
     }
 
     void UnselectAll(std::vector<HierarchyNode *> nodes)
@@ -179,6 +167,10 @@ public:
             ImGui::SetNextWindowClass(&noTab_class);
             if (ImGui::Begin(ContentsName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove))
             {
+                if(currentSelection) 
+                {
+
+                }
             }
             ImGui::End();
         }
