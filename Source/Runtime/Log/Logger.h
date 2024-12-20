@@ -6,6 +6,7 @@
 class Logger {
 protected:
 	inline static void InternalLog(const char* Namespace, const char* message, const char* prefix = "");
+	inline static std::string InternalGetTimeStamp();
 public:
 	static MulticastDelegate<const char*, const char*, const char*> OnLogMessage;
 	static MulticastDelegate<const char*, const char*, const char*> OnLogFatal;

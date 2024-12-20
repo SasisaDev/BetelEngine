@@ -7,13 +7,26 @@
 
 #include <Platform/Platform.h>
 #include <cstdarg>
+#include <ctime>
 
 MulticastDelegate<const char*, const char*, const char*> Logger::OnLogMessage = MulticastDelegate<const char*, const char*, const char*>();
+
+std::string Logger::InternalGetTimeStamp()
+{
+	// Get local time
+	std::time_t time = std::time(0);
+    std::tm* timeNow = std::localtime(&time);
+
+	std::stringstream stream;
+	stream << timeNow->tm_hour << ":" << timeNow->tm_min << ":" << timeNow->tm_sec;
+
+	return stream.str();
+}
 
 void Logger::InternalLog(const char* Namespace, const char* message, const char* prefix)
 {
 	std::stringstream prefixStream;
-	prefixStream << prefix << " [" << "HH:MM:SS:MS" << "] [" << Namespace << "] " << message << "\n\0";
+	prefixStream << prefix << " [" << InternalGetTimeStamp() << "] [" << Namespace << "] " << message << "\n\0";
 
 	IPlatform::Get()->DebugPrint(prefixStream.str().c_str());
 }
