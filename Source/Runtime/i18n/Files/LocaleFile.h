@@ -62,7 +62,7 @@ public:
     std::string Get(std::string key) {
         // TODO: Make more verbose
         if(LocaleMap.find(key) == LocaleMap.end()) {
-            LOG(Warning, LogI18N, "Key not found");
+            LOGF(Warning, LogI18N, "Key \"%s\" not found", key.c_str());
             return key;
         }
 

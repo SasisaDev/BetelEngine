@@ -37,8 +37,8 @@ public:
     bool UnregisterAssetUsage(std::string path);
 
     Asset* LoadAsset(std::string Path);
-    Asset* UnloadAsset(std::string Path);
     Asset* GetAsset(std::string Path);
+    void UnloadAsset(std::string Path, bool force = false);
     
     void CrawlAssetsTyped(AssetType type);
     void CrawlAssetsAll(std::string LocalDomain);

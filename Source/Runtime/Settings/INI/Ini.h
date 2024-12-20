@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <cassert>
 
 class INIFile {
     std::map<std::string, std::map<std::string, std::string>> DataMap;
@@ -19,9 +20,26 @@ public:
         DataMap[domain] = data;
     }
 
-    // Call this without second argument to get size of the buffer you need to allocate
-    void GenerateFileBuffer(size_t* size, unsigned char* buffer = nullptr) {
+    std::string GenerateFileBuffer() {
         // TODO: Generate file data
+        std::string buffer;
+
+        for(auto domainIterator = DataMap.begin();domainIterator != DataMap.end(); domainIterator++)
+        {
+            buffer += "[" + domainIterator->first + "]\n";
+            for(auto keyIterator = domainIterator->second.begin(); keyIterator != domainIterator->second.end(); keyIterator++)
+            {
+                std::string formatedString = keyIterator->second;
+                size_t formatPosition = 0;
+                while((formatPosition = formatedString.find('\n', formatPosition)) != std::string::npos) {
+                    formatedString.insert(formatPosition, "\\");
+                    formatPosition += 2;
+                }
+                buffer += keyIterator->first + "=" + formatedString + "\n";
+            }
+        }
+
+        return buffer;
     }
 
     static INIFile* LoadFromMemory(char* buffer, size_t size) {

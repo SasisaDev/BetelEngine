@@ -67,6 +67,29 @@ Asset* AssetLibrary::LoadAsset(std::string Path)
     return asset;
 }
 
+void AssetLibrary::UnloadAsset(std::string Path, bool force)
+{
+    AssetDescriptor* descriptor = nullptr;
+    for(AssetDescriptor& desc : AssetList) {
+        if(desc.Path == Path) {
+            descriptor = &desc;
+        }
+    }
+
+    // We can't unload asset, that is absent or not loaded
+    if(descriptor == nullptr || !descriptor->AssetPtr.has_value()) {
+        return;
+    }
+
+    // We shouldn't unload asset, that is still being used
+    if(descriptor->Usages > 0 && !force) {
+        return;
+    }
+
+    delete descriptor->AssetPtr.value();
+    descriptor->AssetPtr.reset();
+}
+
 Asset* AssetLibrary::GetAsset(std::string Path)
 {
     for(auto desc : AssetList) {
