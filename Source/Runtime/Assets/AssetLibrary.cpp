@@ -2,6 +2,7 @@
 #include <Platform/Platform.h>
 #include <Log/Logger.h>
 #include "AssetFile/AssetFile.h"
+#include <cassert>
 
 AssetLibrary& AssetLibrary::Get()
 {
@@ -119,4 +120,35 @@ void AssetLibrary::CrawlAssetsRecursive(IDirectory* directory)
             LoadAsset(dir->GetPath().GetPath());
         }
     }
+}
+
+bool AssetLibrary::RegisterAssetUsage(std::string path) 
+{
+    for(AssetDescriptor& descriptor : AssetList)
+    {
+        if(descriptor.Path == path) {
+            descriptor.Usages += 1; 
+            return true;
+        }
+    }
+
+    //TODO: assert(!"Trying to add asset usage, but target asset is not in the library!");
+
+    return false;
+}
+
+bool AssetLibrary::UnregisterAssetUsage(std::string path)
+{
+    for(AssetDescriptor& descriptor : AssetList)
+    {
+        if(descriptor.Path == path) {
+            // If you encounter this assert, asset life cycle is broken
+            assert(descriptor.Usages > 0 && "Trying to remove asset usage, but nobody uses this asset already!");
+
+            descriptor.Usages -= 1; 
+            return true;
+        }
+    }
+
+    return false;
 }

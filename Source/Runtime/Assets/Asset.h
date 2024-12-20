@@ -13,6 +13,8 @@ class Asset
     std::string className;
 public:
 
+    std::string GetPath() const {return path;}
+
     virtual Artifact Serialize() {return {};}
     virtual void Deserialize(Artifact& artifact) {}
 };

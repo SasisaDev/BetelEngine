@@ -8,8 +8,25 @@ class AssetPtr
     AssetTypeT* assetPtr;
     std::string path;
 public:
-    AssetPtr(){}
-    AssetPtr(std::string defaultPath) : path(defaultPath){}
+    AssetPtr() {}
+    AssetPtr(AssetTypeT* ptr) : assetPtr(ptr) 
+    {
+        if(ptr != nullptr) {
+            path = ptr->GetPath(); 
+            AssetLibrary::Get().RegisterAssetUsage(path);
+        }
+    }
+
+    AssetPtr(std::string defaultPath) : path(defaultPath) {
+        AssetLibrary::Get().RegisterAssetUsage(path);
+    }
+
+    ~AssetPtr() 
+    {
+        if(assetPtr != nullptr) {
+            AssetLibrary::Get().UnregisterAssetUsage(path);
+        }
+    }
 
     AssetTypeT* Load() 
     {
@@ -17,9 +34,14 @@ public:
             return assetPtr;
         }
 
+        if(path.empty()) {
+            return nullptr;
+        }
+
         AssetLibrary& lib = AssetLibrary::Get();
         
         assetPtr = dynamic_cast<AssetTypeT*>(lib.LoadAsset(path));
+        AssetLibrary::Get().RegisterAssetUsage(path);
 
         return assetPtr;
     }

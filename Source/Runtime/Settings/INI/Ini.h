@@ -29,10 +29,20 @@ public:
         
         std::string domain, key, value;
         bool pDomain = true, pValue = false; 
+        bool comment = false;
+        bool multiline = false;
 
         for(size_t i = 0; i < size; i++){
             // Line end; Submit data
             if(buffer[i] == '\0' || buffer[i] == '\n') {
+                comment = false;
+                
+                // Don't push if multiline is still enabled
+                if(multiline) {
+                    multiline = false;
+                    continue;
+                }
+
                 // This check guards against broken pairs and domain defining sequence
                 if(domain.size() > 0 && key.size() > 0 && value.size() > 0) {
                     file->DataMap[domain][key] = value;
@@ -40,6 +50,29 @@ public:
                     value.clear();
                     pValue = false;
                 }
+                continue;
+            }
+            
+            // Don't do anything if it's comment
+            if(comment) {
+                continue;
+            }
+
+            // Comment
+            if(buffer[i] == ';') {
+                comment = true;
+                continue;
+            }
+
+            // Multiline value or '\\' character
+            if(buffer[i] == '\\' && pValue) {
+                if(buffer[i+1]=='\\') {
+                    value.push_back('\\');
+                    i += 1;
+                    continue;
+                }
+                multiline = true;
+                value.push_back('\n');
                 continue;
             }
 

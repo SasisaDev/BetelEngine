@@ -19,7 +19,7 @@ protected:
 public:
     SettingsManager() {
         // TODO: Load file
-        char buffer[] = "[Test]\nKey=Value\0";
+        char buffer[] = "[Test]\nKey=Value\\\nMultiline!\0";
         size_t size = sizeof(buffer);
 
 

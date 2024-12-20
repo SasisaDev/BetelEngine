@@ -15,10 +15,12 @@ struct AssetDescriptor
     // Local path. E.g. "Editor/Content/Some/Asset"
     std::string Path;
     std::optional<Asset*> AssetPtr;
+    uint32_t Usages = 0;
 };
 
 class AssetLibrary
 {
+    friend class AssetGarbageCollector;
 protected:
     std::vector<AssetType*> RegisteredAssetTypes;
     std::vector<AssetDescriptor> AssetList;
@@ -31,7 +33,11 @@ public:
         return true;
     }
 
+    bool RegisterAssetUsage(std::string path);
+    bool UnregisterAssetUsage(std::string path);
+
     Asset* LoadAsset(std::string Path);
+    Asset* UnloadAsset(std::string Path);
     Asset* GetAsset(std::string Path);
     
     void CrawlAssetsTyped(AssetType type);
