@@ -20,7 +20,7 @@ jobs:
       with:
         usesh: true
         prepare: |
-          pkg install -y cmake clang19
+          pkg install -y cmake llvm19
 
         run: >
           cmake -B ${{ github.workspace }}/build
