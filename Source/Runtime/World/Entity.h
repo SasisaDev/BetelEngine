@@ -1,4 +1,7 @@
 #pragma once
+
+#include <Object/Object.h>
+
 #include <RenderV/Vulkan/vkloader.h>
 
 #include <set>
@@ -8,10 +11,6 @@
 
 #include <Math/Transform.h>
 
-#ifdef EDITOR
-#   include <Reflection/IPropertyProvider.h>
-#endif
-
 class EntityRenderProxy;
 class World;
 
@@ -20,18 +19,12 @@ struct EntitySpawnInfo
 
 };
 
-class Entity
-#ifdef EDITOR
-    : public IPropertyProvider
-#endif
+class Entity : public Object
 {
     friend class World;
 protected:
     Transform transform;
 
-    World* OwnerWorld;
-    Entity* Parent;
-    std::set<Entity*> Children;
     EntityRenderProxy* RenderProxy;
 
     std::string DisplayName = "Entity";
@@ -45,7 +38,7 @@ public:
     virtual EntityRenderProxy* CreateRenderProxy(){return RenderProxy = nullptr;}
     virtual EntityRenderProxy* GetRenderProxy() {return RenderProxy;}
 
-    virtual inline World* GetWorld() const {return OwnerWorld;}
+    virtual World* GetWorld();
     
     virtual void Tick(float deltaTime);
 
@@ -58,8 +51,6 @@ public:
     // TODO
     virtual void SetLocation(const IVec3& loc){}
     virtual void SetRelativeLocation(const IVec3& loc) {transform.Location = loc;}
-
-    virtual const std::set<Entity*>& GetChildren() const {return Children;}
 
     virtual std::string GetDisplayName() {return DisplayName;} 
 };

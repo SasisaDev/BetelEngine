@@ -6,7 +6,7 @@
 #include <Math/Transform.h>
 #include <Delegate/Delegate.h>
 
-class World
+class World : public Object
 {
     friend class WorldRenderLayer;
 protected:
@@ -38,7 +38,7 @@ public:
     {
         EntityType* spawnedEntity = new EntityType();
         spawnedEntity->DisplayName = name;
-        spawnedEntity->OwnerWorld = this;
+        spawnedEntity->Reparent(this);
         entities.push_back(spawnedEntity);
 
         OnEntitySpawned.Broadcast(spawnedEntity);

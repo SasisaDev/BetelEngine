@@ -44,10 +44,15 @@ public:
     template <typename ParentObjectT = Object>
     ParentObjectT* GetParent() 
     {
-        return dynamic_cast<ParentObjectT*>(Parent);
+        // If parent doesn't match the template type, attempt to find next parent
+        if(dynamic_cast<ParentObjectT*>(Parent) == nullptr && Parent != nullptr) {
+            return Parent->GetParent<ParentObjectT>();
+        } else {
+            return dynamic_cast<ParentObjectT*>(Parent);
+        }
     }
 
-    virtual void Serialize(SerialArchive& archive);
+    virtual void Serialize(SerialArchive& archive){}
     
     //~Reflection API start
 #ifdef EDITOR 
