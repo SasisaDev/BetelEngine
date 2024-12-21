@@ -85,4 +85,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: BetelEngine-${{matrix.os}}-${{matrix.build_type}}-${{matrix.c_compiler}}
-        path: ${{ steps.strings.outputs.build-output-dir }}/*
+        path: |
+          ${{ steps.strings.outputs.build-output-dir }}/Game
+          ${{ steps.strings.outputs.build-output-dir }}/Editor
+          ${{ steps.strings.outputs.build-output-dir }}/${{matrix.build_type}}/*
