@@ -9,6 +9,33 @@ on:
     branches: [ "master" ]
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: FreeBSD Debug
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build
+      id: vm-freebsd-build
+      uses: vmactions/freebsd-vm@v1
+      with:
+        usesh: true
+        prepare: |
+          pkg install -y cmake clang19
+
+        run: >
+          cmake -B ${{ github.workspace }}/build
+          -DCMAKE_CXX_COMPILER=clang
+          -DCMAKE_C_COMPILER=clang
+          -DCMAKE_BUILD_TYPE=Debug
+          -S ${{ github.workspace }} &&
+          cmake --build ${{ github.workspace }}/build --config ${{ matrix.build_type }} --target Editor Game
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: BetelEngine-freebsd-Debug
+        path: |
+          ${{ github.workspace }}/build/Game
+          ${{ github.workspace }}/build/Editor
   build:
     runs-on: ${{ matrix.os }}
 
