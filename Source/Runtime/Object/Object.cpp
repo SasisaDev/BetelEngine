@@ -10,6 +10,8 @@ void Object::Rename(std::string newName)
     Name = newName;
 }
 
+
+#ifdef EDITOR 
 PropertyContainer Object::GetEditorReflectedProperties()
 {
     PropertyContainer container;
@@ -18,3 +20,4 @@ PropertyContainer Object::GetEditorReflectedProperties()
 
     return container;
 }
+#endif
