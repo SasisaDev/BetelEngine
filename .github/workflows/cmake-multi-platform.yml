@@ -28,7 +28,7 @@ jobs:
           -DCMAKE_C_COMPILER=clang
           -DCMAKE_BUILD_TYPE=Debug
           -S ${{ github.workspace }} &&
-          cmake --build ${{ github.workspace }}/build --config Debug --target Editor Game
+          cmake --build ${{ github.workspace }}/build --target Editor Game
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
