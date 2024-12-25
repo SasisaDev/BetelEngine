@@ -7,6 +7,8 @@
 #include <string>
 
 #include "Asset.h"
+//TODO: #include "Files/AssetFile.h"
+#include "Files/BundleFile.h"
 #include <Platform/Platform.h>
 
 struct AssetDescriptor
@@ -18,10 +20,12 @@ struct AssetDescriptor
     uint32_t Usages = 0;
 };
 
+// TODO: Add Numeric ID API
 class AssetLibrary
 {
     friend class AssetGarbageCollector;
 protected:
+    std::vector<BundleFile*> BundleFiles;
     std::vector<AssetType*> RegisteredAssetTypes;
     std::vector<AssetDescriptor> AssetList;
 public:
@@ -40,6 +44,7 @@ public:
     Asset* GetAsset(std::string Path);
     void UnloadAsset(std::string Path, bool force = false);
     
+    // TODO: Rework crawling
     void CrawlAssetsTyped(AssetType type);
     void CrawlAssetsAll(std::string LocalDomain);
 

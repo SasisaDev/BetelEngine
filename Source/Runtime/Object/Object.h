@@ -15,16 +15,17 @@ class Object
 #endif
 {
 protected:
+    uint32_t ID;
     std::string Name;
     std::string Path;
     
     std::vector<Object*> Children;
     Object* Parent;
 public:
-
     void Reparent(Object* newParent);
     void Rename(std::string newName);
 
+    inline uint32_t GetID() const {return ID;}
     inline std::string GetName() const {return Name;}
     inline std::string GetPath() const {return Path;}
 

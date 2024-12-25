@@ -6,7 +6,7 @@
 
 class Archive 
 {
-    std::map<SerialField, void*> data;
+    std::map<std::string, void*> data;
     bool bIsLoading = false;
 public:
     inline bool IsLoading() const {return bIsLoading;}

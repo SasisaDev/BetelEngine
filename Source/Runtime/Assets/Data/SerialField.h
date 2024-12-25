@@ -15,12 +15,10 @@ enum class ESerialObjectFieldType : uint8_t
     Object,
 };
 
-struct SerialField 
+enum ESerialObjectFieldFlags
 {
-    ESerialObjectFieldType type;
-    uint32_t originalSize = 0;
-    uint32_t size = 0;
-    char* data;
+    SERIAL_OBJECT_FIELD_LAZY = (0 << 0),
+    SERIAL_OBJECT_FIELD_COMPRESSED = (0 << 1),
 };
 
 /*
@@ -33,6 +31,7 @@ struct SerialObjectFieldMetadata
     uint16_t fieldNameSize;
     char* fieldName;
     uint8_t type;
+    uint8_t flags;
     uint32_t offset;
     uint32_t size;
     uint32_t originalSize;

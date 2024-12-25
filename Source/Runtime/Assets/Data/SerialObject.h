@@ -12,6 +12,7 @@ struct SerialObject
 
 struct SerialObjectMetadata
 {
+    uint32_t objectID;
     uint16_t objectNameSize;
     char* objectName;
     uint8_t type;
