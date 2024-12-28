@@ -2,13 +2,13 @@
 
 #include <Log/Logger.h>
 
-#include "IAssetCompressor.h"
+#include "ICompressor.h"
 
 #include <lz4/lz4.h>
 #include <lz4/lz4hc.h>
 
 // TODO: LZ4 Compressor
-class LZ4AssetCompressor : public IAssetCompressor
+class LZ4Compressor : public ICompressor
 {
 public:
     virtual std::vector<char> Compress(std::vector<char> data) override 

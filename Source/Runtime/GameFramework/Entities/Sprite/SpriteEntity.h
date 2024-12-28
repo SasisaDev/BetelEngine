@@ -2,6 +2,10 @@
 
 #include <World/Entity.h>
 #include <RenderV/Objects/Material.h>
+#include <Materials/Assets/ShaderAsset.h>
+#include <Materials/Assets/MaterialAsset.h>
+#include <Assets/AssetSmartPointers.h>
+#include <GameFramework/Assets/Texture2D/Texture2D.h>
 
 class SpriteRenderProxy : public EntityRenderProxy
 {
@@ -20,6 +24,9 @@ public:
 class SpriteEntity : public Entity
 {
 public:
+    AssetPtr<MaterialAsset> material;
+    AssetPtr<Texture2D> texture;
+
     SpriteEntity() {
         DisplayName = "Sprite";
     }

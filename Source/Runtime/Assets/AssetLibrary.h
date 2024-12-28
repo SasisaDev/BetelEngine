@@ -14,7 +14,7 @@
 struct AssetDescriptor
 {
     AssetType* Type;
-    // Local path. E.g. "Editor/Content/Some/Asset"
+    // Local path. E.g. "Path/To/Some/Asset"
     std::string Path;
     std::optional<Asset*> AssetPtr;
     uint32_t Usages = 0;

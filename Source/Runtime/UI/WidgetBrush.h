@@ -11,13 +11,13 @@
 struct WidgetBrush 
 {
     AssetPtr<ShaderAsset> shader;
-    AssetPtr<Texture2DAsset> texture;
+    AssetPtr<Texture2D> texture;
     Color color;
 
     WidgetBrush()
     {
       static AssetPtr<ShaderAsset> DefaultBrushShader = AssetPtr<ShaderAsset>("Content/Default/Widgets/WidgetShader");
-      static AssetPtr<Texture2DAsset> DefaultBrushTexture = AssetPtr<Texture2DAsset>("Content/Default/Widgets/WidgetDefaultTexture");
+      static AssetPtr<Texture2D> DefaultBrushTexture = AssetPtr<Texture2D>("Content/Default/Widgets/WidgetDefaultTexture");
       static Color DefaultBrushColor = Color(1,1,1,1);
 
       shader = DefaultBrushShader;

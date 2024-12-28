@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Assets/AssetLibrary.h>
+#include <AssetLoader/AssetLoader.h>
 
 class AssetGarbageCollector
 {

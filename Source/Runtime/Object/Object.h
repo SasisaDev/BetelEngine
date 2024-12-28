@@ -17,7 +17,6 @@ class Object
 protected:
     uint32_t ID;
     std::string Name;
-    std::string Path;
     
     std::vector<Object*> Children;
     Object* Parent;
@@ -27,7 +26,6 @@ public:
 
     inline uint32_t GetID() const {return ID;}
     inline std::string GetName() const {return Name;}
-    inline std::string GetPath() const {return Path;}
 
     template <typename ChildObjectT = Object>
     inline std::vector<ChildObjectT*> GetChildren() const {
@@ -60,4 +58,10 @@ public:
     virtual PropertyContainer GetEditorReflectedProperties() override;
 #endif
     //~Reflection API stop
+};
+
+class ObjectType
+{
+public:
+    virtual Object* CreateInstance() { return new Object; }
 };

@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <Assets/AssetSmartPointers.h>
+#include <RenderV/Objects/Material.h>
 
 #include "ShaderAsset.h"
 
@@ -10,6 +11,7 @@ class MaterialAsset : public Asset
 {
 protected:
     AssetPtr<ShaderAsset> Shader;
+    std::shared_ptr<IMaterial> pMaterial;
 public:
 };
 

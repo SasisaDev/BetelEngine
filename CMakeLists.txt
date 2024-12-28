@@ -51,7 +51,8 @@ set(SrcLZ4 "Source/ThirdParty/lz4/lz4.c" "Source/ThirdParty/lz4/lz4file.c" "Sour
 
 # Modules Sources
 set(SrcGameFramework "Source/Runtime/GameFramework/Entities/Test/TestEntity.cpp" "Source/Runtime/GameFramework/Entities/Sprite/SpriteEntity.cpp"
-    "Source/Runtime/Materials/Assets/MaterialAsset.cpp" "Source/Runtime/Materials/Assets/ShaderAsset.cpp") 
+    "Source/Runtime/GameFramework/Entities/Tilemap/Tilemap.cpp"
+    "Source/Runtime/Materials/Assets/MaterialAsset.cpp" "Source/Runtime/Materials/Assets/ShaderAsset.cpp" ) 
 
 set(SrcAssets "Source/Runtime/Assets/AssetLibrary.cpp" "Source/Runtime/Assets/Asset.cpp" "Source/Runtime/Assets/AssetFile/AssetFile.cpp")
 
@@ -61,7 +62,7 @@ set(SrcRenderV "Source/Runtime/RenderV/Vulkan/vkloader.cpp" "Source/Runtime/Rend
 
 set(SrcEngine "Source/Runtime/Engine/Engine.cpp" "Source/Runtime/Engine/EngineDelegates.cpp" "Source/Runtime/Engine/Tickable.cpp")
 
-set(SrcObject "Source/Runtime/Object/Object.cpp") 
+set(SrcObject "Source/Runtime/Object/Object.cpp" "Source/Runtime/Object/ObjectRef.cpp" "Source/Runtime/Object/ObjectLibrary.cpp") 
 
 set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp" "Source/Runtime/World/World.cpp" "Source/Runtime/World/Entity.cpp" 
              "Source/Runtime/World/Entities/Camera/Camera.cpp") 
