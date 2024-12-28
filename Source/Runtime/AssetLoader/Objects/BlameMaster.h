@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <cstdint>
 
 struct BlameObjectTableEntry {
     uint32_t offset, size;

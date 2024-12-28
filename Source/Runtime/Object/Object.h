@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <cstdint>
 
 #ifdef EDITOR
 #   include <Reflection/IPropertyProvider.h>
