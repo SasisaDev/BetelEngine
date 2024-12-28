@@ -38,6 +38,7 @@ public:
 	virtual char* Fetch(size_t count);
 	virtual std::string FetchAll();
 
+	// Read file's whole buffer. Will fail if FILE_ACCESS_FLAG_ATE is not specified
 	virtual std::vector<char> FetchAllBinary();
 
 	virtual void Write(std::string content) { file << content; }

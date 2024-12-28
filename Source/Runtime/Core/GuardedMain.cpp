@@ -22,6 +22,7 @@
 #include <UI/Widgets/Panel/Panel.h>
 #include <GameFramework/Entities/Sprite/SpriteEntity.h>
 #include <World/Entities/Camera/Camera.h>
+#include <AssetLoader/AssetLoader.h>
 
 int GuardedMain(int argc, char* argv[])
 {
@@ -99,6 +100,8 @@ int GuardedMain(int argc, char* argv[])
 	IDirectory* directory = IPlatform::Get()->OpenDirectory("./Content");
 	IDirectory* localDirectory = IPlatform::Get()->OpenLocalDirectory("./");
 	IDirectory* contentDirectory = IPlatform::Get()->OpenContentDirectory("./");
+
+	Resource* testResourceShader = AssetLoader::Get().LoadResource("Shaders/Test/Test.vert.spv");
 
 	/*AssetFile assetFile("Editor/Content/AssetFile");
 	assetFile.ReadFromDevice();*/

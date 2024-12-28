@@ -10,6 +10,8 @@
 
 #include <Platform/Platform.h>
 
+#include <AssetLoader/AssetLoader.h>
+
 WorldRenderLayerRef::WorldRenderLayerRef()
     : world(nullptr)
 {
@@ -362,19 +364,26 @@ void WorldRenderLayer::CreateUpscalePipeline()
 
 void WorldRenderLayer::CreateUpscaleMaterial()
 {
-    //IFile* VertFile = IPlatform::Get()->OpenFile("./Shaders/TriangleUpscale/TriangleUpscale.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
-    IFile* VertFile = IPlatform::Get()->OpenLocalFile("Shaders/TriangleUpscale/TriangleUpscale.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
-    IFile* FragFile = IPlatform::Get()->OpenLocalFile("Shaders/TriangleUpscale/TriangleUpscale.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+    //IFile* VertFile = IPlatform::Get()->OpenLocalFile("Shaders/TriangleUpscale/TriangleUpscale.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+    //IFile* FragFile = IPlatform::Get()->OpenLocalFile("Shaders/TriangleUpscale/TriangleUpscale.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
 
-    if(!VertFile->IsOpen() || !FragFile->IsOpen()) {
+    Resource *VertShader = AssetLoader::Get().LoadResource("Shaders/TriangleUpscale/TriangleUpscale.vert.spv");
+    Resource *FragShader = AssetLoader::Get().LoadResource("Shaders/TriangleUpscale/TriangleUpscale.frag.spv");
+
+    if(VertShader == nullptr || FragShader == nullptr)
+    {
         LOG(Fatal, LogWorldRenderLayer, "Upscale shaders not found in folder \"Editor/Shaders/TriangleUpscale/\", can't run layer!");
     }
+
+    /*if(!VertFile->IsOpen() || !FragFile->IsOpen()) {
+        LOG(Fatal, LogWorldRenderLayer, "Upscale shaders not found in folder \"Editor/Shaders/TriangleUpscale/\", can't run layer!");
+    }*/
 
     ShaderDescriptorLayout descriptorsLayout;
     descriptorsLayout.GenerateBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
     descriptorsLayout.GenerateBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 
-    upscaleShader = std::make_shared<IShader>(upscaleRenderPass, VertFile->FetchAllBinary(), FragFile->FetchAllBinary(), descriptorsLayout);
+    upscaleShader = std::make_shared<IShader>(upscaleRenderPass, VertShader->GetBuffer(), FragShader->GetBuffer(), descriptorsLayout);
 
     if(!upscaleShader->IsValid())
     {

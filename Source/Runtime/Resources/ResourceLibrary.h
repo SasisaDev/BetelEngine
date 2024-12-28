@@ -8,6 +8,8 @@
 #include "Resource.h"
 
 // TODO
+// MAYBE REMOVE?
+
 struct ResourceDescriptor
 {
     Resource* resource;
