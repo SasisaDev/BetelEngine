@@ -54,7 +54,7 @@ set(SrcLZ4 "Source/ThirdParty/lz4/lz4.c" "Source/ThirdParty/lz4/lz4file.c" "Sour
 
 # Modules Sources
 set(SrcGameFramework "Source/Runtime/GameFramework/Entities/Test/TestEntity.cpp" "Source/Runtime/GameFramework/Entities/Sprite/SpriteEntity.cpp"
-    "Source/Runtime/GameFramework/Entities/Tilemap/Tilemap.cpp"
+    "Source/Runtime/GameFramework/Entities/Tilemap/Tilemap.cpp" "Source/Runtime/GameFramework/Assets/Sprite/Sprite.cpp"
     "Source/Runtime/Materials/Assets/MaterialAsset.cpp" "Source/Runtime/Materials/Assets/ShaderAsset.cpp" ) 
 
 set(SrcAssets "Source/Runtime/Assets/AssetLibrary.cpp" "Source/Runtime/Assets/Asset.cpp" "Source/Runtime/Assets/AssetFile/AssetFile.cpp")

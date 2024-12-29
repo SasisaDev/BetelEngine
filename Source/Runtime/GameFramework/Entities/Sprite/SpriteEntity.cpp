@@ -2,8 +2,24 @@
 #include <World/RenderLayer/WorldRenderLayer.h>
 #include <stb/stb_image.h>
 
+Buffer* SpriteRenderProxy::vertexBuffer = nullptr;
+Buffer* SpriteRenderProxy::indexBuffer = nullptr;
+
 void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
 {
+    // Create Static Resources
+    if (SpriteRenderProxy::vertexBuffer == nullptr || SpriteRenderProxy::indexBuffer == nullptr) 
+    {
+        Vertex vertices[4] = {{{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+                              {{1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+                              {{0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+                              {{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}};
+        SpriteRenderProxy::vertexBuffer = new Buffer(sizeof(vertices), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vertices);
+
+        uint16_t indices[6] = {0, 1, 2, 1, 2, 3};
+        SpriteRenderProxy::indexBuffer = new Buffer(sizeof(indices), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, indices);
+    }
+
     if(shader.get() != nullptr && shader->IsValid())
     {
         return;

@@ -10,7 +10,10 @@ class Object;
 template <ObjectClass _ObjectT>
 class ObjectRef
 {
-    virtual void InternalRegisterUsage();
+    virtual void InternalRegisterUsage()
+    {
+        ObjectLibrary::Get().RegisterObjectUsage(objectID);
+    }
 protected:
     _ObjectT* ref = nullptr;
     uint32_t objectID = 0;

@@ -26,6 +26,9 @@ public:
     inline VkImageView GetImageView() {return imageView;}
     inline VkSampler GetSampler() {return sampler;}
 
+    inline uint32_t GetWidth() const {return static_cast<uint32_t>(dimensionX);}
+    inline uint32_t GetHeight() const {return static_cast<uint32_t>(dimensionY);}
+
     void InitializeTexture(int dimX, int dimY, unsigned char* data = nullptr, int channels = 4);
     void UpdateTexture(unsigned char* data);
 };
