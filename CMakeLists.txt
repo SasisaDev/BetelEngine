@@ -46,6 +46,9 @@ endif()
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
+# Third Party Sources
+set(SrcStbImage "Source/ThirdParty/stb/stb_image.cpp")
+
 # LZ4 Source
 set(SrcLZ4 "Source/ThirdParty/lz4/lz4.c" "Source/ThirdParty/lz4/lz4file.c" "Source/ThirdParty/lz4/xxhash.c" "Source/ThirdParty/lz4/lz4hc.c" "Source/ThirdParty/lz4/lz4frame.c")
 
@@ -60,7 +63,7 @@ set(SrcAssetLoader "Source/Runtime/AssetLoader/AssetLoader.cpp" )
 
 set(SrcRenderV "Source/Runtime/RenderV/Vulkan/vkloader.cpp" "Source/Runtime/RenderV/Render.cpp" "Source/Runtime/RenderV/Engine.cpp" 
     "Source/Runtime/RenderV/Composition.cpp" "Source/Runtime/RenderV/Layer.cpp" "Source/Runtime/RenderV/Utility.cpp" "Source/Runtime/RenderV/Objects/Shader.cpp"
-    "Source/Runtime/RenderV/Objects/Buffers/Buffer.cpp" "Source/Runtime/RenderV/Objects/Material.cpp")
+    "Source/Runtime/RenderV/Objects/Buffers/Buffer.cpp" "Source/Runtime/RenderV/Objects/Material.cpp" "Source/Runtime/RenderV/Objects/Images/SamplerTexture.cpp")
 
 set(SrcEngine "Source/Runtime/Engine/Engine.cpp" "Source/Runtime/Engine/EngineDelegates.cpp" "Source/Runtime/Engine/Tickable.cpp")
 
@@ -79,7 +82,7 @@ set(SrcPlatform "Source/Runtime/Platform/Interface/Files/IFile.cpp" "Source/Runt
                 "Source/Runtime/Platform/Interface/Files/IPath.cpp" "Source/Runtime/Platform/Interface/IPlatform.cpp")
 
 set(Sources ${SrcRenderV} ${SrcObject} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGameFramework} ${SrcAssets} ${SrcPlatform} ${SrcInput} ${SrcI18N} ${SrcLZ4}
-    ${SrcAssetLoader}
+    ${SrcAssetLoader} ${SrcStbImage}
     "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
     "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Core/Window/WindowManager.cpp")
@@ -106,13 +109,11 @@ set(ImguiSrc "Source/ThirdParty/imgui/imgui_demo.cpp" "Source/ThirdParty/imgui/i
              "Source/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp")
 set(ImguiBetelSrc "Source/Editor/ImGui/RenderLayer/ImGuiLayer.cpp" "Source/Editor/ImGui/BetelImGui.cpp")
 
-set(SrcStb "Source/ThirdParty/stb/stb_implementation.cpp")
-
 set(AssetFactoriesSrc "Source/Editor/AssetFactory/Default/ShaderFactory.cpp" )
 
 set(ArgumentEventsSrc "Source/Editor/ArgumentEvents/UseAssetFactoryEvent.cpp")
 
-set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc} ${SrcStb}
+set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc}
     "Source/Editor/ToolkitRenderLayer/ToolkitRenderLayer.cpp" "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" "Source/Editor/Editor/EditorDelegates.cpp") 
 
 add_executable(Editor ${Sources} ${EditorSources})
@@ -130,7 +131,7 @@ set_property(TARGET Editor PROPERTY CXX_STANDARD 20)
 
 # Shaders
 add_shaders(Shaders "Shaders/TriangleUpscale/TriangleUpscale.vert" "Shaders/TriangleUpscale/TriangleUpscale.frag" "Shaders/Test/Test.vert" "Shaders/Test/Test.frag"
-                    "Shaders/UI_Brush_Texture/UI_Brush_Texture.frag" "Shaders/UI_Brush_Texture/UI_Brush_Texture.vert")
+                    "Shaders/UI_Brush_Texture/UI_Brush_Texture.frag" "Shaders/UI_Brush_Texture/UI_Brush_Texture.vert" "Shaders/SpriteMasked/SpriteMasked.frag" "Shaders/SpriteMasked/SpriteMasked.vert")
 
 # Assets
 cook_assets(Cook "Content/" "Content/")

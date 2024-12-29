@@ -7,10 +7,6 @@ Buffer::Buffer(size_t BufferDataSize, VkBufferUsageFlags usage, void* initialBuf
 {
     bufferData = malloc(BufferDataSize);
 
-    if(initialBufferData != nullptr) {
-        std::memcpy(bufferData, initialBufferData, bufferSize);
-    }
-
     VkDevice device = IRenderUtility::GetDevice();
 
     VkBufferCreateInfo buffCreateInfo = {
@@ -38,6 +34,12 @@ Buffer::Buffer(size_t BufferDataSize, VkBufferUsageFlags usage, void* initialBuf
     }
 
     vkBindBufferMemory(device, buffer, bufferMemory, 0);
+
+    if(initialBufferData != nullptr) {
+        vkMapMemory(IRenderUtility::GetDevice(), bufferMemory, 0, bufferSize, 0, &bufferData);
+        std::memcpy(bufferData, initialBufferData, bufferSize);
+        vkUnmapMemory(IRenderUtility::GetDevice(), bufferMemory);
+    }
 }
 
 Buffer::~Buffer()

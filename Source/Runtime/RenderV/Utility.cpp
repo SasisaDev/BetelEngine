@@ -3,6 +3,7 @@
 
 uint32_t IRenderUtility::framesInFlight = 2;
 uint32_t IRenderUtility::currentFrameInFlight = 0;
+VkCommandPool IRenderUtility::singleTimePool = VK_NULL_HANDLE;
 
 RenderQueueFamilyIndices IRenderUtility::FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
 {

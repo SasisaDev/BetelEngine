@@ -19,6 +19,7 @@ class IRenderUtility
 {
     static uint32_t framesInFlight;
     static uint32_t currentFrameInFlight;
+    static VkCommandPool singleTimePool;
 public:
     static RenderQueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface = 0);
     static uint32_t FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
@@ -26,12 +27,58 @@ public:
     static VkPhysicalDevice GetPhysicalDevice();
     static VkInstance GetInstance();
 
+    static VkQueue GetDeviceQueue(uint32_t family = 0) {
+        VkQueue queue;
+        vkGetDeviceQueue(GetDevice(), family, 0, &queue);
+        return queue;
+    }
+
     static inline uint32_t GetFramesInFlight() {return framesInFlight;}
     static inline void SetFramesInFlight(uint32_t fif) {framesInFlight = fif;}
     
     static inline uint32_t GetCurrentFrameInFlight() {return currentFrameInFlight;}
     static inline void SetCurrentFrameInFlight(uint32_t curfif) {currentFrameInFlight = curfif;}
      
+    static inline VkCommandBuffer StartSingleTimeCommandBuffer() {
+        if(singleTimePool == VK_NULL_HANDLE) {
+            VkCommandPoolCreateInfo poolInfo = {};
+            poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+            poolInfo.queueFamilyIndex = FindQueueFamilies(GetPhysicalDevice()).graphicsFamily.value();
+
+            vkCreateCommandPool(GetDevice(), &poolInfo, nullptr, &singleTimePool);
+        }
+
+        VkCommandBuffer cmdBuffer;
+
+        VkCommandBufferAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+        allocInfo.commandBufferCount = 1;
+        allocInfo.commandPool = singleTimePool;
+        vkAllocateCommandBuffers(GetDevice(), &allocInfo, &cmdBuffer);
+
+        VkCommandBufferBeginInfo beginInfo = {};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+        vkBeginCommandBuffer(cmdBuffer, &beginInfo);
+        
+        return cmdBuffer;
+    }
+    static inline void EndSingleTimeCommandBuffer(VkCommandBuffer cmdBuffer)
+    {
+        vkEndCommandBuffer(cmdBuffer);
+
+        VkSubmitInfo submitInfo{};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &cmdBuffer;
+
+        VkQueue graphicsQueue = GetDeviceQueue(FindQueueFamilies(GetPhysicalDevice()).graphicsFamily.value());
+
+        vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(graphicsQueue);
+        
+        vkFreeCommandBuffers(GetDevice(), singleTimePool, 1, &cmdBuffer);
+    }
 
     static inline void ImageBarrier(VkCommandBuffer cmdBuffer, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout,
                                     VkPipelineStageFlags src = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VkPipelineStageFlags dst = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
