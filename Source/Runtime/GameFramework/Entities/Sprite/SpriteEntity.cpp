@@ -10,13 +10,13 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
     // Create Static Resources
     if (SpriteRenderProxy::vertexBuffer == nullptr || SpriteRenderProxy::indexBuffer == nullptr) 
     {
-        Vertex vertices[4] = {{{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-                              {{1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-                              {{0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
-                              {{1.0f, 1.0f, 0.0f}, {1.0f, 1.0f}}};
+        Vertex vertices[4] = {{{-0.0f, 0.0f},  {0.0f, 0.0f}},
+                              {{1.0f, 0.0f},   {1.0f, 0.0f}},
+                              {{1.0f, 1.0f},    {1.0f, 1.0f}},
+                              {{-0.0f, 1.0f},   {0.0f, 1.0f}}};
         SpriteRenderProxy::vertexBuffer = new Buffer(sizeof(vertices), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vertices);
 
-        uint16_t indices[6] = {0, 1, 2, 1, 2, 3};
+        uint16_t indices[6] = {0, 1, 2, 2, 3, 0};
         SpriteRenderProxy::indexBuffer = new Buffer(sizeof(indices), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, indices);
     }
 
@@ -36,7 +36,27 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
     descriptorsLayout.GenerateBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
     descriptorsLayout.GenerateBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
 
-    shader = std::make_shared<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertShader->GetBuffer(), FragShader->GetBuffer(), descriptorsLayout);
+    ShaderCreateInfo sCreateInfo = {};
+
+    VkVertexInputBindingDescription bindingDescription{};
+    bindingDescription.binding = 0;
+    bindingDescription.stride = sizeof(Vertex);
+    bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+    sCreateInfo.VertexInputBindingDescriptions = {bindingDescription};
+
+    VkVertexInputAttributeDescription positionAttrPos = {};
+    positionAttrPos.binding = 0;
+    positionAttrPos.location = 0;
+    positionAttrPos.format = VK_FORMAT_R32G32_SFLOAT;
+    positionAttrPos.offset = offsetof(Vertex, position);
+    VkVertexInputAttributeDescription positionAttrUV = {};
+    positionAttrUV.binding = 0;
+    positionAttrUV.location = 1;
+    positionAttrUV.format = VK_FORMAT_R32G32_SFLOAT;
+    positionAttrUV.offset = offsetof(Vertex, uv);
+    sCreateInfo.VertexInputAtrributeDescriptions = {positionAttrPos, positionAttrUV};
+
+    shader = std::make_shared<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertShader->GetBuffer(), FragShader->GetBuffer(), descriptorsLayout, sCreateInfo);
 
     Resource *SpriteImage = AssetLoader::Get().LoadResource("Sprites/Test.png");
 
@@ -60,8 +80,13 @@ void SpriteRenderProxy::Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* l
     vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader->GetPipelineLayout(), 0, 1, &set, 0, nullptr);
 
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, shader->GetPipeline());
+    
+    VkBuffer vertBuffers[1] = {SpriteRenderProxy::vertexBuffer->GetBufferObject()};
+    VkDeviceSize offsets[] = {0};
+    vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertBuffers, offsets);
+    vkCmdBindIndexBuffer(cmdBuffer, SpriteRenderProxy::indexBuffer->GetBufferObject(), 0, VK_INDEX_TYPE_UINT16);
 
-    vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
+    vkCmdDrawIndexed(cmdBuffer, 6, 1, 0, 0, 0);
 
     IRenderUtility::EndDebugLabel(cmdBuffer);
 }

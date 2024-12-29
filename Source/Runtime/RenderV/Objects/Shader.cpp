@@ -69,10 +69,10 @@ IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vec
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputInfo.vertexBindingDescriptionCount = 0;
-    vertexInputInfo.pVertexBindingDescriptions = nullptr; // Optional
-    vertexInputInfo.vertexAttributeDescriptionCount = 0;
-    vertexInputInfo.pVertexAttributeDescriptions = nullptr; // Optional
+    vertexInputInfo.vertexBindingDescriptionCount = createInfo.VertexInputBindingDescriptions.size();
+    vertexInputInfo.pVertexBindingDescriptions = createInfo.VertexInputBindingDescriptions.data();
+    vertexInputInfo.vertexAttributeDescriptionCount = createInfo.VertexInputAtrributeDescriptions.size();
+    vertexInputInfo.pVertexAttributeDescriptions = createInfo.VertexInputAtrributeDescriptions.data();
 
     VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
     inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;

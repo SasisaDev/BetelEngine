@@ -16,6 +16,9 @@ struct ShaderCreateInfo
     struct {
         VkBool32 Enabled = VK_FALSE;
     } Blending;
+
+    std::vector<VkVertexInputAttributeDescription> VertexInputAtrributeDescriptions;
+    std::vector<VkVertexInputBindingDescription> VertexInputBindingDescriptions;
 };
 
 struct ShaderDescriptorLayout
