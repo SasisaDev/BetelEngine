@@ -46,10 +46,10 @@ void Window::Update(const SDL_WindowEvent& event)
 			    OnWindowEvent.Broadcast(this, new WindowEventPayload(WINDOW_EVENT_HIDDEN));
             }
 			break;
-		/*case SDL_WINDOWEVENT_EXPOSED:
+		case SDL_WINDOWEVENT_RESTORED:
 			if(!bShouldClose) {
 			    OnWindowEvent.Broadcast(this, new WindowEventPayloadResize(width, height));
             }
-			break;*/
+			break;
 	}
 }

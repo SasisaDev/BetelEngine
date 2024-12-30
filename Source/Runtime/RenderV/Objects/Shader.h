@@ -15,6 +15,7 @@ struct ShaderCreateInfo
 
     struct {
         VkBool32 Enabled = VK_FALSE;
+        // Allows writing of Alpha Channel into the destination texture on blending
         VkBool32 WriteAlpha = VK_FALSE;
     } Blending;
     
