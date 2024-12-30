@@ -37,6 +37,10 @@ protected:
     std::vector<EntityRenderProxy*> renderProxies;
     std::vector<EntityRenderProxy*> postRenderProxies;
 
+    VkImage pixelPerfectDepthImage;
+    VkDeviceMemory pixelPerfectDepthImageMemory;
+    VkImageView pixelPerfectDepthImageView;
+    
     std::vector<VkImage> pixelPerfectImages;
     std::vector<VkDeviceMemory> pixelPerfectImageMemories;
     std::vector<VkImageView> pixelPerfectImageViews;
@@ -89,6 +93,8 @@ class WorldRenderLayer : public IRenderLayer
     VkRenderPass upscaleRenderPass;
 public:
     static IRenderLayerRef* CreateRef() {return new WorldRenderLayerRef;}
+
+    virtual VkRenderPass GetCompositionCompatRenderPass() const override {return upscaleRenderPass;}
 
     static std::string GetStaticName() {return "WorldRenderLayer";}
 

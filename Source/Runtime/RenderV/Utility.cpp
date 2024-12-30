@@ -59,6 +59,32 @@ uint32_t IRenderUtility::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFla
     return 0;
 }
 
+VkFormat IRenderUtility::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
+{
+    for (VkFormat format : candidates) {
+            VkFormatProperties props;
+            vkGetPhysicalDeviceFormatProperties(GetPhysicalDevice(), format, &props);
+
+            if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
+                return format;
+            } else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
+                return format;
+            }
+        }
+
+        LOG(Error, LogRender, "Could not find memory type for buffer allocation");
+        return VK_FORMAT_UNDEFINED;
+}
+
+VkFormat IRenderUtility::FindDepthFormat()
+{
+    return FindSupportedFormat(
+        {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
+            VK_IMAGE_TILING_OPTIMAL,
+            VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
+        );
+}
+
 VkDevice IRenderUtility::GetDevice()
 {
     return vkloader::GetLogicalDevice();

@@ -38,6 +38,11 @@ public:
     
     static inline uint32_t GetCurrentFrameInFlight() {return currentFrameInFlight;}
     static inline void SetCurrentFrameInFlight(uint32_t curfif) {currentFrameInFlight = curfif;}
+
+    static VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+    static VkFormat FindDepthFormat();
+
+    static inline bool HasStencilComponent(VkFormat format) {return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;}
      
     static inline VkCommandBuffer StartSingleTimeCommandBuffer() {
         if(singleTimePool == VK_NULL_HANDLE) {
@@ -89,8 +94,14 @@ public:
         imgMemBar.oldLayout = oldLayout;
         imgMemBar.newLayout = newLayout;
 
+        if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+            imgMemBar.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+
+            // TODO Test format for stencil component
+        } else {
+            imgMemBar.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+        }
         imgMemBar.image = image;
-        imgMemBar.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
         imgMemBar.subresourceRange.baseMipLevel = 0;
         imgMemBar.subresourceRange.levelCount = 1;
         imgMemBar.subresourceRange.baseArrayLayer = 0;

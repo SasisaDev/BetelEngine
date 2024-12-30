@@ -14,6 +14,7 @@ public:
     static IRenderLayerRef* CreateRef();
 
     inline VkRenderPass GetRenderPass() const {return renderPass;}
+    virtual VkRenderPass GetCompositionCompatRenderPass() const {return renderPass;}
 
     static std::string GetStaticName() {return "__EmptyNull";}
     /* 

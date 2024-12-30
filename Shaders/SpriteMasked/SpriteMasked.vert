@@ -12,6 +12,9 @@ layout(std140, set = 0, binding = 0) uniform WorldData {
 } worldData;
 
 void main() {
-    gl_Position = worldData.View * worldData.Projection * vec4(inPosition*50 + vec2(worldData.Position.x, worldData.Position.y), 0, 1); 
+    vec2 size = {150, 100};
+    int depth = 1;
+
+    gl_Position = worldData.View * worldData.Projection * vec4(inPosition * size + vec2(worldData.Position.x, worldData.Position.y), -10., 1); 
     texcoords = inUV;
 }

@@ -148,8 +148,8 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
         // Hoping for it to exist and be valid. If it's not, the crush will occur.
         VkRenderPass pass;
         for(IRenderLayerRef* ref : composition->GetLayerRefs()) {
-            if (ref->GetParentLayer()->GetRenderPass() != VK_NULL_HANDLE) {
-                pass = ref->GetParentLayer()->GetRenderPass();
+            if (ref->GetParentLayer()->GetCompositionCompatRenderPass() != VK_NULL_HANDLE) {
+                pass = ref->GetParentLayer()->GetCompositionCompatRenderPass();
                 break;
             }
         }

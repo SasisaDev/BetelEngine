@@ -13,6 +13,9 @@ const ShaderCreateInfo IShader::DefaultShaderCreateInfo = {
     },
     .Blending={
         .Enabled = VK_TRUE
+    },
+    .Depth={
+        .Enabled = VK_TRUE
     }
 };
 
@@ -66,6 +69,18 @@ IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vec
     dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
     dynamicState.pDynamicStates = dynamicStates.data();
+
+    VkPipelineDepthStencilStateCreateInfo depthStencil{};
+    depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+    depthStencil.depthTestEnable = createInfo.Depth.Enabled;
+    depthStencil.depthWriteEnable = createInfo.Depth.Enabled;
+    depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+    depthStencil.depthBoundsTestEnable = VK_FALSE;
+    depthStencil.minDepthBounds = 0.0f; // Optional
+    depthStencil.maxDepthBounds = 1.0f; // Optional
+    depthStencil.stencilTestEnable = VK_FALSE;
+    depthStencil.front = {}; // Optional
+    depthStencil.back = {}; // Optional
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
@@ -175,7 +190,11 @@ IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vec
     pipelineInfo.pViewportState = &viewportState;
     pipelineInfo.pRasterizationState = &rasterizer;
     pipelineInfo.pMultisampleState = &multisampling;
-    pipelineInfo.pDepthStencilState = nullptr; // Optional
+    if(createInfo.Depth.Enabled) {
+        pipelineInfo.pDepthStencilState = &depthStencil;
+    } else {
+        pipelineInfo.pDepthStencilState = nullptr;
+    }
     pipelineInfo.pColorBlendState = &colorBlending;
     pipelineInfo.pDynamicState = &dynamicState;
     pipelineInfo.layout = pipelineLayout;

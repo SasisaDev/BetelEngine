@@ -67,7 +67,77 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
 
     const size_t framesInFlight = GetParentComposition()->GetFramesInFlight();
 
-    // Create Swapchain
+    // Create Depth Buffer
+    VkFormat depthImageFormat = IRenderUtility::FindDepthFormat();
+    
+    {
+        VkImageCreateInfo depthImgInfo;
+        depthImgInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+        depthImgInfo.flags = 0;
+        depthImgInfo.pNext = nullptr;
+        depthImgInfo.imageType = VK_IMAGE_TYPE_2D;
+		depthImgInfo.format = depthImageFormat;
+		depthImgInfo.extent.width = viewport.width;
+		depthImgInfo.extent.height = viewport.height;
+		depthImgInfo.extent.depth = 1;
+		depthImgInfo.mipLevels = 1;
+		depthImgInfo.arrayLayers = 1;
+		depthImgInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+		depthImgInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+		depthImgInfo.usage = VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+        auto indices = IRenderUtility::FindQueueFamilies(IRenderUtility::GetPhysicalDevice());
+        depthImgInfo.queueFamilyIndexCount = 1;
+        depthImgInfo.pQueueFamilyIndices = &indices.graphicsFamily.value();
+        depthImgInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+        depthImgInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+        if (vkCreateImage(device, &depthImgInfo, nullptr, &pixelPerfectDepthImage) != VK_SUCCESS) {
+            LOG(Fatal, LogWorldRenderLayer, "failed to create depth image!");
+        }
+
+        VkMemoryAllocateInfo memAlloc;
+        memAlloc.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+        memAlloc.pNext = nullptr;
+        //memAlloc.allocationSize = ;
+        VkMemoryRequirements memReqs;
+
+        vkGetImageMemoryRequirements(device, pixelPerfectDepthImage, &memReqs);
+		memAlloc.allocationSize = memReqs.size;
+		memAlloc.memoryTypeIndex = IRenderUtility::FindMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+		if(vkAllocateMemory(device, &memAlloc, nullptr, &pixelPerfectDepthImageMemory) != VK_SUCCESS) {
+            LOG(Fatal, LogWorldRenderLayer, "failed to allocate depth device memory.");
+        }
+
+		if(vkBindImageMemory(device, pixelPerfectDepthImage, pixelPerfectDepthImageMemory, 0) != VK_SUCCESS) {
+            LOG(Fatal, LogWorldRenderLayer, "failed to bind depth memory.");
+        }
+
+        VkImageViewCreateInfo depthViewInfo;
+        depthViewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+        depthViewInfo.flags = 0;
+        depthViewInfo.pNext = nullptr;
+        depthViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		depthViewInfo.format = depthImageFormat;
+		depthViewInfo.subresourceRange = {};
+		depthViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		depthViewInfo.subresourceRange.baseMipLevel = 0;
+		depthViewInfo.subresourceRange.levelCount = 1;
+		depthViewInfo.subresourceRange.baseArrayLayer = 0;
+		depthViewInfo.subresourceRange.layerCount = 1;
+		depthViewInfo.image = pixelPerfectDepthImage;
+
+        depthViewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+        depthViewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+        depthViewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+        depthViewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+
+        if (vkCreateImageView(device, &depthViewInfo, nullptr, &pixelPerfectDepthImageView) != VK_SUCCESS) {
+            LOG(Fatal, LogWorldRenderLayer, "failed to create depth image views.");
+        }
+    }
+
+    // Create Stencil Swapchain
     // TODO: swapchain support info
     imageFormat = VK_FORMAT_B8G8R8A8_SRGB;
 
@@ -150,8 +220,9 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
         framebufferInfo.height = viewport.height;
         framebufferInfo.renderPass = GetParentLayer()->GetRenderPass();
         framebufferInfo.layers = 1;
-        framebufferInfo.attachmentCount = 1;
-        framebufferInfo.pAttachments = &pixelPerfectImageViews[i];
+        std::vector<VkImageView> fbAttachments = {pixelPerfectImageViews[i], pixelPerfectDepthImageView};
+        framebufferInfo.attachmentCount = static_cast<uint32_t>(fbAttachments.size());
+        framebufferInfo.pAttachments = fbAttachments.data();
        
         if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, &pixelPerfectImageFramebuffers[i]) != VK_SUCCESS) {
             LOG(Fatal, LogWorldRenderLayer,  "failed to create framebuffer!");
@@ -412,17 +483,44 @@ bool WorldRenderLayer::Initialize(VkDevice device)
     colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
     //colorAttachmentRef.layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
+    VkAttachmentDescription depthAttachment{};
+    depthAttachment.format = IRenderUtility::FindDepthFormat();
+    depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+    depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+    depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+    depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    //depthAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+    depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
+    VkAttachmentReference depthAttachmentRef{};
+    depthAttachmentRef.attachment = 1;
+    depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+
     VkSubpassDescription subpass{};
     subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpass.colorAttachmentCount = 1;
     subpass.pColorAttachments = &colorAttachmentRef;
+    subpass.pDepthStencilAttachment = &depthAttachmentRef;
+
+    VkSubpassDependency dependency{};
+        dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+        dependency.dstSubpass = 0;
+        dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+        dependency.srcAccessMask = 0;
+        dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+        dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
     VkRenderPassCreateInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    renderPassInfo.attachmentCount = 1;
-    renderPassInfo.pAttachments = &colorAttachment;
+    std::vector<VkAttachmentDescription> attachments = {colorAttachment, depthAttachment};
+    renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+    renderPassInfo.pAttachments = attachments.data();
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;
+    renderPassInfo.dependencyCount = 1;
+    renderPassInfo.pDependencies = &dependency;
 
     if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
         LOG(Fatal, LogRender, "failed to create render pass!");
@@ -518,8 +616,12 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
         passInfo.pNext = nullptr;
         passInfo.renderPass = renderPass;
         VkClearValue clearVal = {{{WorldColorValue.x, WorldColorValue.y, WorldColorValue.z, 1}}};
-        passInfo.pClearValues = &clearVal;
-        passInfo.clearValueCount = 1;
+        VkClearValue depthClearVal {};
+        depthClearVal.depthStencil = {1.0f, 0};
+        std::vector<VkClearValue> clearValues = {clearVal, depthClearVal};
+
+        passInfo.pClearValues = clearValues.data();
+        passInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
         passInfo.framebuffer = worldRef->pixelPerfectImageFramebuffers[CurrentFrame]/*layerRef->GetParentComposition()->GetCurrentFramebuffer()*/;
         passInfo.renderArea.offset = {0, 0};
         passInfo.renderArea.extent = worldRef->viewport;
