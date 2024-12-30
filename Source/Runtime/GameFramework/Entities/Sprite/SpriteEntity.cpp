@@ -35,6 +35,7 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
     ShaderDescriptorLayout descriptorsLayout;
     descriptorsLayout.GenerateBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
     descriptorsLayout.GenerateBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+    descriptorsLayout.SetPushConstantRange(sizeof(SpriteEntityPushConstants));
 
     ShaderCreateInfo sCreateInfo = {};
 
@@ -86,7 +87,22 @@ void SpriteRenderProxy::Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* l
     vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertBuffers, offsets);
     vkCmdBindIndexBuffer(cmdBuffer, SpriteRenderProxy::indexBuffer->GetBufferObject(), 0, VK_INDEX_TYPE_UINT16);
 
+    SpriteEntityPushConstants constants;
+    constants.Position = glm::vec2(Parent->GetLocation().x, Parent->GetLocation().y);
+
+    vkCmdPushConstants(cmdBuffer, material->GetShader()->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(SpriteEntityPushConstants), &constants);
+
     vkCmdDrawIndexed(cmdBuffer, 6, 1, 0, 0, 0);
 
     IRenderUtility::EndDebugLabel(cmdBuffer);
+}
+
+void SpriteEntity::Tick(float deltaTime)
+{
+    // TODO: Remove experiment code
+    static float param = 0;
+    param += deltaTime;
+    double sin = glm::sin(param / 1.0) * 100.0;
+    double cos = glm::cos(param / 1.5) * 100.0;
+    SetRelativeLocation({static_cast<int>(sin) , static_cast<int>(cos) , 0});
 }

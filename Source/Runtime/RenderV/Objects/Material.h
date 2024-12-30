@@ -17,6 +17,7 @@ public:
     void SetSamplerRenderTarget(uint32_t binding, std::vector<VkImageView> views, VkSampler sampler);
 
     inline VkDescriptorSet Get(uint32_t id) const {return descriptorSets[id];}
+    inline IShader* GetShader() const {return pShader;}
 
     void Bind(VkCommandBuffer cmd);
 };

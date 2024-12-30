@@ -20,7 +20,7 @@ protected:
     std::string Name;
     
     std::vector<Object*> Children;
-    Object* Parent;
+    Object* Parent = nullptr;
 public:
     void Reparent(Object* newParent);
     void Rename(std::string newName);

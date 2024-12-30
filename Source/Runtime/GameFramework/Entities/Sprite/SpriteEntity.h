@@ -15,6 +15,12 @@
 
 #include <Math/Vertex.h>
 
+struct SpriteEntityPushConstants
+{
+    glm::ivec2 Position = {0, 0};
+    glm::int32_t Rotation = 0;
+};
+
 class SpriteRenderProxy : public EntityRenderProxy
 {
     std::shared_ptr<IShader> shader;
@@ -39,7 +45,6 @@ public:
     AssetPtr<MaterialAsset> material;
     //AssetPtr<Texture2D> texture;
 
-
     SpriteEntity() {
         DisplayName = "Sprite";
     }
@@ -48,6 +53,8 @@ public:
         sprite = newSprite;
         // TODO: Change object's size and other transforms to match the sprite to enforce pixel-perfect look 
     }
+
+    virtual void Tick(float deltaTime) override;
 
     virtual EntityRenderProxy* CreateRenderProxy() override {return RenderProxy = new SpriteRenderProxy(this);}
 };

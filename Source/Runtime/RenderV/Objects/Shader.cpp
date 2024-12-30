@@ -173,8 +173,8 @@ IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vec
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = (descSetLayout) ? 1 : 0;
     pipelineLayoutInfo.pSetLayouts = &descSetLayout;
-    pipelineLayoutInfo.pushConstantRangeCount = 0; 
-    pipelineLayoutInfo.pPushConstantRanges = nullptr; 
+    pipelineLayoutInfo.pushConstantRangeCount = descLayout.PushConstantRanges.size(); 
+    pipelineLayoutInfo.pPushConstantRanges = descLayout.PushConstantRanges.data(); 
 
     if (vkCreatePipelineLayout(IRenderUtility::GetDevice(), &pipelineLayoutInfo, nullptr, &pipelineLayout) != VK_SUCCESS) {
         LOG(Fatal, LogRender, "failed to create pipeline layout!");
