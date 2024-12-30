@@ -13,13 +13,13 @@ layout(std140, set = 0, binding = 0) uniform WorldData {
 
 layout(push_constant) uniform ObjectData {
     ivec2 Position;
+    ivec2 Size;
     int Rotation;
 } objectData;
 
 void main() {
-    vec2 size = {150, 100};
     int depth = 1;
 
-    gl_Position = worldData.View * worldData.Projection * vec4(inPosition * size + vec2(worldData.Position.x, worldData.Position.y) + objectData.Position, -99., 1);
+    gl_Position = worldData.View * worldData.Projection * vec4(inPosition * objectData.Size + vec2(worldData.Position.x, worldData.Position.y) + objectData.Position, -10., 1);
     texcoords = inUV;
 }

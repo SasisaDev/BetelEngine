@@ -9,14 +9,15 @@ const ShaderCreateInfo IShader::DefaultShaderCreateInfo = {
     .Viewport={{0, 0}, {0, 0}},
     .Scissors={{0, 0}, {0, 0}},
     .Multisampling={
-        .SampleShadingEnabled = VK_FALSE
+        .SampleShadingEnabled = VK_FALSE,
     },
     .Blending={
-        .Enabled = VK_TRUE
+        .Enabled = VK_TRUE,
+        .WriteAlpha = VK_FALSE,
     },
     .Depth={
-        .Enabled = VK_TRUE
-    }
+        .Enabled = VK_TRUE,
+    },
 };
 
 IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vector<char> fragmentData, const ShaderDescriptorLayout& descLayout, const ShaderCreateInfo& createInfo)
@@ -136,10 +137,14 @@ IShader::IShader(VkRenderPass renderPass, std::vector<char> vertexData, std::vec
     multisampling.alphaToOneEnable = VK_FALSE; // Optional
 
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-    colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+    colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT;
     colorBlendAttachment.blendEnable = VK_FALSE;
     if(createInfo.Blending.Enabled)
     {
+        if(createInfo.Blending.WriteAlpha) {
+            colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+        }
+
         colorBlendAttachment.blendEnable = VK_TRUE;
         colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
         colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;

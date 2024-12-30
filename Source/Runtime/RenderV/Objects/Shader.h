@@ -15,6 +15,7 @@ struct ShaderCreateInfo
 
     struct {
         VkBool32 Enabled = VK_FALSE;
+        VkBool32 WriteAlpha = VK_FALSE;
     } Blending;
     
     struct {

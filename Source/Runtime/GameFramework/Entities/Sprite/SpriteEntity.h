@@ -18,6 +18,7 @@
 struct SpriteEntityPushConstants
 {
     glm::ivec2 Position = {0, 0};
+    glm::ivec2 Size = {1, 1};
     glm::int32_t Rotation = 0;
 };
 
@@ -26,6 +27,8 @@ class SpriteRenderProxy : public EntityRenderProxy
     std::shared_ptr<IShader> shader;
     std::shared_ptr<IMaterial> material;
     std::shared_ptr<ISamplerTexture> texture;
+
+    SpriteEntityPushConstants constants;
 
     static Buffer* vertexBuffer;
     static Buffer* indexBuffer;

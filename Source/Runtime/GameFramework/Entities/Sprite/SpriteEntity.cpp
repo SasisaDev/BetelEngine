@@ -57,9 +57,12 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
     positionAttrUV.offset = offsetof(Vertex, uv);
     sCreateInfo.VertexInputAtrributeDescriptions = {positionAttrPos, positionAttrUV};
 
+    sCreateInfo.Blending.Enabled = true;
+    sCreateInfo.Blending.WriteAlpha = false;
+
     shader = std::make_shared<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertShader->GetBuffer(), FragShader->GetBuffer(), descriptorsLayout, sCreateInfo);
 
-    Resource *SpriteImage = AssetLoader::Get().LoadResource("Sprites/Test.png");
+    Resource *SpriteImage = AssetLoader::Get().LoadResource("Sprites/TestSemi.png");
 
     int texWidth, texHeight, texChannels;
     unsigned char* pixels = stbi_load_from_memory(reinterpret_cast<stbi_uc*>(SpriteImage->GetBuffer().data()), SpriteImage->GetBuffer().size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -87,8 +90,9 @@ void SpriteRenderProxy::Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* l
     vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertBuffers, offsets);
     vkCmdBindIndexBuffer(cmdBuffer, SpriteRenderProxy::indexBuffer->GetBufferObject(), 0, VK_INDEX_TYPE_UINT16);
 
-    SpriteEntityPushConstants constants;
     constants.Position = glm::vec2(Parent->GetLocation().x, Parent->GetLocation().y);
+    // TODO: Render data for sprite must come from Sprite System 
+    constants.Size = glm::vec2(texture->GetWidth(), texture->GetHeight());
 
     vkCmdPushConstants(cmdBuffer, material->GetShader()->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(SpriteEntityPushConstants), &constants);
 
