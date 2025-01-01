@@ -5,13 +5,15 @@ World::World()
     
 }
 
-void World::StartPlay()
+void World::BeginPlay()
 {
 
 }
 
 void World::Tick(float DeltaTime)
 {
+    timerManager.Tick(DeltaTime);
+
     for(int entID = 0; entID < entities.size(); entID++) {
         // Remove destruction pending entity
         if(entities[entID]->bBeginDestroy) {

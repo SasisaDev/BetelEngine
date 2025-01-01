@@ -9,5 +9,5 @@
 
 void LinuxPlatform::DebugPrint(const char* string) const
 {
-	std::cout << string;
+	std::cout << string << "\n";
 }

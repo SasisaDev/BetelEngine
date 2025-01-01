@@ -8,6 +8,10 @@
 #include <Log/Logger.h>
 #include <Platform/Platform.h>
 
+#ifdef EDITOR
+#	include <Editor/Editor.h>
+#endif
+
 Application* GApplication = nullptr;
 
 #if !defined(NDEBUG)
@@ -180,7 +184,11 @@ void Application::ApplicationLoop()
 		Windows->Update(deltaTime);
 
 		// Tick Game Engine
-		GameEngine->Tick(deltaTime);
+#		ifdef EDITOR
+			Editor::Get()->Tick(deltaTime);
+#		else
+			GameEngine->Tick(deltaTime);
+#		endif
 
 		// Perform rendering
 		Render->Render();

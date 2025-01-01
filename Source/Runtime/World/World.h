@@ -5,11 +5,14 @@
 #include <string>
 #include <Math/Transform.h>
 #include <Delegate/Delegate.h>
+#include <Timer/Timer.h>
 
 class World : public Object
 {
     friend class WorldRenderLayer;
 protected:
+    TimerManager timerManager;
+
     std::vector<Entity*> entities;
 
     bool BackgroundGradient = false;
@@ -27,6 +30,8 @@ public:
 
     MulticastDelegate<Entity*> OnEntitySpawned;
     MulticastDelegate<Entity*> OnEntityDestroyed;
+
+    TimerManager& GetTimerManager() { return timerManager; }
 
     void SetBackgroundColor(const Vec3& color) {BackgroundColor = color;}
 
@@ -51,7 +56,7 @@ public:
     void SetWorldCameraPosition(IVec2 pos) {CameraPosition = pos;}
     void SetWorldCameraRotation(IVec2 rot) {CameraRotation = rot;}
 
-    virtual void StartPlay();
+    virtual void BeginPlay();
 
     virtual void Tick(float DeltaTime);
 };

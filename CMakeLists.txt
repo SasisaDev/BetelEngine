@@ -78,17 +78,22 @@ set(SrcInput "Source/Runtime/Input/InputManager.cpp")
 
 set(SrcI18N "Source/Runtime/i18n/Text.cpp")
 
+set(SrcTimer "Source/Runtime/Timer/Timer.cpp")
+
 set(SrcPlatform "Source/Runtime/Platform/Interface/Files/IFile.cpp" "Source/Runtime/Platform/Interface/Files/IDirectory.cpp" "Source/Runtime/Platform/Platform.cpp"
                 "Source/Runtime/Platform/Interface/Files/IPath.cpp" "Source/Runtime/Platform/Interface/IPlatform.cpp")
 
 set(Sources ${SrcRenderV} ${SrcObject} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGameFramework} ${SrcAssets} ${SrcPlatform} ${SrcInput} ${SrcI18N} ${SrcLZ4}
-    ${SrcAssetLoader} ${SrcStbImage}
+    ${SrcAssetLoader} ${SrcStbImage} ${SrcTimer}
     "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
     "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Core/Window/WindowManager.cpp")
 
 if(WIN32)
     set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp" "Source/Runtime/Platform/Windows/Files/WindowsFile.cpp")
+endif()
+if(CMAKE_HOST_SYSTEM MATCHES Linux)
+  set(Sources ${Sources} "Source/Runtime/Platform/Linux/LinuxPlatform.cpp")
 endif()
 
 # Game
@@ -114,7 +119,8 @@ set(AssetFactoriesSrc "Source/Editor/AssetFactory/Default/ShaderFactory.cpp" )
 set(ArgumentEventsSrc "Source/Editor/ArgumentEvents/UseAssetFactoryEvent.cpp")
 
 set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc}
-    "Source/Editor/ToolkitRenderLayer/ToolkitRenderLayer.cpp" "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" "Source/Editor/Editor/EditorDelegates.cpp") 
+    "Source/Editor/ToolkitRenderLayer/ToolkitRenderLayer.cpp" "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" "Source/Editor/Editor/EditorDelegates.cpp"
+    "Source/Editor/Editor/Editor.cpp") 
 
 add_executable(Editor ${Sources} ${EditorSources})
 

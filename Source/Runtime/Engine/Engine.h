@@ -1,7 +1,6 @@
 #pragma once
 
 #include "EngineDelegates.h"
-#include "Timer.h"
 #include "Tickable.h"
 #include <Assets/AssetLibrary.h>
 #include <Assets/AssetSmartPointers.h>
@@ -9,6 +8,8 @@
 #include <UI/Widget.h>
 #include <Input/InputManager.h>
 #include <i18n/TextManager.h>
+#include <AssetLoader/GC/AssetGarbageCollector.h>
+#include <Timer/Timer.h>
 
 class Engine
 {
@@ -18,6 +19,7 @@ protected:
     AssetLibrary assetLibrary;
     InputManager inputManager;
     TextManager textManager;
+    AssetGarbageCollector GC;
 
     World* world;
 

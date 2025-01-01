@@ -19,6 +19,14 @@ public:
 
 	static IPlatform* Get();
 
+    static inline constexpr bool IsEditor() {
+        #ifdef EDITOR
+        return true;
+        #else
+        return false;
+        #endif
+    }
+
 	virtual void SetExecVariables(std::vector<std::string> newVars){ExecVariables = newVars;}
 	virtual std::vector<std::string> GetExecVariables() const {return ExecVariables;}
 

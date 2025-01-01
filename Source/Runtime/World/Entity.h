@@ -40,6 +40,7 @@ public:
 
     virtual World* GetWorld();
     
+    virtual void BeginPlay() {}
     virtual void Tick(float deltaTime);
 
     virtual Transform GetTransform();

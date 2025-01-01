@@ -4,17 +4,14 @@
 #include <memory>
 #include <vector>
 
-template <typename FuncType>
-class Delegate;
-
 template <typename RetValType, typename... ArgTypes>
-class Delegate<RetValType(ArgTypes...)>
+class Delegate
 {
     std::shared_ptr<DelegateInstance<RetValType(ArgTypes...)>>instance;
 public:
 
     template <typename UserClass>
-    inline static Delegate<RetValType(ArgTypes...)>
+    inline static Delegate<RetValType, ArgTypes...>
     CreateMember(
         UserClass* InUserObject,
         typename MemFuncPtr<false,
@@ -27,7 +24,7 @@ public:
         return Result;
     }
 
-    inline static Delegate<RetValType(ArgTypes...)>
+    inline static Delegate<RetValType, ArgTypes...>
     CreateRaw(typename RawFuncPtr<RetValType(ArgTypes...)>::Type InFunc)
     {
         Delegate<RetValType(ArgTypes...)> Result;
