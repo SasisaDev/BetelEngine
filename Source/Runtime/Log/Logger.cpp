@@ -13,14 +13,21 @@ MulticastDelegate<const char*, const char*, const char*> Logger::OnLogMessage = 
 
 std::string Logger::InternalGetTimeStamp()
 {
-	// Get local time
-	std::time_t time = std::time(0);
+    static std::time_t time = std::time(0);
+    static std::tm* timeOld = std::localtime(&time);
+    static std::string buffer = {};
+
+    time = std::time(0);
     std::tm* timeNow = std::localtime(&time);
 
-	std::stringstream stream;
-	stream << timeNow->tm_hour << ":" << timeNow->tm_min << ":" << timeNow->tm_sec;
+    if(timeOld->tm_hour == timeNow->tm_hour &&  timeOld->tm_sec == timeNow->tm_sec && timeOld->tm_min == timeNow->tm_min && buffer.size()) {
+        return buffer;
+    }
 
-	return stream.str();
+	buffer.resize(7 + (timeNow->tm_hour > 9));
+	sprintf(buffer.data(), "%d:%02d:%02d", timeNow->tm_hour, timeNow->tm_min, timeNow->tm_sec);
+
+    return buffer;
 }
 
 void Logger::InternalLog(const char* Namespace, const char* message, const char* prefix)
