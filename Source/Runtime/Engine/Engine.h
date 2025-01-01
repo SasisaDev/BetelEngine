@@ -10,6 +10,7 @@
 #include <i18n/TextManager.h>
 #include <AssetLoader/GC/AssetGarbageCollector.h>
 #include <Timer/Timer.h>
+#include <Object/ObjectRef.h>
 
 class Engine
 {
@@ -41,7 +42,7 @@ public:
 #pragma region "World API"
     // Shouldn't be used, instead use Engine::LoadWorld
     void SetWorld(World* world);
-    void LoadWorld(AssetPtr<World> worldPtr);
+    void LoadWorld(ObjectRef<World> worldRef);
     inline World* GetWorld() const {return world;}
 #pragma endregion "World API"
 

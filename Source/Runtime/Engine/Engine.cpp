@@ -23,7 +23,29 @@ Engine::Engine()
 void Engine::SetWorld(World* nWorld)
 {
     world = nWorld;
+#   ifndef EDITOR
+    world->BeginPlay();
+#   endif
     EngineDelegates::OnWorldLoad.Broadcast(world);
+}
+
+void Engine::LoadWorld(ObjectRef<World> worldRef)
+{
+    LOGF(Log, LogEngine, "Trying to load world: 0x%08X.", worldRef.GetID());
+
+    if(!worldRef.IsValid())
+    {
+        LOG(Error, LogEngine, "LoadWorld failed: passed World Reference is invalid.");
+        return;
+    }
+
+    if(worldRef.Load() == nullptr)
+    {
+        LOG(Error, LogEngine, "LoadWorld failed: passed World Reference is seemingly valid, but loading has failed.");
+        return;
+    }
+
+    // TODO
 }
 
 void Engine::Tick(float DeltaTime)

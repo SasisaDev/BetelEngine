@@ -88,6 +88,8 @@ int GuardedMain(int argc, char* argv[])
 #endif
 
 	// TODO: Delete these synthetic calls
+	app.GetEngine()->LoadWorld(0xABCD0123);
+
 	EngineDelegates::OnWorldLoad.Broadcast(app.GetEngine()->GetWorld());
 	app.GetEngine()->GetWorld()->SetBackgroundColor(Vec3(0.75, 0.5, 0));
 	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());

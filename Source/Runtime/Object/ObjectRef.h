@@ -19,6 +19,8 @@ protected:
     uint32_t objectID = 0;
 
 public:
+    ObjectRef() {}
+    ObjectRef(uint32_t id) : objectID(id) {}
 
     inline bool IsValid() const {return ObjectLibrary::Get().IsObjectValid(objectID);} 
     inline bool IsLoaded() const {return ref;}
