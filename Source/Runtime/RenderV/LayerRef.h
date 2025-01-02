@@ -36,4 +36,7 @@ public:
     virtual void Render(VkDevice device){}
 
     virtual bool Deinitialize(VkDevice device) {return false;}
+
+    template <typename LayerT>
+    LayerT* PushInto(LayerT** layerPtr) {*layerPtr = dynamic_cast<LayerT*>(this); return dynamic_cast<LayerT*>(this);}
 };

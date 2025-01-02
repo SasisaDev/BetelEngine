@@ -4,19 +4,21 @@
 #include <string>
 #include <cassert>
 
+typedef std::map<std::string, std::string> INIMap;
+
 class INIFile {
-    std::map<std::string, std::map<std::string, std::string>> DataMap;
+    std::map<std::string, INIMap> DataMap;
 public:
 
     bool HasDomain(std::string domain) {
         return DataMap.find(domain) != DataMap.end();
     }
 
-    std::map<std::string, std::string> GetDomain(std::string domain) {
+    INIMap GetDomain(std::string domain) {
         return DataMap[domain];
     }
 
-    void SetDomain(std::string domain, std::map<std::string, std::string> data) {
+    void SetDomain(std::string domain, INIMap data) {
         DataMap[domain] = data;
     }
 
@@ -42,8 +44,8 @@ public:
         return buffer;
     }
 
-    static INIFile* LoadFromMemory(char* buffer, size_t size) {
-        INIFile* file = new INIFile;
+    static INIFile LoadFromMemory(char* buffer, size_t size) {
+        INIFile file;
         
         std::string domain, key, value;
         bool pDomain = true, pValue = false; 
@@ -63,7 +65,7 @@ public:
 
                 // This check guards against broken pairs and domain defining sequence
                 if(domain.size() > 0 && key.size() > 0 && value.size() > 0) {
-                    file->DataMap[domain][key] = value;
+                    file.DataMap[domain][key] = value;
                     key.clear();
                     value.clear();
                     pValue = false;

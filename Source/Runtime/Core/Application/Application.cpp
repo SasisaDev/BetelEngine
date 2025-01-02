@@ -8,6 +8,8 @@
 #include <Log/Logger.h>
 #include <Platform/Platform.h>
 
+#include <GameFramework/Settings/GameSettings.h>
+
 #ifdef EDITOR
 #	include <Editor/Editor.h>
 #endif
@@ -165,7 +167,11 @@ void Application::ApplicationLoop()
 	auto frame_lifetime_start = std::chrono::high_resolution_clock::now();
 	auto frame_lifetime_end = std::chrono::high_resolution_clock::now();
 
-	float MinimalDeltaTime = 1000.f/120.f;
+#	ifdef EDITOR
+	float MinimalDeltaTime = 1000.0f/120.0f;
+#	else
+	float MinimalDeltaTime = 1000.0f/static_cast<float>(Settings->GetOrDefault<GameSettings>()->MaxFPS);
+#	endif
 
 	while(!Windows->ShouldTerminate())
 	{

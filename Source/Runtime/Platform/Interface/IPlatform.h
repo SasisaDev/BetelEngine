@@ -31,6 +31,7 @@ public:
 	virtual std::vector<std::string> GetExecVariables() const {return ExecVariables;}
 
 	// TODO: Rewrite it more neatly
+    // This variant is unreliable and may fail on some systems
 	virtual std::string GetExecutablePath() { return (ExecVariables.size() > 0) ? ExecVariables[0] : ""; }
 	virtual std::string GetExecutableFolder() { return (ExecVariables.size() > 0) ? IPath(ExecVariables[0]).StepBack() : ""; }
 

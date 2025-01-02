@@ -18,13 +18,13 @@ protected:
 public:
     SettingsManager() {
         // Test
-        INIFile* settingsFile;
+        INIFile settingsFile;
         char buffer[] = "[Test]\nKey=Value\\\nMultiline!\0";
         size_t size = sizeof(buffer);
 
         settingsFile = INIFile::LoadFromMemory(buffer, size);
 
-        std::string outbuffer = settingsFile->GenerateFileBuffer();
+        std::string outbuffer = settingsFile.GenerateFileBuffer();
 
         // Create Config Directory if it doesn't exist yet
         IPlatform::Get()->OpenLocalDirectory("./Config/", EDirectoryFlags::DIRECTORY_FLAG_CREATE);
@@ -46,18 +46,23 @@ public:
         }
         
         SettingsType* defaultSettings = new SettingsType();
-        IFile* settingsFile = IPlatform::Get()->OpenLocalFile("./Config/" + SettingsType::GetName() + ".ini", EFileAccessFlags::FILE_ACCESS_FLAG_READ);
+        IFile* settingsFile = IPlatform::Get()->OpenLocalFile("./Config/" + SettingsType::GetName() + ".ini", EFileAccessFlags::FILE_ACCESS_FLAG_READ | EFileAccessFlags::FILE_ACCESS_FLAG_BINARY | EFileAccessFlags::FILE_ACCESS_FLAG_ATE);
         if(!settingsFile || !settingsFile->IsOpen()) {
             LOGF(Warning, LogSettings, "Settings file for \"%s\" was not find. Creating new one", SettingsType::GetName().c_str());
-            // TODO: Create Settings File
+
+            IFile* settingsFileWriter = IPlatform::Get()->OpenLocalFile("./Config/" + SettingsType::GetName() + ".ini", EFileAccessFlags::FILE_ACCESS_FLAG_WRITE);
+            INIFile defaultINI = defaultSettings->Serialize();
+            settingsFileWriter->Write(defaultINI.GenerateFileBuffer());
+            settingsFileWriter->Close();
         }
 
         std::vector<char> settingsFileData = settingsFile->FetchAllBinary();
-        defaultSettings->file = INIFile::LoadFromMemory(settingsFileData.data(), settingsFileData.size());
-        defaultSettings->Deserialize();
+        INIFile ini = INIFile::LoadFromMemory(settingsFileData.data(), settingsFileData.size());
+        defaultSettings->Deserialize(ini);
 
         LoadedSettings.insert({SettingsType::GetName(), dynamic_cast<Settings*>(defaultSettings)});
 
+        settingsFile->Close();
         return defaultSettings;
     }
 };

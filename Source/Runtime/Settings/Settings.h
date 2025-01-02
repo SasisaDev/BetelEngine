@@ -5,11 +5,14 @@
 
 class Settings 
 {
+protected:
     INIFile* file;
     friend class SettingsManager;
 public:
+    Settings(){}
+
     static std::string GetName() {return "Default";}
 
-    virtual void Deserialize() {}
-    virtual void Serialize() {}
+    virtual void Deserialize(INIFile& file) {}
+    virtual INIFile Serialize() {return {};}
 };

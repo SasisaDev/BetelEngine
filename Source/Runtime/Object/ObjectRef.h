@@ -6,7 +6,6 @@
 
 class Object;
 
-// TODO
 template <ObjectClass _ObjectT>
 class ObjectRef
 {
@@ -25,8 +24,8 @@ public:
     inline bool IsValid() const {return ObjectLibrary::Get().IsObjectValid(objectID);} 
     inline bool IsLoaded() const {return ref;}
 
-    _ObjectT* Get() const {return ref;} 
-    uint32_t GetID() const {return objectID;} 
+    inline _ObjectT* Get() const {return ref;} 
+    inline uint32_t GetID() const {return objectID;} 
     _ObjectT* Load() 
     {
         _ObjectT* obj = dynamic_cast<_ObjectT*>(ObjectLibrary::Get().LoadObject(objectID));

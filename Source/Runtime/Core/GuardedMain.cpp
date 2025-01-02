@@ -47,6 +47,8 @@ int GuardedMain(int argc, char* argv[])
 
 	// Create game window
 #ifdef EDITOR
+	ImGuiRenderLayerRef* imGuiLayer = nullptr;
+
 	std::vector<IRenderLayerRef*> editorCompositionLayerRefs = {
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
 			->SetViewportSize({settings->PixelPerfectViewportWidth, settings->PixelPerfectViewportHeight})
@@ -56,6 +58,7 @@ int GuardedMain(int argc, char* argv[])
 		IRenderFactory::CreateLayerRef<ToolkitRenderLayer, ToolkitRenderLayerRef>(render),
 		IRenderFactory::CreateLayerRef<ImGuiRenderLayer, ImGuiRenderLayerRef>(render)
 			->SetToolkit(new EditorToolkitBase)
+			->PushInto(&imGuiLayer)
 	};
 
 	WindowCreateInfo editorWininfo = {
@@ -66,8 +69,7 @@ int GuardedMain(int argc, char* argv[])
 	};
 
 	window_t edWinId = app.CreateWindow(editorWininfo);
-	// TODO: More robust host window setup for ImGui Layer
-	((ImGuiRenderLayerRef*)editorCompositionLayerRefs[3])->SetHostWindow(app.GetWindow(edWinId));
+	imGuiLayer->SetHostWindow(app.GetWindow(edWinId));
 #else
 	std::vector<IRenderLayerRef*> gameCompositionLayerRefs = {
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
