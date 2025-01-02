@@ -5,12 +5,29 @@
 
 Engine* GEngine = nullptr;
 
+void Engine::HandleIncomingInputEvent(InputEvent event)
+{
+    // Should not dispatch any events if the game is out of focus
+    if(!GetGameFocused()) {
+        return;
+    }
+
+    if(event.KeyName.size() > 0)
+        LOGF(Log, LogInput, "Key down: %s", event.KeyName.c_str());
+
+    // TODO: Forward Event to the World
+
+}
+
 Engine::Engine()
 {
     GEngine = this;
 
     // Initialize i18n
     textManager.Initialize();
+
+    // Subscribe to input events
+    inputManager.OnInputEvent.BindMember(this, &Engine::HandleIncomingInputEvent);
 
     // Create default world
     world = new World;
@@ -51,6 +68,7 @@ void Engine::LoadWorld(ObjectRef<World> worldRef)
 void Engine::Tick(float DeltaTime)
 {
     tickManager.Tick(DeltaTime);
+    timerManager.Tick(DeltaTime);
 
     world->Tick(DeltaTime);
 

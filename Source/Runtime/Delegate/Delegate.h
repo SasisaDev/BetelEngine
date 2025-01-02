@@ -7,6 +7,7 @@
 template <typename RetValType, typename... ArgTypes>
 class Delegate
 {
+protected:
     std::shared_ptr<DelegateInstance<RetValType(ArgTypes...)>>instance;
 public:
 
@@ -19,7 +20,7 @@ public:
             RetValType(ArgTypes...)
         >::Type InFunc)
     {
-        Delegate<RetValType(ArgTypes...)> Result;
+        Delegate<RetValType, ArgTypes...> Result;
         Result.instance.reset(new MemDelegateInstance<false, UserClass, RetValType, ArgTypes...>(InUserObject, InFunc));
         return Result;
     }
@@ -27,7 +28,7 @@ public:
     inline static Delegate<RetValType, ArgTypes...>
     CreateRaw(typename RawFuncPtr<RetValType(ArgTypes...)>::Type InFunc)
     {
-        Delegate<RetValType(ArgTypes...)> Result;
+        Delegate<RetValType, ArgTypes...> Result;
         Result.instance.reset(new RawDelegateInstance<RetValType, ArgTypes...>(InFunc));
         return Result;
     }

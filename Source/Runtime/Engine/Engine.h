@@ -14,6 +14,7 @@
 
 class Engine
 {
+    virtual void HandleIncomingInputEvent(InputEvent event);
 protected:
     TickableManager tickManager;
     TimerManager timerManager;

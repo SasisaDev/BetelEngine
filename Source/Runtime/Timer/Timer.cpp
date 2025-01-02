@@ -8,6 +8,9 @@ void TimerManager::SetTimer(TimerID& id, float tickDelay, Delegate<void> delegat
     timerData.isCycle = cycle;
     timerData.tickTime = cycleTime;
     timerData.delegate = delegate;
+
+    Timers.push_back(timerData);
+    id = Timers.size()-1;
 }
 
 void TimerManager::StopTimer(TimerID id)
@@ -24,7 +27,7 @@ void TimerManager::Tick(float deltaTime)
         // All timers must make their first tick at specific delay. If delay is zero, we tick imediately
         if(Timers[i].firstTicked == false)
         {
-            if((Timers[i].firstTickDelay + Timers[i].startTime) >= CurrentTime)
+            if((Timers[i].firstTickDelay + Timers[i].startTime) <= CurrentTime)
             {
                 Timers[i].delegate.Execute();
                 Timers[i].firstTicked = true;
