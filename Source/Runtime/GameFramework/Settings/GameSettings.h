@@ -13,8 +13,14 @@ public:
     uint32_t MaxFPS = 120;
 
     virtual void Deserialize(INIFile& file) override {
-        std::string maxFPS = file.GetDomain("General")["MaxFPS"];
-        MaxFPS = std::stoi(maxFPS);
+        std::string value = file.GetDomain("General")["MaxFPS"];
+        MaxFPS = std::stoi(value);
+
+        // Pixel Perfect
+        value = file.GetDomain("Pixel Perfect")["PixelPerfectViewportWidth"];
+        PixelPerfectViewportWidth = std::stoi(value);
+        value = file.GetDomain("Pixel Perfect")["PixelPerfectViewportHeight"];
+        PixelPerfectViewportHeight = std::stoi(value);
     }
 
     virtual INIFile Serialize() override {

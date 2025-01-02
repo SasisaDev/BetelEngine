@@ -53,6 +53,10 @@ public:
         bool multiline = false;
 
         for(size_t i = 0; i < size; i++){
+            // We don't care about Window's endline \r byte
+            if(buffer[i] == '\r') {
+                continue;
+            }
             // Line end; Submit data
             if(buffer[i] == '\0' || buffer[i] == '\n') {
                 comment = false;

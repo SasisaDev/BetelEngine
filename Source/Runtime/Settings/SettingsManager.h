@@ -54,6 +54,8 @@ public:
             INIFile defaultINI = defaultSettings->Serialize();
             settingsFileWriter->Write(defaultINI.GenerateFileBuffer());
             settingsFileWriter->Close();
+            settingsFile->Close();
+            return defaultSettings;
         }
 
         std::vector<char> settingsFileData = settingsFile->FetchAllBinary();
