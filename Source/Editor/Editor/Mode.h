@@ -1,4 +1,5 @@
 #pragma once
+#include <Input/InputEvent.h>
 #include <i18n/Text.h>
 
 class EditorMode
@@ -12,4 +13,6 @@ public:
     virtual void OnEnabled(){}
     virtual void Tick(float deltaTime) {}
     virtual void OnDisabled(){}
+
+    virtual bool HandleInputEvent(InputEvent &event) { return false;}
 };

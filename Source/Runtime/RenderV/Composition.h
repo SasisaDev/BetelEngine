@@ -92,6 +92,15 @@ public:
     uint32_t AddLayerRef(IRenderLayerRef* ref);
     std::pair<uint32_t, uint32_t> AddLayerRefs(std::vector<IRenderLayerRef*> &ref);
     IRenderLayerRef* GetLayer(uint32_t idx) {return Layers[idx];}
+    template <typename LayerRefT>
+    int GetLayerIDFromType() {
+        for(int i = 0; i < Layers.size(); i++) {
+            if(dynamic_cast<LayerRefT*>(Layers[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
     inline const std::vector<IRenderLayerRef*>& GetLayerRefs() const { return Layers; }
 
     inline VkSurfaceKHR GetSurface() const {return surface;}

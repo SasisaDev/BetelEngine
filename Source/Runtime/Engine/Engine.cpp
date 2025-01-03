@@ -34,8 +34,6 @@ Engine::Engine()
     // Subscribe to input events
     inputManager.OnInputEvent.BindMember(this, &Engine::HandleIncomingInputEvent);
 
-    // Create default world
-    world = new World;
     canvasWidget = std::make_shared<CanvasWidget>();
 
     // Crawl all assets

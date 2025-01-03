@@ -34,6 +34,7 @@ public:
 
         // Constant values
         static const int32_t WindowPadding = 5;
+        static const int WorldLayerID = comp->GetLayerIDFromType<WorldRenderLayerRef>();
 
         // Fix docked window background being different from the undocked
         static ImGuiWindowClass vpClass;
@@ -54,7 +55,7 @@ public:
 
             ImRect workRect = ImGui::GetCurrentWindow()->WorkRect;
             comp->SetGameViewport({{(int)workRect.GetTL().x - WindowPadding, (int)workRect.GetTL().y - WindowPadding}, {(unsigned int)workRect.GetWidth() + WindowPadding * 2, (unsigned int)workRect.GetHeight() + WindowPadding * 2}});
-
+            
             // In editor mod set, if the game is focused or not
             if(GApplication && GApplication->GetEngine())
                 GApplication->GetEngine()->SetGameFocused(ImGui::IsWindowFocused());
@@ -64,7 +65,8 @@ public:
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.15, 0.15, 0.15, 0.4));
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.15, 0.15, 0.15, 0.5));
             ImGui::SetNextItemWidth(175);
-            std::vector<const char*> modeNames;
+            static std::vector<const char*> modeNames;
+            modeNames.clear();
             for(EditorMode* mode : Editor::Get()->Modes) {
                 modeNames.push_back(mode->GetName().Get().c_str());
             }

@@ -92,6 +92,7 @@ int GuardedMain(int argc, char* argv[])
 #endif
 
 	// TODO: Delete these synthetic calls
+	app.GetEngine()->SetWorld(new World);
 	app.GetEngine()->LoadWorld(0xABCD0123);
 
 	EngineDelegates::OnWorldLoad.Broadcast(app.GetEngine()->GetWorld());

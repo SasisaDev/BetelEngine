@@ -56,6 +56,8 @@ public:
 
     void SetWorldCameraPosition(IVec2 pos) {CameraPosition = pos;}
     void SetWorldCameraRotation(IVec2 rot) {CameraRotation = rot;}
+    IVec2& GetWorldCameraPosition() {return CameraPosition;}
+    IVec2& GetWorldCameraRotation() {return CameraRotation;}
 
     virtual void BeginPlay();
 

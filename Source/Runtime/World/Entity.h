@@ -13,6 +13,7 @@
 
 class EntityRenderProxy;
 class World;
+class Editor;
 
 struct EntitySpawnInfo
 {
@@ -58,6 +59,12 @@ public:
     virtual void SetRelativeLocation(const IVec3& loc) {transform.Location = loc;}
 
     virtual std::string GetDisplayName() {return DisplayName;} 
+
+    // Editor API
+#   ifdef EDITOR
+    void PushEditorModes(Editor* editor) {}
+    void PopEditorModes(Editor* editor) {}
+#   endif
 };
 
 class WorldRenderLayerRef;
