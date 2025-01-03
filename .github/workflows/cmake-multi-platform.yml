@@ -84,7 +84,7 @@ jobs:
     - name: Upload Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: BetelEngine-${GITHUB_SHA::7}-${{matrix.os}}-${{matrix.build_type}}-${{matrix.c_compiler}}
+        name: BetelEngine-${{GITHUB_SHA::7}}-${{matrix.os}}-${{matrix.build_type}}-${{matrix.c_compiler}}
         path: |
           ${{ steps.strings.outputs.build-output-dir }}/Game
           ${{ steps.strings.outputs.build-output-dir }}/Editor
