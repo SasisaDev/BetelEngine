@@ -38,24 +38,25 @@ Window* WindowManager::GetWindow(window_t id)
 
 void WindowManager::Update(float deltaTime)
 {
-    SDL_PollEvent(&event);
-
-	OnSDLEvent.Broadcast(event);
-
-    Window* emittedWindow = nullptr;
-	
-	switch(event.type)
+    while(SDL_PollEvent(&event))
 	{
-		/*case SDL_QUIT:
-			bShouldClose = true;
-			break;*/
-		case SDL_WINDOWEVENT:
-			// Handle window events
-            emittedWindow = internal_GetBySDLWindow(SDL_GetWindowFromID(event.window.windowID));
-			if(emittedWindow) {
-				emittedWindow->Update(event.window);
-			}
-			break;
+		OnSDLEvent.Broadcast(event);
+	
+    	Window* emittedWindow = nullptr;
+		
+		switch(event.type)
+		{
+			/*case SDL_QUIT:
+				bShouldClose = true;
+				break;*/
+			case SDL_WINDOWEVENT:
+				// Handle window events
+    	        emittedWindow = internal_GetBySDLWindow(SDL_GetWindowFromID(event.window.windowID));
+				if(emittedWindow) {
+					emittedWindow->Update(event.window);
+				}
+				break;
+		}
 	}
 }
 
