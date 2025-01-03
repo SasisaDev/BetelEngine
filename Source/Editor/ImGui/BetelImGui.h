@@ -9,7 +9,7 @@
 #include "backends/imgui_impl_vulkan.h"
 
 class BetelImGuiEngine {
-
+    void ApplyTheme();
 public:
     BetelImGuiEngine();
     ~BetelImGuiEngine();

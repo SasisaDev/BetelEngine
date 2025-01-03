@@ -3,6 +3,8 @@
 #include <Core/Application/Application.h>
 #include <World/RenderLayer/WorldRenderLayer.h>
 
+#include "Modes/ObjectMode.h"
+
 #include <algorithm>
 
 //#include "Gizmo/EditorGizmo.h"
@@ -37,6 +39,9 @@ void Editor::HandleIncomingInputEvent(InputEvent &event)
 Editor::Editor() {
     //Gizmo = new EditorGizmo();
     GApplication->GetEngine()->GetInputManager().OnInputEvent.BindMember(this, &Editor::HandleIncomingInputEvent);
+
+    // Add default mode
+    AddToolkitMode<ObjectMode>();
 }
 
 void Editor::Tick(float deltaTime)

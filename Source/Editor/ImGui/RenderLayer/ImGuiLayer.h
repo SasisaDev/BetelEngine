@@ -16,6 +16,7 @@ class ImGuiRenderLayerRef : public IRenderLayerRef
 {
     friend class ImGuiRenderLayer;
 protected:
+    uint32_t MaxSetsCount = 0;
     VkDescriptorPool imagesPool;
 
     BetelImGuiEngine* ImGuiE;
@@ -29,6 +30,7 @@ public:
 
     ImGuiRenderLayerRef* SetHostWindow(Window* window);
     ImGuiRenderLayerRef* SetToolkit(EditorToolkit* toolkit) {CurrentToolkit = toolkit; return this;}
+    ImGuiRenderLayerRef* SetMaxSets(uint32_t maxSets) {MaxSetsCount = maxSets; return this;}
 
     void onCanvasWidgetBind(){}
 };

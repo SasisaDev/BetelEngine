@@ -3,6 +3,7 @@
 #include <vector>
 #include <Math/Vector.h>
 #include <Input/InputEvent.h>
+#include "Mode.h"
 
 class World;
 class Entity;
@@ -20,7 +21,7 @@ struct EditorInputContext
 
 class Editor {
     Editor();
-    
+
     EditorInputContext edInputCtx;
     virtual void HandleIncomingInputEvent(InputEvent &event);
 protected:
@@ -33,6 +34,10 @@ protected:
     IVec2 EditorCameraRotation = {};
 public:
     float ViewportZoom = 1;
+    bool bShowOverlay = true;
+
+    std::vector<EditorMode*> Modes;
+    int CurrentActiveMode = 0;
 
     /*
      * Returns static Editor instance pointer
@@ -43,6 +48,13 @@ public:
     static Editor* Get() {
         static Editor* editor = new Editor;
         return editor;
+    }
+
+    // Can be used for Defered Registration
+    template <typename ToolkitModeT>
+    bool AddToolkitMode() {
+        Modes.push_back(new ToolkitModeT);
+        return true;
     }
 
     virtual void Tick(float deltaTime);

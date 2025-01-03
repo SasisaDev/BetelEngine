@@ -10,8 +10,7 @@ bool ImGuiRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
 {
     VkDescriptorPoolCreateInfo descPoolInfo{};
     descPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    descPoolInfo.maxSets = IRenderUtility::GetFramesInFlight();
-    descPoolInfo.poolSizeCount = 1;
+    descPoolInfo.maxSets = IRenderUtility::GetFramesInFlight() + MaxSetsCount;
 
     VkDescriptorPoolSize descPoolSize;
     descPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;

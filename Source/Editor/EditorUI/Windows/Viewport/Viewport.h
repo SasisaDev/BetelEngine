@@ -2,9 +2,12 @@
 
 #include <Toolkit/ToolkitWindow.h>
 #include <Core/Application/Application.h>
+#include <Editor/Editor.h>
+#include "../../EditorImageLoader.h"
 
 class EditorViewport : public EditorToolkitWindow
 {
+    EditorTextureData ShowOverlayImageW{};
 public:
     const char* GetName()override{return "Game";}
 
@@ -20,6 +23,13 @@ public:
     }
 
     virtual void OnGUI(Window* window){
+        static bool first_init = true;
+        if(first_init) {
+            EditorImageLoader::Get().LoadTextureFromFile("./Editor/ShowOverlayW16.png", 16, 16, &ShowOverlayImageW);
+
+            first_init = false;
+        }
+
         IRenderComposition* comp = GApplication->GetRender()->GetComposition(window->GetCompositionID());
 
         // Constant values
@@ -51,11 +61,28 @@ public:
 
             // Draw Toolbar Elements
             // TODO: Editor Mod Fetch & Registration
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.15, 0.15, 0.15, 0.4));
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.15, 0.15, 0.15, 0.5));
             ImGui::SetNextItemWidth(175);
-            static const char* comboItems[]{"Object Mode","Tilemap Mode","NPC Mode"};
-            static int selectedComboItem = 0;
-            ImGui::Combo("##EditorMode", &selectedComboItem, comboItems, IM_ARRAYSIZE(comboItems));
-            
+            std::vector<const char*> modeNames;
+            for(EditorMode* mode : Editor::Get()->Modes) {
+                modeNames.push_back(mode->GetName().Get().c_str());
+            }
+            ImGui::Combo("##EditorMode", &Editor::Get()->CurrentActiveMode, modeNames.data(), IM_ARRAYSIZE(modeNames.data()));
+            ImGui::PopStyleColor(2);
+
+            // Show Editor Overlay Button
+            ImGui::SameLine();
+            if(Editor::Get()->bShowOverlay){
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0.647, 1, 0.9));
+            } else {
+                ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.6));
+            }
+            if(ImGui::ImageButton("##ShowOverlay", (ImTextureID)ShowOverlayImageW.DS, ImVec2(14,14))) {
+                Editor::Get()->bShowOverlay = !Editor::Get()->bShowOverlay;
+            }
+            ImGui::PopStyleColor(1);
+
         }
         ImGui::PopStyleColor(2);
         ImGui::PopStyleVar(1);

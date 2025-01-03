@@ -59,6 +59,7 @@ int GuardedMain(int argc, char* argv[])
 		IRenderFactory::CreateLayerRef<ToolkitRenderLayer, ToolkitRenderLayerRef>(render),
 		IRenderFactory::CreateLayerRef<ImGuiRenderLayer, ImGuiRenderLayerRef>(render)
 			->SetToolkit(new EditorToolkitBase)
+			->SetMaxSets(16)
 			->PushInto(&imGuiLayer)
 	};
 
