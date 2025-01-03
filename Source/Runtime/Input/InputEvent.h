@@ -7,7 +7,19 @@ struct InputEvent {
     bool Caps : 1 = false;
 
     std::string KeyName;
+    uint8_t MouseButton; 
+    
+    // Was key or button unpressed
+    bool IsUp = false;
+    // Is action related to mouse
+    bool IsMouse = false;
+    // Is action related to gamepas
+    bool IsGamepad = false;
+    // Is action related to key, not an axis
+    bool IsKey = false;
 
-    float MouseAxisX = 0;
-    float MouseAxisY = 0;
+    float AxisX = 0;
+    float AxisY = 0;
+    float MouseX = 0;
+    float MouseY = 0;
 };

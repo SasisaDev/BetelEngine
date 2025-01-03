@@ -6,6 +6,7 @@
 #include <Math/Transform.h>
 #include <Delegate/Delegate.h>
 #include <Timer/Timer.h>
+#include <Input/InputEvent.h>
 
 class World : public Object
 {
@@ -59,4 +60,6 @@ public:
     virtual void BeginPlay();
 
     virtual void Tick(float DeltaTime);
+
+    virtual void PushInputEvent(InputEvent &input) {/*TODO World Input Events*/}
 };

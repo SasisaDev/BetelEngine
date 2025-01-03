@@ -2,6 +2,7 @@
 
 #include <Delegate/Delegate.h>
 #include <Core/Window/WindowManager.h>
+#include <unordered_map>
 
 #include "InputEvent.h"
 
@@ -14,15 +15,16 @@ class InputManager
     void InternalHandleEvent(SDL_Event e);
 protected:
     bool IsActive = true;
+    bool IsGamepad = false;
 public:
     InputManager() {
         WindowManager::OnSDLEvent.BindMember(this, &InputManager::InternalHandleEvent);
     }
 
     /*
-    * Multicast delegate, bound functions will be called each time
-    * an input event has occured.
+    * Multicast delegate, bound functions will be called
+    * each time the input event occurs.
     */
-    MulticastDelegate<InputEvent> OnInputEvent;
+    MulticastDelegate<InputEvent&> OnInputEvent;
     
 };

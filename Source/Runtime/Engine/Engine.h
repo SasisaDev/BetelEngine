@@ -14,7 +14,7 @@
 
 class Engine
 {
-    virtual void HandleIncomingInputEvent(InputEvent event);
+    virtual void HandleIncomingInputEvent(InputEvent &event);
 protected:
     TickableManager tickManager;
     TimerManager timerManager;
@@ -23,7 +23,7 @@ protected:
     TextManager textManager;
     AssetGarbageCollector GC;
 
-    World* world;
+    World* world = nullptr;
 
     std::shared_ptr<Widget> canvasWidget;
 

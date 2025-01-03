@@ -24,6 +24,8 @@ class Entity : public Object
     friend class World;
 protected:
     Transform transform;
+    // Dynamic entities are testing against dynamic value, like collision
+    bool bIsDynamic = false;
 
     EntityRenderProxy* RenderProxy;
 
@@ -34,6 +36,8 @@ public:
     bool Visible = true;
 
     void BeginDestroy() {bBeginDestroy = true;}
+
+    inline bool IsDynamic() const {return bIsDynamic;}
 
     virtual EntityRenderProxy* CreateRenderProxy(){return RenderProxy = nullptr;}
     virtual EntityRenderProxy* GetRenderProxy() {return RenderProxy;}
