@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+#include <cstdint>
 
 struct InputEvent {
     bool Shift : 1 = false;

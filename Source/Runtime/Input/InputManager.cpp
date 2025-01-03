@@ -19,6 +19,8 @@ void InputManager::InternalHandleEvent(SDL_Event e) {
             event.IsMouse = true;
             event.AxisX = e.motion.xrel;
             event.AxisY = e.motion.yrel;
+            event.MouseX = e.motion.x;
+            event.MouseY = e.motion.y;
             break;
         case SDL_MOUSEBUTTONUP:
             event.IsUp = true;
@@ -26,6 +28,8 @@ void InputManager::InternalHandleEvent(SDL_Event e) {
             event.IsMouse = true;
             event.IsKey = true;
             event.MouseButton = e.button.button;
+            event.MouseX = e.motion.x;
+            event.MouseY = e.motion.y;
             break;
     };
 
