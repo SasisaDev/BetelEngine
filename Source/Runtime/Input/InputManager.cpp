@@ -31,6 +31,11 @@ void InputManager::InternalHandleEvent(SDL_Event e) {
             event.MouseX = e.motion.x;
             event.MouseY = e.motion.y;
             break;
+        case SDL_MOUSEWHEEL:
+            event.IsMouse = true;
+            event.IsKey = false;
+            event.MouseWheel = e.wheel.y;
+            break;
     };
 
     OnInputEvent.Broadcast(event);

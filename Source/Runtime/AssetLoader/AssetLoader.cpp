@@ -15,5 +15,7 @@ Resource* AssetLoader::LoadResource(std::string path)
 
     Resource* resource = new Resource(file->FetchAllBinary());
 
+    LOGF(Log, LogAssetLoader, "Loaded Resource \"%s\".", path.c_str());
+
     return resource;
 }

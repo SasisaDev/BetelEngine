@@ -12,6 +12,10 @@
 
 #include <AssetLoader/AssetLoader.h>
 
+#ifdef EDITOR
+#   include <Editor/Editor.h> 
+#endif
+
 WorldRenderLayerRef::WorldRenderLayerRef()
     : world(nullptr)
 {
@@ -577,7 +581,11 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
 
     if(World* world = ref->GetWorld()) {
         ref->SceneDataStorages[imageID].ProjectionMatrix = glm::ortho(0.0f, static_cast<float>(ref->viewport.width), 0.0f, static_cast<float>(ref->viewport.height), -100.f, 100.0f);
+#       ifdef EDITOR
+        ref->SceneDataStorages[imageID].ViewMatrix = glm::scale(glm::mat4(1), glm::vec3(Editor::Get()->ViewportZoom, Editor::Get()->ViewportZoom, 1));
+#       else
         ref->SceneDataStorages[imageID].ViewMatrix = glm::mat4(1);
+#       endif
         ref->SceneDataStorages[imageID].Position = glm::vec2(world->CameraPosition.x, world->CameraPosition.y);
     }
     

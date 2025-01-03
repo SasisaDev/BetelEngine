@@ -24,4 +24,5 @@ struct InputEvent {
     float AxisY = 0;
     float MouseX = 0;
     float MouseY = 0;
+    float MouseWheel = 0;
 };

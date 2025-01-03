@@ -19,6 +19,8 @@ struct EditorInputContext
 };
 
 class Editor {
+    Editor();
+    
     EditorInputContext edInputCtx;
     virtual void HandleIncomingInputEvent(InputEvent &event);
 protected:
@@ -30,7 +32,7 @@ protected:
     IVec2 EditorCameraPosition = {};
     IVec2 EditorCameraRotation = {};
 public:
-    Editor();
+    float ViewportZoom = 1;
 
     /*
      * Returns static Editor instance pointer

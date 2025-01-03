@@ -1,6 +1,7 @@
 #include "Editor.h"
 
 #include <Core/Application/Application.h>
+#include <World/RenderLayer/WorldRenderLayer.h>
 
 //#include "Gizmo/EditorGizmo.h"
 
@@ -19,9 +20,15 @@ void Editor::HandleIncomingInputEvent(InputEvent &event)
 
     if(edInputCtx.IsDragging) {
         if(event.IsMouse) {
-            EditorCameraPosition.x = edInputCtx.OriginalEditorCameraPosition.x + (event.MouseX - edInputCtx.MouseDragStartX) / 10;
-            EditorCameraPosition.y = edInputCtx.OriginalEditorCameraPosition.y + (event.MouseY - edInputCtx.MouseDragStartY) / 10;
+            EditorCameraPosition.x = edInputCtx.OriginalEditorCameraPosition.x + (event.MouseX - edInputCtx.MouseDragStartX) / ViewportZoom;
+            EditorCameraPosition.y = edInputCtx.OriginalEditorCameraPosition.y + (event.MouseY - edInputCtx.MouseDragStartY) / ViewportZoom;
         }    
+    }
+
+    // Zoom In/Out
+    if(event.IsMouse && event.MouseWheel != 0 && GApplication->GetEngine()->GetGameFocused() && !edInputCtx.IsDragging)
+    {
+        ViewportZoom = std::clamp(ViewportZoom + (event.MouseWheel * (ViewportZoom / 5)), 0.05f, 10.f);
     }
 }
 

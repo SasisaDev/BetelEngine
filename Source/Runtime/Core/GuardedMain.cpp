@@ -51,10 +51,11 @@ int GuardedMain(int argc, char* argv[])
 
 	std::vector<IRenderLayerRef*> editorCompositionLayerRefs = {
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
-			->SetViewportSize({settings->PixelPerfectViewportWidth, settings->PixelPerfectViewportHeight})
+			// TODO: This Viewport Size should ideally be equal to a window size
+			->SetViewportSize({1280, 720})
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldLoad)
 			->SubscribeWorldUnload(&EngineDelegates::OnWorldUnload),
-		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
+		//IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
 		IRenderFactory::CreateLayerRef<ToolkitRenderLayer, ToolkitRenderLayerRef>(render),
 		IRenderFactory::CreateLayerRef<ImGuiRenderLayer, ImGuiRenderLayerRef>(render)
 			->SetToolkit(new EditorToolkitBase)
