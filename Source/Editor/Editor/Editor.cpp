@@ -3,6 +3,8 @@
 #include <Core/Application/Application.h>
 #include <World/RenderLayer/WorldRenderLayer.h>
 
+#include <algorithm>
+
 //#include "Gizmo/EditorGizmo.h"
 
 void Editor::HandleIncomingInputEvent(InputEvent &event)
