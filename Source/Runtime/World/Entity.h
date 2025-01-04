@@ -17,7 +17,7 @@ class Editor;
 
 struct EntitySpawnInfo
 {
-
+    IVec3 Location = {0, 0, 0};
 };
 
 class Entity : public Object
@@ -56,7 +56,7 @@ public:
 
     // TODO
     virtual void SetLocation(const IVec3& loc){}
-    virtual void SetRelativeLocation(const IVec3& loc) {transform.Location = loc;}
+    virtual void SetRelativeLocation(const IVec3 loc) {transform.Location = loc;}
 
     virtual std::string GetDisplayName() {return DisplayName;} 
 

@@ -12,11 +12,11 @@ bool ObjectMode::HandleInputEvent(InputEvent &event)
         IVec2 MouseLocation = {static_cast<int>(event.MouseX), static_cast<int>(event.MouseY)};
         const IRenderComposition* comp = GApplication->GetRender()->GetComposition(0);
         VkRect2D ViewportLocation = comp->GetGameViewport();
-        float MouseX = MouseLocation.x - ViewportLocation.offset.x;
-        float MouseY = MouseLocation.y - ViewportLocation.offset.y;
+        float MouseX = (MouseLocation.x - ViewportLocation.offset.x);
+        float MouseY = (MouseLocation.y - ViewportLocation.offset.y);
 
         HitscanParams params;
-        WorldUtility::HitscanCamToWorld(Editor::Get()->GetWorld(), MouseX, MouseY, params);
+        WorldUtility::HitscanCamToWorld(Editor::Get()->GetWorld(), MouseX, MouseY, ViewportLocation.extent.width, ViewportLocation.extent.height, params);
     }
 
     return false;

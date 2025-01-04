@@ -5,7 +5,7 @@
 #include <Materials/Assets/ShaderAsset.h>
 #include <Materials/Assets/MaterialAsset.h>
 #include <Assets/AssetSmartPointers.h>
-#include <GameFramework/Assets/Texture2D/Texture2D.h>
+#include <GameFramework/Assets/Texture/Texture.h>
 
 #include <AssetLoader/AssetLoader.h>
 #include <RenderV/Objects/Images/SamplerTexture.h>
@@ -20,6 +20,7 @@ struct SpriteEntityPushConstants
     glm::ivec2 Position = {0, 0};
     glm::ivec2 Size = {1, 1};
     glm::int32_t Rotation = 0;
+    glm::int32_t Depth = 0;
 };
 
 class SpriteRenderProxy : public EntityRenderProxy

@@ -45,6 +45,7 @@ public:
         EntityType* spawnedEntity = new EntityType();
         spawnedEntity->DisplayName = name;
         spawnedEntity->Reparent(this);
+        spawnedEntity->transform.Location = spawnInfo.Location;
         entities.push_back(spawnedEntity);
 
         OnEntitySpawned.Broadcast(spawnedEntity);

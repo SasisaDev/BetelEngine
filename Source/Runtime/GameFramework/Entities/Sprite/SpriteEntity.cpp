@@ -93,6 +93,7 @@ void SpriteRenderProxy::Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* l
     constants.Position = glm::vec2(Parent->GetLocation().x, Parent->GetLocation().y);
     // TODO: Render data for sprite must come from Sprite System 
     constants.Size = glm::vec2(texture->GetWidth(), texture->GetHeight());
+    constants.Depth = Parent->GetLocation().z;
 
     vkCmdPushConstants(cmdBuffer, material->GetShader()->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(SpriteEntityPushConstants), &constants);
 

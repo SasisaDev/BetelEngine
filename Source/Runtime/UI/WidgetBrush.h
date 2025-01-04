@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Materials/Assets/MaterialAsset.h>
-#include <GameFramework/Assets/Texture2D/Texture2D.h>
+#include <GameFramework/Assets/Texture/Texture.h>
 #include <Assets/AssetSmartPointers.h>
 #include <Math/Color.h>
 
@@ -11,13 +11,13 @@
 struct WidgetBrush 
 {
     AssetPtr<ShaderAsset> shader;
-    AssetPtr<Texture2D> texture;
+    AssetPtr<ObjTexture> texture;
     Color color;
 
     WidgetBrush()
     {
       static AssetPtr<ShaderAsset> DefaultBrushShader = AssetPtr<ShaderAsset>("Content/Default/Widgets/WidgetShader");
-      static AssetPtr<Texture2D> DefaultBrushTexture = AssetPtr<Texture2D>("Content/Default/Widgets/WidgetDefaultTexture");
+      static AssetPtr<ObjTexture> DefaultBrushTexture = AssetPtr<ObjTexture>("Content/Default/Widgets/WidgetDefaultTexture");
       static Color DefaultBrushColor = Color(1,1,1,1);
 
       shader = DefaultBrushShader;

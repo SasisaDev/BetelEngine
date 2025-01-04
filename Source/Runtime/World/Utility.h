@@ -5,6 +5,7 @@
 #include "World.h"
 #include <Core/Application/Application.h>
 #include <GameFramework/Settings/GameSettings.h>
+#include <Log/Logger.h>
 
 #ifdef EDITOR
 #   include <Editor/Editor.h>       
@@ -32,7 +33,7 @@ public:
     }
     
     // TODO: Cam to World Projection
-    static HitResult HitscanCamToWorld(World* world, float ViewportX, float ViewportY, HitscanParams& params) {
+    static HitResult HitscanCamToWorld(World* world, float ViewportX, float ViewportY, float ViewportW, float ViewportH, HitscanParams& params) {
         IVec2 &CameraCenter = world->GetWorldCameraPosition();
 #       ifdef EDITOR
         // TODO: Dynamic Editor Viewport Size
@@ -48,10 +49,13 @@ public:
 #       endif
 
         // Pixel on a Viewport Texture, disregarding Camera Position
-        IVec2 TargetPixel = {static_cast<int>(ViewportX / ViewportPixelsPerGamePixels), static_cast<int>(ViewportY / ViewportPixelsPerGamePixels)};
+        IVec2 TargetPixel = {static_cast<int>((ViewportX + ViewportW / 2) / ViewportPixelsPerGamePixels), 
+                             static_cast<int>((ViewportY + ViewportH / 2) / ViewportPixelsPerGamePixels)};
 
         // Real World Hitpoint
         IVec2 WorldHitpoint = TargetPixel + CameraCenter;
+
+        LOGF(Log, LogHitscan, "VPPGP == %f, X = %d, Y = %d", ViewportPixelsPerGamePixels, WorldHitpoint.x, WorldHitpoint.y);
         
         return HitscanWorld(world, WorldHitpoint);
     }

@@ -95,10 +95,11 @@ int GuardedMain(int argc, char* argv[])
 	app.GetEngine()->SetWorld(new World);
 	app.GetEngine()->LoadWorld(0xABCD0123);
 
-	EngineDelegates::OnWorldLoad.Broadcast(app.GetEngine()->GetWorld());
 	app.GetEngine()->GetWorld()->SetBackgroundColor(Vec3(0.75, 0.5, 0));
 	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());
 	app.GetEngine()->GetWorld()->Spawn<SpriteEntity>("Sprite", EntitySpawnInfo());
+	EntitySpawnInfo sprite2info {.Location = {64, 32, 0}};
+	app.GetEngine()->GetWorld()->Spawn<SpriteEntity>("Sprite 2", sprite2info);
 	CameraEntity* camera = app.GetEngine()->GetWorld()->Spawn<CameraEntity>("Camera", EntitySpawnInfo());
 	camera->SetCameraActive();
 
