@@ -586,7 +586,7 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
 #       else
         ref->SceneDataStorages[imageID].ViewMatrix = glm::mat4(1);
 #       endif
-        ref->SceneDataStorages[imageID].Position = glm::vec2(world->CameraPosition.x, world->CameraPosition.y);
+        ref->SceneDataStorages[imageID].Position = glm::vec2(world->CameraPosition.x + (ref->viewport.width / 2), world->CameraPosition.y + (ref->viewport.height / 2));
     }
     
     /*for(int i = 0; i < ref->SceneDataSSBOs.size(); ++i)
