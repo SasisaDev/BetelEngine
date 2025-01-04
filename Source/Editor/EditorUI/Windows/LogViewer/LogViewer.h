@@ -6,6 +6,8 @@
 class EditorLogViewer : public EditorToolkitWindow
 {
     std::vector<std::string> messages;
+    bool AutoScroll = true; 
+    bool ScrollNow = true; 
 public:
     EditorLogViewer() {
         Logger::OnLogMessage.BindMember(this, &EditorLogViewer::MessageCallback);
@@ -15,6 +17,7 @@ public:
 
     void MessageCallback(const char* type, const char* space, const char* text) {
         messages.push_back(std::string("[") + space + "] " + text);
+        ScrollNow = true;
     }
 
     virtual void OnGUI(Window* window) {
@@ -41,6 +44,11 @@ public:
                 for(std::string message : messages) {
                     // TODO: Text with selection
                     ImGui::Text(message.c_str());
+                }
+
+                if(AutoScroll && ScrollNow && ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
+                    ImGui::SetScrollHereY(1.0f);
+                    ScrollNow = false;
                 }
                 ImGui::EndListBox();
             }
