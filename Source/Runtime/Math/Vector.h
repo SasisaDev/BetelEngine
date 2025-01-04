@@ -31,6 +31,14 @@ struct Vec3
         ret.z = z + other.z;
         return ret;
     }
+
+    Vec3 operator*(const Vec3& other) {
+        Vec3 ret;
+        ret.x = x * other.x;
+        ret.y = y * other.y;
+        ret.z = z * other.z;
+        return ret;
+    }
 };
 
 struct Vec2

@@ -5,8 +5,8 @@
 
 struct Transform
 {
-    IVec3 Location;
-    Vec3 Scale;
+    IVec3 Location = {0, 0, 0};
+    Vec3 Scale = {1, 1, 1};
     Quat Rotator;
 
     Transform(){}

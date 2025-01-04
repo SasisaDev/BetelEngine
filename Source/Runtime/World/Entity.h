@@ -58,6 +58,9 @@ public:
     virtual void SetLocation(const IVec3& loc){}
     virtual void SetRelativeLocation(const IVec3 loc) {transform.Location = loc;}
 
+    // Used for testing of collisions and visibility
+    virtual Vec3 GetBoundingBox() {return transform.Scale;}
+
     virtual std::string GetDisplayName() {return DisplayName;} 
 
     // Editor API

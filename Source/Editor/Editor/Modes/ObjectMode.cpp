@@ -8,7 +8,7 @@
 bool ObjectMode::HandleInputEvent(InputEvent &event)
 { 
     // Try selecting object
-    if(event.MouseButton == SDL_BUTTON_LEFT) {
+    if(event.MouseButton == SDL_BUTTON_LEFT && !event.IsUp) {
         IVec2 MouseLocation = {static_cast<int>(event.MouseX), static_cast<int>(event.MouseY)};
         const IRenderComposition* comp = GApplication->GetRender()->GetComposition(0);
         VkRect2D ViewportLocation = comp->GetGameViewport();
@@ -16,7 +16,11 @@ bool ObjectMode::HandleInputEvent(InputEvent &event)
         float MouseY = (MouseLocation.y - ViewportLocation.offset.y);
 
         HitscanParams params;
-        WorldUtility::HitscanCamToWorld(Editor::Get()->GetWorld(), MouseX, MouseY, ViewportLocation.extent.width, ViewportLocation.extent.height, params);
+        HitResult result = WorldUtility::HitscanCamToWorld(Editor::Get()->GetWorld(), MouseX, MouseY, ViewportLocation.extent.width, ViewportLocation.extent.height, params);
+        if(result.HitEntities.size() > 0)
+        {
+            LOGF(Log, LogObjectMode, "Selected Entity: 0x%08X", result.HitEntities[0]);
+        }
     }
 
     return false;

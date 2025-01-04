@@ -38,8 +38,6 @@ public:
     virtual void CreateResources(WorldRenderLayerRef* layerRef) override;
     virtual void Update(WorldRenderLayerRef* layerRef) override{}
     virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef) override;
-
-    
 };
 
 class SpriteEntity : public Entity
@@ -61,4 +59,7 @@ public:
     virtual void Tick(float deltaTime) override;
 
     virtual EntityRenderProxy* CreateRenderProxy() override {return RenderProxy = new SpriteRenderProxy(this);}
+
+    // TODO: Make it real, Make it Faster, maybe memoize
+    virtual Vec3 GetBoundingBox() override {return transform.Scale * Vec3(32, -32, 1);}
 };

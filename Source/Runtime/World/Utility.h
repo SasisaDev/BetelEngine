@@ -28,6 +28,31 @@ public:
     // TODO: World Raycast Test 
     static HitResult HitscanWorld(World* world, IVec2 hitpoint) {
         HitResult result;
+        result.Hitpoint = hitpoint;
+
+        for(Entity* ent : world->GetEntities()) {
+            IVec3 loc = ent->GetLocation();
+            Vec3 bbox = ent->GetBoundingBox();
+            bool isXHit = false;
+            bool isYHit = false;
+            // This is terrible, but okay for testing
+            if(bbox.x > 0 ) {
+                isXHit = hitpoint.x >= loc.x && hitpoint.x <= bbox.x;
+            } else {
+                isXHit = hitpoint.x <= loc.x && hitpoint.x >= bbox.x;
+            }
+            if(bbox.y > 0 ) {
+                isYHit = hitpoint.y >= loc.y && hitpoint.y <= bbox.y;
+            } else {
+                isYHit = hitpoint.y <= loc.y && hitpoint.y >= bbox.y;
+            }
+
+            if(isXHit && isYHit) {
+                result.HitEntities.push_back(ent);
+                // TODO: Multiscan, etc.
+                break;
+            }
+        }
 
         return result;
     }
@@ -49,8 +74,8 @@ public:
 #       endif
 
         // Pixel on a Viewport Texture, disregarding Camera Position
-        IVec2 TargetPixel = {static_cast<int>((ViewportX + ViewportW / 2) / ViewportPixelsPerGamePixels), 
-                             static_cast<int>((ViewportY + ViewportH / 2) / ViewportPixelsPerGamePixels)};
+        IVec2 TargetPixel = {static_cast<int>((ViewportX - ViewportW / 2) / ViewportPixelsPerGamePixels), 
+                             static_cast<int>(-(ViewportY - ViewportH / 2) / ViewportPixelsPerGamePixels)};
 
         // Real World Hitpoint
         IVec2 WorldHitpoint = TargetPixel + CameraCenter;
