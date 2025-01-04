@@ -19,7 +19,7 @@ struct WorldRenderLayerGPUStorage
     glm::mat4 ProjectionMatrix;
     // View Matrix should only be used for Rotation
     glm::mat4 ViewMatrix;
-    glm::vec2 Position;
+    glm::vec2 CameraPosition;
 };
 
 struct UpscaleGPUStorage
