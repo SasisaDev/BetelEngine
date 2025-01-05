@@ -39,7 +39,8 @@ public:
         // Fix docked window background being different from the undocked
         static ImGuiWindowClass vpClass;
         vpClass.ClassId = ImGui::GetID("GameViewport");
-        vpClass.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoUndocking;
+        vpClass.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoUndocking | ImGuiDockNodeFlags_AutoHideTabBar
+                                            | ImGuiDockNodeFlags_HiddenTabBar ;
 
         ImGui::SetNextWindowClass(&vpClass);
         //ImGui::SetNextWindowBgAlpha(1.f);
@@ -53,8 +54,10 @@ public:
                 
             }
 
-            ImRect workRect = ImGui::GetCurrentWindow()->WorkRect;
-            comp->SetGameViewport({{(int)workRect.GetTL().x - WindowPadding, (int)workRect.GetTL().y - WindowPadding}, {(unsigned int)workRect.GetWidth() + WindowPadding * 2, (unsigned int)workRect.GetHeight() + WindowPadding * 2}});
+            ImGuiWindow *window = ImGui::GetCurrentWindowRead();
+            ImVec2 viewport = ImGui::GetMainViewport()->Pos;
+            ImRect workRect = window->WorkRect;
+            comp->SetGameViewport({{(int)workRect.GetTL().x - WindowPadding - (int)viewport.x, (int)workRect.GetTL().y - WindowPadding  - (int)viewport.y}, {(unsigned int)workRect.GetWidth() + WindowPadding * 2, (unsigned int)workRect.GetHeight() + WindowPadding * 2 }});
             
             // In editor mod set, if the game is focused or not
             if(GApplication && GApplication->GetEngine())
