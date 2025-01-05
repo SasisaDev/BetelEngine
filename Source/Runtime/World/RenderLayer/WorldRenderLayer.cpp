@@ -615,7 +615,6 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     {
         uint32_t CurrentFrame = ((WorldRenderLayerRef*)layerRef)->GetParentComposition()->GetCurrentImageIndex(); 
         WorldRenderLayerRef* worldRef = (WorldRenderLayerRef*)layerRef;
-        // TODO: Gradient
         const Vec3& WorldColorValue = worldRef->GetWorld()->BackgroundColor;
 
         IRenderUtility::BeginDebugLabel(cmdBuffer, "Pixel Perfect World", 0.35, 0.85, 0.5);
@@ -632,20 +631,18 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
         passInfo.pClearValues = clearValues.data();
         passInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-        passInfo.framebuffer = worldRef->pixelPerfectImageFramebuffers[CurrentFrame]/*layerRef->GetParentComposition()->GetCurrentFramebuffer()*/;
+        passInfo.framebuffer = worldRef->pixelPerfectImageFramebuffers[CurrentFrame];
         passInfo.renderArea.offset = {0, 0};
         passInfo.renderArea.extent = worldRef->viewport;
 
         vkCmdBeginRenderPass(cmdBuffer, &passInfo, VkSubpassContents::VK_SUBPASS_CONTENTS_INLINE);
 
-        // Render
+        // Pixel Perfect World Render
         VkViewport viewport;
         viewport.x = 0;
         viewport.y = 0;
         viewport.width = ((WorldRenderLayerRef*)layerRef)->viewport.width;
         viewport.height = ((WorldRenderLayerRef*)layerRef)->viewport.height;
-        //viewport.width = layerRef->GetParentComposition()->GetExtent().width;
-        //viewport.height = layerRef->GetParentComposition()->GetExtent().height;
         viewport.minDepth = 0;
         viewport.maxDepth = 1;
         
@@ -664,42 +661,25 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
             }
         }
 
-        for(EntityRenderProxy* postProxy : ((WorldRenderLayerRef*)layerRef)->postRenderProxies)
-        {
-            postProxy->Render(cmdBuffer, (WorldRenderLayerRef*)layerRef);
+        // Render Post Render Proxies. These are mostly non-pixel perfect overlays of Editor Tools
+        if(((WorldRenderLayerRef*)layerRef)->bRenderPostRenderProxies) {
+            for(EntityRenderProxy* postProxy : ((WorldRenderLayerRef*)layerRef)->postRenderProxies)
+            {
+                postProxy->Render(cmdBuffer, (WorldRenderLayerRef*)layerRef);
+            }
         }
 
         vkCmdEndRenderPass(cmdBuffer);
         IRenderUtility::EndDebugLabel(cmdBuffer);
-        // Render End
-
-        // Barrier
-        /*VkImageMemoryBarrier imgMemBar = {};
-        imgMemBar.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-        imgMemBar.oldLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        imgMemBar.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-        imgMemBar.image = ((WorldRenderLayerRef*)layerRef)->pixelPerfectImages[CurrentFrame];
-        imgMemBar.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        imgMemBar.subresourceRange.baseMipLevel = 0;
-        imgMemBar.subresourceRange.levelCount = 1;
-        imgMemBar.subresourceRange.baseArrayLayer = 0;
-        imgMemBar.subresourceRange.layerCount = 1;
-
-        imgMemBar.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        imgMemBar.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        imgMemBar.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-        imgMemBar.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-    
-        vkCmdPipelineBarrier(cmdBuffer, VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &imgMemBar);*/
+        // Pixel Perfect World Render End
 
         IRenderUtility::ImageBarrier(cmdBuffer, ((WorldRenderLayerRef*)layerRef)->pixelPerfectImages[CurrentFrame], 
                                      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 
                                      VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
                                      VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_ACCESS_SHADER_READ_BIT);
 
+        // Upscale pass
         IRenderUtility::BeginDebugLabel(cmdBuffer, "Upscale");
-        // Stretch pass
         clearVal = {{{1, 0, 0, 1}}};
         passInfo.clearValueCount = 0;
         passInfo.renderPass = upscaleRenderPass;

@@ -15,8 +15,8 @@ public:
 
     virtual const char* GetName() override {return "Log Viewer";}
 
-    void MessageCallback(const char* type, const char* space, const char* text) {
-        messages.push_back(std::string("[") + space + "] " + text);
+    void MessageCallback(const char* timestamp, const char* space, const char* text) {
+        messages.push_back(std::string("[") + timestamp + "] [" + space + "] " + text);
         ScrollNow = true;
     }
 

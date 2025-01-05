@@ -36,6 +36,7 @@ protected:
 
     std::vector<EntityRenderProxy*> renderProxies;
     std::vector<EntityRenderProxy*> postRenderProxies;
+    bool bRenderPostRenderProxies = true;
 
     VkImage pixelPerfectDepthImage;
     VkDeviceMemory pixelPerfectDepthImageMemory;
@@ -75,6 +76,8 @@ public:
     void onWorldLoad(World* loadedWorld);
     void onWorldUnload(World* loadedWorld){}
     void onWorldEntitySpawned(Entity* entity);
+
+    void SetRenderPostRenderProxies(bool render) { bRenderPostRenderProxies = render; }
 };
 
 class WorldRenderLayer : public IRenderLayer
