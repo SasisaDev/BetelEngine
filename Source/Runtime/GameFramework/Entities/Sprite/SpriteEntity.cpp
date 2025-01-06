@@ -58,7 +58,7 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
     sCreateInfo.VertexInputAtrributeDescriptions = {positionAttrPos, positionAttrUV};
 
     sCreateInfo.Blending.Enabled = true;
-    sCreateInfo.Blending.WriteAlpha = false;
+    sCreateInfo.Blending.WriteAlpha = true;
 
     shader = std::make_shared<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertShader->GetBuffer(), FragShader->GetBuffer(), descriptorsLayout, sCreateInfo);
 
@@ -109,5 +109,5 @@ void SpriteEntity::Tick(float deltaTime)
     param += deltaTime;
     double sin = glm::sin(param / 1.0) * 100.0;
     double cos = glm::cos(param / 1.5) * 100.0;
-    SetRelativeLocation({static_cast<int>(sin) , static_cast<int>(cos) , 0});
+    SetRelativeLocation({static_cast<int>(sin) , static_cast<int>(cos) , transform.Location.z});
 }

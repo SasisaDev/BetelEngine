@@ -53,6 +53,7 @@ int GuardedMain(int argc, char* argv[])
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
 			// TODO: This Viewport Size should ideally be equal to a window size
 			->SetViewportSize({1280, 720})
+			->SetCompensateAspectRatio(true)
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldLoad)
 			->SubscribeWorldUnload(&EngineDelegates::OnWorldUnload),
 		//IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
@@ -76,6 +77,7 @@ int GuardedMain(int argc, char* argv[])
 	std::vector<IRenderLayerRef*> gameCompositionLayerRefs = {
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
 			->SetViewportSize({settings->PixelPerfectViewportWidth, settings->PixelPerfectViewportHeight})
+			->SetCompensateAspectRatio(settings->CompensateAspectRatio)
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldLoad)
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldUnload),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
@@ -97,9 +99,12 @@ int GuardedMain(int argc, char* argv[])
 
 	app.GetEngine()->GetWorld()->SetBackgroundColor(Vec3(0.75, 0.5, 0));
 	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());
-	app.GetEngine()->GetWorld()->Spawn<SpriteEntity>("Sprite", EntitySpawnInfo());
-	EntitySpawnInfo sprite2info {.Location = {64, 32, 0}};
+	EntitySpawnInfo spriteinfo {.Location = {0, 0, -10}};
+	app.GetEngine()->GetWorld()->Spawn<SpriteEntity>("Sprite", spriteinfo);
+	EntitySpawnInfo sprite2info {.Location = {8, 16, -5}};
 	app.GetEngine()->GetWorld()->Spawn<SpriteEntity>("Sprite 2", sprite2info);
+	EntitySpawnInfo sprite3info {.Location = {16, 8, -15}};
+	app.GetEngine()->GetWorld()->Spawn<SpriteEntity>("Sprite 3", sprite3info);
 	CameraEntity* camera = app.GetEngine()->GetWorld()->Spawn<CameraEntity>("Camera", EntitySpawnInfo());
 	camera->SetCameraActive();
 

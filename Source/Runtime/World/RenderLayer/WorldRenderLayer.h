@@ -29,6 +29,7 @@ struct UpscaleGPUStorage
 
 class WorldRenderLayerRef : public IRenderLayerRef
 {
+    void CalculateAspectRatioCompensationData();
 protected:
     World* world;
     VkExtent2D viewport;
@@ -37,6 +38,7 @@ protected:
     std::vector<EntityRenderProxy*> renderProxies;
     std::vector<EntityRenderProxy*> postRenderProxies;
     bool bRenderPostRenderProxies = true;
+    bool bCompensateAspectRatio = true;
 
     VkImage pixelPerfectDepthImage;
     VkDeviceMemory pixelPerfectDepthImageMemory;
@@ -70,6 +72,7 @@ public:
     WorldRenderLayerRef* SubscribeWorldUnload(MulticastDelegate<World*>* delegate);
     WorldRenderLayerRef* SetWorld(World* newWorld);
     WorldRenderLayerRef* SetViewportSize(VkExtent2D newViewport) {viewport = newViewport; return this;}
+    WorldRenderLayerRef* SetCompensateAspectRatio(bool compensate) {bCompensateAspectRatio = compensate; return this;}
 
     inline World* GetWorld() const {return world;}
 

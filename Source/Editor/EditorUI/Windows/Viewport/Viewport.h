@@ -54,10 +54,14 @@ public:
                 
             }
 
+            // Set game viewport
             ImGuiWindow *window = ImGui::GetCurrentWindowRead();
             ImVec2 viewport = ImGui::GetMainViewport()->Pos;
             ImRect workRect = window->WorkRect;
-            comp->SetGameViewport({{(int)workRect.GetTL().x - WindowPadding - (int)viewport.x, (int)workRect.GetTL().y - WindowPadding  - (int)viewport.y}, {(unsigned int)workRect.GetWidth() + WindowPadding * 2, (unsigned int)workRect.GetHeight() + WindowPadding * 2 }});
+            comp->SetGameViewport({{(int)workRect.GetTL().x - WindowPadding - (int)viewport.x, 
+                                    (int)workRect.GetTL().y - WindowPadding  - (int)viewport.y}, 
+                                    {(unsigned int)workRect.GetWidth() + WindowPadding * 2, 
+                                    (unsigned int)workRect.GetHeight() + WindowPadding * 2 }});
             
             // In editor mod set, if the game is focused or not
             if(GApplication && GApplication->GetEngine())
