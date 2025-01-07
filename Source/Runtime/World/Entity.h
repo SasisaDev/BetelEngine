@@ -17,6 +17,7 @@ class Editor;
 
 struct EntitySpawnInfo
 {
+    static EntitySpawnInfo Empty;
     IVec3 Location = {0, 0, 0};
 };
 

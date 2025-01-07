@@ -62,4 +62,10 @@ public:
 
     // TODO: Make it real, Make it Faster, maybe memoize
     virtual Vec3 GetBoundingBox() override {return transform.Scale * Vec3(32, -32, 1);}
+
+        // Editor API
+#   ifdef EDITOR
+    void PushEditorModes(Editor* editor) {}
+    void PopEditorModes(Editor* editor) {}
+#   endif
 };

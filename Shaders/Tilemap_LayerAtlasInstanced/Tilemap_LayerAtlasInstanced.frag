@@ -1,4 +1,6 @@
-#version 330 core
+#version 450
+
+layout(set = 0, binding = 2) uniform sampler2D atlasTexture;
 
 void main()
 {

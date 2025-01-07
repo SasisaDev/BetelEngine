@@ -40,7 +40,7 @@ public:
     std::string GetWorldName() const {return Name;}
 
     template<EntityClass EntityType>
-    EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo)
+    EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo = EntitySpawnInfo::Empty)
     {
         EntityType* spawnedEntity = new EntityType();
         spawnedEntity->DisplayName = name;

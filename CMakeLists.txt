@@ -71,6 +71,8 @@ set(SrcEngine "Source/Runtime/Engine/Engine.cpp" "Source/Runtime/Engine/EngineDe
 
 set(SrcObject "Source/Runtime/Object/Object.cpp" "Source/Runtime/Object/ObjectRef.cpp" "Source/Runtime/Object/ObjectLibrary.cpp") 
 
+set(SrcAudio "Source/Runtime/Audio/Audio.cpp") 
+
 set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp" "Source/Runtime/World/World.cpp" "Source/Runtime/World/Entity.cpp" 
              "Source/Runtime/World/Entities/Camera/Camera.cpp") 
 
@@ -86,7 +88,7 @@ set(SrcPlatform "Source/Runtime/Platform/Interface/Files/IFile.cpp" "Source/Runt
                 "Source/Runtime/Platform/Interface/Files/IPath.cpp" "Source/Runtime/Platform/Interface/IPlatform.cpp")
 
 set(Sources ${SrcRenderV} ${SrcObject} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGameFramework} ${SrcAssets} ${SrcPlatform} ${SrcInput} ${SrcI18N} ${SrcLZ4}
-    ${SrcAssetLoader} ${SrcStbImage} ${SrcTimer}
+    ${SrcAssetLoader} ${SrcStbImage} ${SrcTimer} ${SrcAudio}
     "Source/Runtime/Core/main.cpp" "Source/Runtime/Core/Application/Application.cpp" 
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
     "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Core/Window/WindowManager.cpp")
@@ -139,7 +141,8 @@ set_property(TARGET Editor PROPERTY CXX_STANDARD 20)
 
 # Shaders
 add_shaders(Shaders "Shaders/TriangleUpscale/TriangleUpscale.vert" "Shaders/TriangleUpscale/TriangleUpscale.frag" "Shaders/Test/Test.vert" "Shaders/Test/Test.frag"
-                    "Shaders/UI_Brush_Texture/UI_Brush_Texture.frag" "Shaders/UI_Brush_Texture/UI_Brush_Texture.vert" "Shaders/SpriteMasked/SpriteMasked.frag" "Shaders/SpriteMasked/SpriteMasked.vert")
+                    "Shaders/UI_Brush_Texture/UI_Brush_Texture.frag" "Shaders/UI_Brush_Texture/UI_Brush_Texture.vert" "Shaders/SpriteMasked/SpriteMasked.frag" "Shaders/SpriteMasked/SpriteMasked.vert"
+                    "Shaders/Tilemap_LayerAtlasInstanced/Tilemap_LayerAtlasInstanced.frag" "Shaders/Tilemap_LayerAtlasInstanced/Tilemap_LayerAtlasInstanced.vert")
 
 # Assets
 cook_assets(Cook "Content/" "Content/")

@@ -36,6 +36,7 @@ public:
     template <ObjectTypeClass _ObjectTypeT>
     bool RegisterObjectType(std::string typeName) {
         assert(typeName.size() > 0 && "Object Type Name's length must be longer than 0");
+        assert(objectTypes.contains(typeName) == false && "Object Type with this name is already registered");
         objectTypes[typeName] = new _ObjectTypeT;
         return true;
     }

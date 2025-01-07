@@ -23,6 +23,7 @@
 #include <GameFramework/Entities/Sprite/SpriteEntity.h>
 #include <World/Entities/Camera/Camera.h>
 #include <AssetLoader/AssetLoader.h>
+#include <GameFramework/Entities/Tilemap/Tilemap.h>
 
 int GuardedMain(int argc, char* argv[])
 {
@@ -98,14 +99,15 @@ int GuardedMain(int argc, char* argv[])
 	app.GetEngine()->LoadWorld(0xABCD0123);
 
 	app.GetEngine()->GetWorld()->SetBackgroundColor(Vec3(0.75, 0.5, 0));
-	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity", EntitySpawnInfo());
+	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity");
 	EntitySpawnInfo spriteinfo {.Location = {0, 0, -10}};
 	app.GetEngine()->GetWorld()->Spawn<SpriteEntity>("Sprite", spriteinfo);
 	EntitySpawnInfo sprite2info {.Location = {8, 16, -5}};
 	app.GetEngine()->GetWorld()->Spawn<SpriteEntity>("Sprite 2", sprite2info);
 	EntitySpawnInfo sprite3info {.Location = {16, 8, -15}};
 	app.GetEngine()->GetWorld()->Spawn<SpriteEntity>("Sprite 3", sprite3info);
-	CameraEntity* camera = app.GetEngine()->GetWorld()->Spawn<CameraEntity>("Camera", EntitySpawnInfo());
+	app.GetEngine()->GetWorld()->Spawn<EntTilemap>("Tilemap");
+	CameraEntity* camera = app.GetEngine()->GetWorld()->Spawn<CameraEntity>("Camera");
 	camera->SetCameraActive();
 
 	app.GetEngine()->GetCanvasWidget()->AddChild(std::make_shared<PanelWidget>());

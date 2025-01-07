@@ -13,9 +13,18 @@ public:
     virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef) override;
 };
 
-class TilemapChunkEntity : public Entity
+class EntTilemapChunk : public Entity
 {
     std::vector<TilemapLayer*> layers;
 public:
     virtual EntityRenderProxy* CreateRenderProxy() override {return RenderProxy = new TilemapChunkRenderProxy(this);}
 };
+
+class EntTilemapChunkType : public ObjectType
+{
+    static bool bRegistered;
+public:
+    virtual Object* CreateInstance() { return new EntTilemapChunk; }
+    virtual bool ShowInEditor() override { return false; }
+};
+

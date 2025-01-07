@@ -20,6 +20,7 @@ bool ObjectMode::HandleInputEvent(InputEvent &event)
         if(result.HitEntities.size() > 0)
         {
             LOGF(Log, LogObjectMode, "Selected Entity: 0x%08X", result.HitEntities[0]);
+            Editor::Get()->SetSelectedEntity(result.HitEntities[0]);
         }
     }
 

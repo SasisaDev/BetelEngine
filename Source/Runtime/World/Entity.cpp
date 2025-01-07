@@ -2,6 +2,8 @@
 
 #include "World.h"
 
+EntitySpawnInfo EntitySpawnInfo::Empty = EntitySpawnInfo();
+
 void Entity::Tick(float deltaTime)
 {
 

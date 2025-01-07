@@ -1,4 +1,4 @@
 #include "Tilemap.h"
 #include <Object/ObjectLibrary.h>
 
-bool TilemapEntityType::bRegistered = ObjectLibrary::Get().RegisterObjectType<TilemapEntityType>("TILEMAP");
+bool EntTilemapType::bRegistered = ObjectLibrary::Get().RegisterObjectType<EntTilemapType>("TILEMAP");

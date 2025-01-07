@@ -1,21 +1,30 @@
 #pragma once
 
 #include <vector>
+#include <unordered_map>
 
 #include <World/Entity.h>
 #include "TilemapChunk.h"
+#include <Object/ObjectRef.h>
+#include <Math/Vector.h>
 
-class TilemapEntity : public Entity
+struct TilemapChunkData 
 {
-    std::vector<TilemapChunkEntity*> chunks;
+    bool AlwaysLoaded = false;
+    ObjectRef<EntTilemapChunk> Chunk;
+};
+
+class EntTilemap : public Entity
+{
+    std::map<IVec2, TilemapChunkData> chunks;
     std::vector<TilemapLayer*> layers;
 public:
 };
 
-class TilemapEntityType : public ObjectType
+class EntTilemapType : public ObjectType
 {
     static bool bRegistered;
 public:
-    virtual Object* CreateInstance() { return new TilemapEntity; }
+    virtual Object* CreateInstance() { return new EntTilemap; }
 };
 

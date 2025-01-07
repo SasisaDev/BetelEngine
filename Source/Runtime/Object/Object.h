@@ -65,4 +65,5 @@ class ObjectType
 {
 public:
     virtual Object* CreateInstance() { return new Object; }
+    virtual bool ShowInEditor() { return true; }
 };
