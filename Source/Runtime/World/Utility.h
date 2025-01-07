@@ -78,7 +78,7 @@ public:
                              static_cast<int>(-(ViewportY - ViewportH / 2) / ViewportPixelsPerGamePixels)};
 
         // Real World Hitpoint
-        IVec2 WorldHitpoint = TargetPixel + CameraCenter;
+        IVec2 WorldHitpoint = {TargetPixel.x - CameraCenter.x, TargetPixel.y + CameraCenter.y};
 
         LOGF(Log, LogHitscan, "VPPGP == %f, sX = %d, sY = %d, X = %d, Y = %d", ViewportPixelsPerGamePixels, TargetPixel.x, TargetPixel.y, WorldHitpoint.x, WorldHitpoint.y);
         

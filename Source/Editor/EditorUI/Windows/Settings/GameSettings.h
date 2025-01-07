@@ -2,18 +2,62 @@
 
 #include <Toolkit/ToolkitWindow.h>
 #include <Core/Application/Application.h>
+#include <Settings/SettingsManager.h>
+#include <GameFramework/Settings/GameSettings.h>
 
 #include <imgui/imgui_internal.h>
 
+#include <EditorUI/WindowLibrary/BetelInputs.h>
+
+#include <optional>
+
 class EditorGameSettings : public EditorToolkitWindow
 {
+    struct SettingsNode {
+        Settings* settings;
+        bool selected = false;
+    };
+
     Text TabName = Text("EditorUI", "GameSettings", "TabName");
 
     const char* SettingsListName = "##SettingsList";
     const char* SettingsDataName = "##SettingsData";
+
+    std::vector<SettingsNode> settings;
+    SettingsNode* selectedSetting = nullptr;
 public:
     EditorGameSettings() {
         Visible = false;
+
+        settings.push_back({GApplication->GetSettings()->GetOrDefault<GameSettings>()});
+    }
+
+    void DrawSettingsListElement(SettingsNode &node)
+    {
+
+        ImGuiTreeNodeFlags nodeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+        if (node.selected)
+            nodeFlags |= ImGuiTreeNodeFlags_Selected;
+
+        ImGui::TreeNodeEx(node.settings->GetName().c_str(), nodeFlags, node.settings->GetName().c_str());
+        if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+        {
+            selectedSetting = &node;
+            for(SettingsNode& otherNode : settings) {
+                otherNode.selected = false;
+            }
+            node.selected = true;
+        }
+    }
+
+    void DrawSettingsDomainField(std::string &name, std::string &value)
+    { 
+        BImGui::InputString(name.c_str(), value);
+    }
+
+    void DrawSettingsDomain(std::string &name, INIMap &values)
+    {
+
     }
 
     virtual void OnGUI(Window* window) {
@@ -51,13 +95,19 @@ public:
         
         ImGui::SetNextWindowClass(&noTab_class);
         if(ImGui::Begin(SettingsListName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove)){
-            
+            for(SettingsNode& setting : settings) {
+                DrawSettingsListElement(setting);
+            }   
         }
         ImGui::End();
 
         ImGui::SetNextWindowClass(&noTab_class);
         if(ImGui::Begin(SettingsDataName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove)){
-            
+            if(selectedSetting != nullptr) {
+                static std::string TestName = "Test";
+                static std::string Test = "Lorem ipsum dolar sit amet";
+                DrawSettingsDomainField(TestName, Test);
+            }
         }
         ImGui::End();
     }

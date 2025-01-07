@@ -102,4 +102,11 @@ struct IVec2
         ret.y = y + other.y;
         return ret;
     }
+
+    IVec2 operator-(const IVec2& other) {
+        IVec2 ret;
+        ret.x = x - other.x;
+        ret.y = y - other.y;
+        return ret;
+    }
 };

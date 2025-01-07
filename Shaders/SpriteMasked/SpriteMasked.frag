@@ -8,4 +8,5 @@ layout(location = 0) out vec4 outColor;
 
 void main() {    
     outColor = texture(texSampler, texcoords);
+    if (outColor.w < 0.05) { discard; }
 }
