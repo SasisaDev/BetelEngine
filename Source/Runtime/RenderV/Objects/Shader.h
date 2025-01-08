@@ -35,11 +35,8 @@ struct ShaderDescriptorLayout
     ShaderDescriptorLayout* SetPushConstantRange(uint32_t size, uint32_t offset = 0, VkShaderStageFlags shaderStage = VK_SHADER_STAGE_VERTEX_BIT) {
         PushConstantRanges.push_back({});
         const size_t Idx = PushConstantRanges.size()-1;
-	    // Push constant range starts at the beginning
 	    PushConstantRanges[Idx].offset = offset;
-	    // Push constant range takes up the size of a MeshPushConstants struct
 	    PushConstantRanges[Idx].size = size;
-	    // Push constant range is accessible only in the vertex shader
 	    PushConstantRanges[Idx].stageFlags = shaderStage;
 
         return this;

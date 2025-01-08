@@ -23,19 +23,31 @@ layout(std140, binding = 1) readonly buffer TilemapData {
 
 struct TileData
 {
-    uint SpriteX;
-    uint SpriteY;
-    uint SpriteWidth;
-    uint SpriteHeight;
+    vec2 TilePosition;
+    vec4 SpriteUV;
 };
 
 // Current Tile data
 layout(std140, binding = 3) readonly buffer LayerData {
+    vec2 AtlasDimensions;
+    vec2 LayerPosition;
+    uint LayerDepth;
     // We expect this array to be of size ChunkWidth ^ 2
-    TileData tiles[];
+    TileData Tiles[];
 } layerData;
 
 void main()
 {
+    vec2 sizedTilePosition = inPosition * tilemapData.TileSize;
+    
+    // Here we apply position of Tile, according to the layer * chunk 
+    vec2 positionedTilePosition = sizedTilePosition + layerData.Tiles[gl_InstanceIndex].TilePosition;
 
+    gl_Position = worldData.Projection * worldData.View * vec4(positionedTilePosition + worldData.CameraPosition, layerData.LayerDepth, 1);
+
+    vec4 SpriteUV = layerData.Tiles[gl_InstanceIndex].SpriteUV;
+    texcoords = vec2((inUV.x > 0) ? SpriteUV.y : SpriteUV.x, 
+                     (inUV.y > 0) ? SpriteUV.w : SpriteUV.z) 
+                     // Divide resulting vector by Atlas Dimensions to get UVs in range (0;1)
+                     / layerData.AtlasDimensions;
 }

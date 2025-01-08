@@ -1,6 +1,7 @@
 #include "SpriteEntity.h"
 #include <World/RenderLayer/WorldRenderLayer.h>
 #include <stb/stb_image.h>
+#include <Math/Models.h>
 
 Buffer* SpriteRenderProxy::vertexBuffer = nullptr;
 Buffer* SpriteRenderProxy::indexBuffer = nullptr;
@@ -10,14 +11,8 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
     // Create Static Resources
     if (SpriteRenderProxy::vertexBuffer == nullptr || SpriteRenderProxy::indexBuffer == nullptr) 
     {
-        Vertex vertices[4] = {{{-0.0f, 0.0f},  {0.0f, 0.0f}},
-                              {{1.0f, 0.0f},   {1.0f, 0.0f}},
-                              {{1.0f, 1.0f},    {1.0f, 1.0f}},
-                              {{-0.0f, 1.0f},   {0.0f, 1.0f}}};
-        SpriteRenderProxy::vertexBuffer = new Buffer(sizeof(vertices), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, vertices);
-
-        uint16_t indices[6] = {0, 1, 2, 2, 3, 0};
-        SpriteRenderProxy::indexBuffer = new Buffer(sizeof(indices), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, indices);
+        SpriteRenderProxy::vertexBuffer = new Buffer(BetelModel::Quad.VerticesSize(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, BetelModel::Quad.VerticesData());
+        SpriteRenderProxy::indexBuffer = new Buffer(BetelModel::Quad.IndicesSize(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, BetelModel::Quad.IndicesData());
     }
 
     if(shader.get() != nullptr && shader->IsValid())
