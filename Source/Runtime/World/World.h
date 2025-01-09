@@ -39,6 +39,7 @@ public:
     void SetWorldName(std::string name) {Name = name;}
     std::string GetWorldName() const {return Name;}
 
+    // TODO: All objects, including entities, must be registered in ObjectLibrary and passed around in ObjectRef<>
     template<EntityClass EntityType>
     EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo = EntitySpawnInfo::Empty)
     {

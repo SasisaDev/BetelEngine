@@ -23,14 +23,13 @@ layout(std140, binding = 1) readonly buffer TilemapData {
 
 struct TileData
 {
-    vec2 TilePosition;
     vec4 SpriteUV;
 };
 
 // Current Tile data
 layout(std140, binding = 3) readonly buffer LayerData {
-    vec2 AtlasDimensions;
-    vec2 LayerPosition;
+    ivec2 AtlasDimensions;
+    ivec2 ChunkPosition;
     uint LayerDepth;
     // We expect this array to be of size ChunkWidth ^ 2
     TileData Tiles[];
@@ -38,10 +37,14 @@ layout(std140, binding = 3) readonly buffer LayerData {
 
 void main()
 {
-    vec2 sizedTilePosition = inPosition * tilemapData.TileSize;
+    ivec2 sizedTilePosition = ivec2(int(inPosition.x * tilemapData.TileSize), int(inPosition.y * tilemapData.TileSize));
+
+    // Move tile according to it's position in chunk
+    sizedTilePosition += ivec2((gl_InstanceIndex % tilemapData.ChunkWidth) * tilemapData.TileSize, 
+                                floor(gl_InstanceIndex / tilemapData.ChunkWidth) * tilemapData.TileSize);
     
-    // Here we apply position of Tile, according to the layer * chunk 
-    vec2 positionedTilePosition = sizedTilePosition + layerData.Tiles[gl_InstanceIndex].TilePosition;
+    // Here we apply position of Tile, according to the chunk 
+    ivec2 positionedTilePosition = sizedTilePosition + layerData.ChunkPosition;
 
     gl_Position = worldData.Projection * worldData.View * vec4(positionedTilePosition + worldData.CameraPosition, layerData.LayerDepth, 1);
 
