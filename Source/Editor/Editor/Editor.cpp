@@ -3,6 +3,7 @@
 #include <Core/Application/Application.h>
 #include <World/RenderLayer/WorldRenderLayer.h>
 #include <Engine/EngineDelegates.h>
+#include <EditorUI/EditorToolkit.h>
 
 #include "Modes/ObjectMode.h"
 
@@ -50,6 +51,8 @@ void Editor::EventLoadWorld(World* world)
 }
 
 Editor::Editor() {
+    edToolkit = new EditorToolkitBase;
+
     //Gizmo = new EditorGizmo();
     GApplication->GetEngine()->GetInputManager().OnInputEvent.BindMember(this, &Editor::HandleIncomingInputEvent);
     EngineDelegates::OnWorldLoad.BindMember(this, &Editor::EventLoadWorld);

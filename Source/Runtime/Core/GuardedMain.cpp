@@ -11,7 +11,7 @@
 
 #ifdef EDITOR
 #	include <ImGui/RenderLayer/ImGuiLayer.h>
-#	include <EditorUI/EditorToolkit.h> 
+#	include <Editor/Editor.h>
 #	include <ToolkitRenderLayer/ToolkitRenderLayer.h>
 #endif
 
@@ -60,7 +60,7 @@ int GuardedMain(int argc, char* argv[])
 		//IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
 		IRenderFactory::CreateLayerRef<ToolkitRenderLayer, ToolkitRenderLayerRef>(render),
 		IRenderFactory::CreateLayerRef<ImGuiRenderLayer, ImGuiRenderLayerRef>(render)
-			->SetToolkit(new EditorToolkitBase)
+			->SetToolkit(Editor::Get()->GetToolkitUI())
 			->SetMaxSets(16)
 			->PushInto(&imGuiLayer)
 	};

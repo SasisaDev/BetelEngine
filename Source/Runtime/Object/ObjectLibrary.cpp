@@ -23,6 +23,11 @@ void ObjectLibrary::UnregisterObjectUsage(uint32_t id) {
     objects[id].usages -= 1;
 }
 
+uint32_t ObjectLibrary::GenerateObjectID() 
+{
+    return ++LastObjectID;
+}
+
 Object* ObjectLibrary::LoadObject(uint32_t id)
 {
     // TODO Load Object

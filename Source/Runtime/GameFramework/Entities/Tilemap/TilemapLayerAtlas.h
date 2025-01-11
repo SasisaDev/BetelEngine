@@ -21,7 +21,7 @@ class TilemapLayerAtlas : public TilemapLayer
 {
 
 public:
-    virtual void CreateResources(WorldRenderLayerRef* layerRef, EntTilemapChunk* chunk, TilemapLayerData* data) override {}
-    virtual void PrepareFrame(WorldRenderLayerRef* layerRef, EntTilemapChunk* chunk, TilemapLayerData* data) override {}
-    virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef, EntTilemapChunk* chunk, TilemapLayerData* data) override {}
+    virtual void CreateResources(WorldRenderLayerRef* layerRef, EntTilemapChunk* chunk, TilemapLayerData* data) override;
+    virtual void PrepareFrame(WorldRenderLayerRef* layerRef, EntTilemapChunk* chunk, TilemapLayerData* data) override;
+    virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef, EntTilemapChunk* chunk, TilemapLayerData* data) override;
 };

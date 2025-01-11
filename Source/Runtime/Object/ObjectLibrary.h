@@ -9,8 +9,11 @@
 
 struct ObjectDescriptor
 {
-    Object* object;
-    uint32_t usages;
+    Object* object = nullptr;
+    uint32_t usages = 0;
+
+    ObjectDescriptor(Object* objPtr) {object = objPtr;}
+    ObjectDescriptor() {}
 };
 
 class ObjectLibrary
@@ -20,6 +23,11 @@ class ObjectLibrary
 
     void RegisterObjectUsage(uint32_t id);
     void UnregisterObjectUsage(uint32_t id);
+
+    uint32_t LastObjectID = 0;
+    uint32_t GenerateObjectID();
+    // Generates unique Object ID, taking holes in a map into an account. It's way slower, yet creates  
+    uint32_t GenerateObjectIDSlow();
 protected:
     std::unordered_map<uint32_t, ObjectDescriptor> objects;
     std::unordered_map<std::string, ObjectType*> objectTypes;
@@ -28,6 +36,22 @@ public:
     static ObjectLibrary& Get() {
         static ObjectLibrary lib;
         return lib;
+    }
+
+    template <ObjectClass _ObjectT>
+    _ObjectT* CreateObject(std::string Name, bool Transient = true) {
+        uint32_t objectID = GenerateObjectID();
+        _ObjectT* object = new _ObjectT();
+        object->SetID(objectID);
+        object->Rename(Name);
+
+        // Set Transient flag
+        if(Transient) {
+            object->SetFlag(ObjectFlags::Transient);
+        }
+
+        objects[objectID] = ObjectDescriptor(object);
+        return object;
     }
 
     Object* LoadObject(uint32_t id);

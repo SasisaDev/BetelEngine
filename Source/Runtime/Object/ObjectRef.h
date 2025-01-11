@@ -11,7 +11,8 @@ class ObjectRef
 {
     virtual void InternalRegisterUsage()
     {
-        ObjectLibrary::Get().RegisterObjectUsage(objectID);
+        // TODO: Uncomment this once Library system is fully integrated
+        //ObjectLibrary::Get().RegisterObjectUsage(objectID);
     }
 protected:
     _ObjectT* ref = nullptr;
@@ -19,7 +20,21 @@ protected:
 
 public:
     ObjectRef() {}
-    ObjectRef(uint32_t id) : objectID(id) {}
+    ObjectRef(ObjectRef<_ObjectT> &otherObjectRef) {
+        ref = otherObjectRef.ref;
+        objectID = otherObjectRef.objectID;
+        if(objectID) {
+            InternalRegisterUsage();
+        }
+    }
+    ObjectRef(uint32_t id) : objectID(id) {InternalRegisterUsage();}
+    ObjectRef(_ObjectT* object) : ref(object) 
+    {
+        if(ref != nullptr) {
+            objectID = ref->GetID();
+            InternalRegisterUsage();
+        }
+    }
 
     inline bool IsValid() const {return ObjectLibrary::Get().IsObjectValid(objectID);} 
     inline bool IsLoaded() const {return ref;}

@@ -4,6 +4,7 @@
 #include <queue>
 #include <Math/Vector.h>
 #include <Input/InputEvent.h>
+#include <Toolkit/Toolkit.h>
 #include "Mode.h"
 
 class World;
@@ -22,6 +23,8 @@ struct EditorInputContext
 
 class Editor {
     Editor();
+
+    EditorToolkit *edToolkit;
 
     EditorInputContext edInputCtx;
     virtual void HandleIncomingInputEvent(InputEvent &event);
@@ -52,6 +55,8 @@ public:
         static Editor* editor = new Editor;
         return editor;
     }
+
+    EditorToolkit* GetToolkitUI() {return edToolkit;}
 
     World* GetWorld() {return CurrentWorld;}
 
