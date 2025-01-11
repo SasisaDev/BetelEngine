@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <string>
 
+#define BLAME_MASTER_FILE_EXT "BMF"
+
 struct BlameMasterFileHeader {
     char pSignature[3] = {'B','M','F'};
     uint32_t uMagic = 0xBE7E1115AF;
@@ -55,11 +57,19 @@ class BlameMasterFile
      * Blame Files are never loaded in full. This flag only indicates that it's data is open for access
      * This variable being false means, that file exists in the File System, but should not be interacted with
     */ 
-    bool IsMounted = false;
+    bool bIsMounted = false;
 
     std::unordered_map<uint32_t, BlameObjectTableEntry> Table;
     std::string FilePath;
     std::string FileName;
 public:
 
+    std::string& GetName() {return FileName;}
+    void SetName(const std::string& Name) {FileName = Name;}
+
+    std::string& GetPath() {return FilePath;}
+    void SetPath(const std::string& Path) {FilePath = Path;}
+
+    bool IsMounted() {return bIsMounted;}
+    void SetMounted(bool isMounted) {bIsMounted = isMounted;}
 };

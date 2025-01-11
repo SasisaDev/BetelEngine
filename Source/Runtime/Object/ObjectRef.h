@@ -14,6 +14,10 @@ class ObjectRef
         // TODO: Uncomment this once Library system is fully integrated
         //ObjectLibrary::Get().RegisterObjectUsage(objectID);
     }
+    virtual void InternalUnregisterUsage()
+    {
+        //ObjectLibrary::Get().UnregisterObjectUsage(objectID);
+    }
 protected:
     _ObjectT* ref = nullptr;
     uint32_t objectID = 0;
@@ -35,6 +39,7 @@ public:
             InternalRegisterUsage();
         }
     }
+    ~ObjectRef() {InternalUnregisterUsage();}
 
     inline bool IsValid() const {return ObjectLibrary::Get().IsObjectValid(objectID);} 
     inline bool IsLoaded() const {return ref;}
@@ -52,4 +57,5 @@ template <ObjectClass _ObjectT>
 class WeakObjectRef : public ObjectRef<_ObjectT>
 {
     virtual void InternalRegisterUsage() override {return;} 
+    virtual void InternalUnregisterUsage() override {return;} 
 };

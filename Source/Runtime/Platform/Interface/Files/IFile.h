@@ -25,10 +25,13 @@ enum EFileSeekFlags : uint8_t
 class IFile
 {
 	std::fstream file;
+	IPath filePath;
 public:
 	IFile() = default;
 	IFile(std::string path, uint8_t accessFlags);
 	~IFile();
+
+	const IPath& GetPath() {return filePath;}
 
 	virtual bool IsOpen() const {return file.is_open();}
 

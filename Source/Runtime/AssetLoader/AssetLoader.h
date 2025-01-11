@@ -17,6 +17,8 @@
 class AssetLoader
 {
     friend class AssetGarbageCollector;
+
+    BlameMasterFile* ParseBlameMasterFile(IFile* file);
 protected:
     std::vector<BlameMasterFile*> blameMasters;
     std::vector<ArchiveFile*> resourceArchives;
@@ -25,6 +27,8 @@ public:
         static AssetLoader loader;
         return loader;
     }
+
+    void CrawlContent(std::string Path = "./Content");
 
     /* 
      * Loads Asset from system's File System or Archive File

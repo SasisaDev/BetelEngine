@@ -26,11 +26,15 @@ class ObjectLibrary
 
     uint32_t LastObjectID = 0;
     uint32_t GenerateObjectID();
-    // Generates unique Object ID, taking holes in a map into an account. It's way slower, yet creates  
+    // Generates unique Object ID, taking holes in a map into an account. It's way slower, but creates denser distribution
     uint32_t GenerateObjectIDSlow();
 protected:
+    friend class AssetLoader;
+
     std::unordered_map<uint32_t, ObjectDescriptor> objects;
     std::unordered_map<std::string, ObjectType*> objectTypes;
+
+    void AddObject(uint32_t id, Object* preloaded = nullptr);
 public:
 
     static ObjectLibrary& Get() {
@@ -56,6 +60,13 @@ public:
 
     Object* LoadObject(uint32_t id);
     bool IsObjectValid(uint32_t id) const;
+    // This function should only be called in GC Pass, when object is not used anymore
+    Object* UnloadObject(uint32_t id);
+    /* 
+     * Calling this function will unload object and destroy it completely from the database 
+     * It may result in broken pointers, use with caution.
+    */
+    Object* DestroyObject(uint32_t id);
 
     template <ObjectTypeClass _ObjectTypeT>
     bool RegisterObjectType(std::string typeName) {

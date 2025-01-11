@@ -23,15 +23,47 @@ void ObjectLibrary::UnregisterObjectUsage(uint32_t id) {
     objects[id].usages -= 1;
 }
 
+void ObjectLibrary::AddObject(uint32_t id, Object* preloaded)
+{
+    objects[id] = {preloaded};
+    if(id > LastObjectID) {
+        LastObjectID = id;
+    }
+}
+
 uint32_t ObjectLibrary::GenerateObjectID() 
 {
     return ++LastObjectID;
 }
 
+uint32_t ObjectLibrary::GenerateObjectIDSlow()
+{
+    for(uint32_t id = 0; id < objects.max_size(); ++id)
+    {
+        if(!objects.contains(id)) {
+            return id;
+        }
+    }
+
+    return ++LastObjectID;
+}
+
 Object* ObjectLibrary::LoadObject(uint32_t id)
 {
+    // If Object is not registered in objects map, it means that it's doesn't exist or is unaccessible
+    if(!objects.contains(id)) {
+        return nullptr;
+    }
+    
+    // Return object if it's already loaded
+    if(objects[id].object != nullptr) {
+        return objects[id].object;
+    }
+
     // TODO Load Object
-    return nullptr;
+    Object* loadedObject = nullptr;
+
+    return loadedObject;
 }
 
 bool ObjectLibrary::IsObjectValid(uint32_t id) const

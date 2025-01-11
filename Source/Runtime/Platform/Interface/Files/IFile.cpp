@@ -23,6 +23,7 @@ IFile::IFile(std::string path, uint8_t accessFlags)
     }
 
     file.open(path, mode);
+    filePath = path;
 }
 
 IFile::~IFile()
