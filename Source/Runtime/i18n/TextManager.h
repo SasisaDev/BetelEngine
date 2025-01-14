@@ -29,6 +29,11 @@ public:
         editorDir = IPlatform::Get()->OpenContentDirectory("Editor/i18n/");
 #       endif
 
+        if(gameDir == nullptr) {
+            LOG(Error, LogI18N, "Could not find translation files");
+            return;
+        }
+
         for(IDirectory* dir : gameDir->GetChildren()) {
             if(dir->IsDirectory()) continue;
 
@@ -45,7 +50,6 @@ public:
                             files.push_back(IPlatform::Get()->OpenFile(edDir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY));
                         }
                     }
-                    delete editorDir;
                 }
 
                 LocaleFile* locale = new LocaleFile();
@@ -59,6 +63,7 @@ public:
                 }
             }
         }
+        delete gameDir;
     }
 
     bool SetLocale(std::string locale) {

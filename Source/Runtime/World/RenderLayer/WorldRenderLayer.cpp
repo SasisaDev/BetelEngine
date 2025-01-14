@@ -728,6 +728,10 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
 WorldRenderLayerRef::~WorldRenderLayerRef()
 {
+    for(auto proxy : renderProxies){
+        delete proxy;
+    }
+    
     for(VkImage image : pixelPerfectImages){
         vkDestroyImage(IRenderUtility::GetDevice(), image, nullptr);
     }

@@ -3,6 +3,9 @@
 #include <Log/Logger.h>
 #include <Platform/Platform.h>
 
+#include <cstring>
+#include <memory>
+
 uint32_t ConvertChar::ToUInt32(char* buffer)
 {
     return (uint32_t)buffer[3] << 24 |
