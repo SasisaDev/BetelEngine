@@ -7,8 +7,6 @@ IDirectory::IDirectory(IPath path, uint8_t flags)
     entry.path = path;
     entry.exists = true;
 
-    volatile auto npath = path.GetPath();
-
     if(!std::filesystem::exists(path.GetPath())) {
         if((flags & DIRECTORY_FLAG_CREATE) == DIRECTORY_FLAG_CREATE) {
             if(!std::filesystem::create_directories(path.GetPath()))

@@ -38,6 +38,7 @@ Engine::Engine()
 
     // Crawl all assets
     AssetLibrary::Get().CrawlAssetsAll("./Content");
+    AssetLoader::Get().CrawlContent();
 }
 
 void Engine::SetWorld(World* nWorld)

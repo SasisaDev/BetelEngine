@@ -13,6 +13,14 @@
 #include "Resources/Archive.h"
 
 #include <Resources/Resource.h>
+#include <Object/Object.h>
+
+struct ConvertChar 
+{
+    static uint32_t ToUInt32(char* buffer);
+    static uint32_t ToUInt16(char* buffer);
+    static uint32_t ToUInt8(char* buffer);
+};
 
 class AssetLoader
 {
@@ -29,6 +37,15 @@ public:
     }
 
     void CrawlContent(std::string Path = "./Content");
+
+    BlameMasterFileObjectContainer ReadObject(BlameMasterFile* master, uint32_t offset);
+
+    /* 
+     * Loads Object from Blame File, applying Plugin changes
+     *
+     * Returns nullptr if object doesn't exist
+    */
+    Object* LoadObject(uint32_t ObjectID);
 
     /* 
      * Loads Asset from system's File System or Archive File

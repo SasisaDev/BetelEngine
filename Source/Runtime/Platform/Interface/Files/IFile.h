@@ -5,6 +5,7 @@
 #include <fstream>
 #include <vector>
 #include <Delegate/Delegate.h>
+#include "IPath.h"
 
 enum EFileAccessFlags : uint8_t
 {

@@ -31,5 +31,8 @@ void ShaderAsset::Deserialize(Artifact& data)
             LOGF(Error, LogWidget, "\tVertex Shader: \"%s\"", VertexShaderPath.c_str());
             LOGF(Error, LogWidget, "\tFragment Shader: \"%s\"", FragmentShaderPath.c_str());
         }
+
+        delete VertFile;
+        delete FragFile;
     }
 }

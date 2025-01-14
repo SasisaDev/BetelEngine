@@ -44,6 +44,8 @@ public:
 
             if(!factory->SuitableFor(inputFile)) {
                 assert(!"Specified factory doesn't support this file type.");
+                delete inputFile;
+                delete outputFile;
                 return false;
             }
 
@@ -55,7 +57,9 @@ public:
             outAssetFile << outArtifact;
 
             outAssetFile.WriteToDevice(outputFile);
-            
+
+            delete inputFile;
+            delete outputFile;
             return false;
         }
         return true;

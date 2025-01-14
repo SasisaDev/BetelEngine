@@ -473,6 +473,9 @@ void WorldRenderLayer::CreateUpscaleMaterial()
     }
 
     upscaleMaterial = std::make_shared<IMaterial>(upscaleShader.get());
+
+    delete VertShader;
+    delete FragShader;
 }
 
 bool WorldRenderLayer::Initialize(VkDevice device)

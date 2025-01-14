@@ -53,8 +53,8 @@ public:
             IFile* settingsFileWriter = IPlatform::Get()->OpenLocalFile("./Config/" + SettingsType::GetName() + ".ini", EFileAccessFlags::FILE_ACCESS_FLAG_WRITE);
             INIFile defaultINI = defaultSettings->Serialize();
             settingsFileWriter->Write(defaultINI.GenerateFileBuffer());
-            settingsFileWriter->Close();
-            settingsFile->Close();
+            delete settingsFileWriter;
+            delete settingsFile;
             return defaultSettings;
         }
 
@@ -64,7 +64,7 @@ public:
 
         LoadedSettings.insert({SettingsType::GetName(), dynamic_cast<Settings*>(defaultSettings)});
 
-        settingsFile->Close();
+        delete settingsFile;
         return defaultSettings;
     }
 };

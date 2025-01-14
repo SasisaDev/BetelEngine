@@ -4,12 +4,14 @@
 #include <cstdint>
 #include <string>
 
-#define BLAME_MASTER_FILE_EXT "BMF"
+#define BLAME_MASTER_FILE_EXT "bmf"
+#define BLAME_MASTER_FILE_MAGIC 0xBE7E1115
+#define BLAME_MASTER_FILE_VERSION 0
 
 struct BlameMasterFileHeader {
     char pSignature[3] = {'B','M','F'};
-    uint32_t uMagic = 0xBE7E1115AF;
-
+    uint32_t uMagic = BLAME_MASTER_FILE_MAGIC;
+    uint16_t uVersion = BLAME_MASTER_FILE_VERSION;
 };
 
 struct BlameObjectTableEntry {
@@ -21,16 +23,24 @@ struct BlameMasterFileTable {
     BlameObjectTableEntry* pObjects = nullptr;
 };
 
-/*
- * 
- * TODO
- * 
-*/
-struct BlameMasterFileObject {
-    uint32_t uSize = 0;
-    uint32_t uClassNameLength = 0;
-    char*   pClassName = nullptr;
+struct BlameMasterFileObjectField {
+    uint8_t uFieldNameLength = 0;
+    char* pFieldName = nullptr;
+    uint8_t uType = 0;
     void* pData = nullptr;
+};
+
+struct BlameMasterFileObject {
+    uint8_t uClassNameLength = 0;
+    char* pClassName = nullptr;
+    uint16_t uFieldsCount = 0;
+    BlameMasterFileObjectField* pFields = nullptr;
+};
+
+// Used to store a pointer to an Object, that will then be copied into memory
+struct BlameMasterFileObjectContainer {
+    uint32_t uObjectSize = 0;
+    BlameMasterFileObject object;
 };
 
 /*
@@ -53,6 +63,7 @@ struct BlameMasterFileObject {
 */
 class BlameMasterFile
 {
+    friend class AssetLoader;
     /* 
      * Blame Files are never loaded in full. This flag only indicates that it's data is open for access
      * This variable being false means, that file exists in the File System, but should not be interacted with
@@ -62,7 +73,12 @@ class BlameMasterFile
     std::unordered_map<uint32_t, BlameObjectTableEntry> Table;
     std::string FilePath;
     std::string FileName;
+    IFile* FileHandle;
+protected:
+    BlameMasterFileHeader FileHeader;
+    BlameMasterFileTable FileTable;
 public:
+    ~BlameMasterFile(){delete FileHandle;}
 
     std::string& GetName() {return FileName;}
     void SetName(const std::string& Name) {FileName = Name;}
@@ -72,4 +88,7 @@ public:
 
     bool IsMounted() {return bIsMounted;}
     void SetMounted(bool isMounted) {bIsMounted = isMounted;}
+
+    const BlameMasterFileHeader& GetHeader() {return FileHeader;}
+    const BlameMasterFileTable& GetTable() {return FileTable;}
 };

@@ -45,12 +45,18 @@ public:
                             files.push_back(IPlatform::Get()->OpenFile(edDir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY));
                         }
                     }
+                    delete editorDir;
                 }
 
                 LocaleFile* locale = new LocaleFile();
                 locale->Load(files);
                 locale->localeID = dir->GetPath().GetName();
                 locales.push_back(locale);
+
+                for(auto* file : files)
+                {
+                    delete file;
+                }
             }
         }
     }

@@ -68,6 +68,9 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
     material = std::make_shared<IMaterial>(shader.get());
 
     material->SetSampler(1, texture->GetImageView(), texture->GetSampler());
+
+    delete VertShader;
+    delete FragShader;
 }
 
 void SpriteRenderProxy::Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef)

@@ -58,6 +58,17 @@ std::string IPath::GetNameExt() const {
     return pathMembers[pathMembers.size()-1];
 }
 
+std::string IPath::GetExt() const {
+    if(pathMembers.size() <= 0) {
+        return "";
+    }
+    
+    std::string member = pathMembers[pathMembers.size()-1];
+    size_t tokenPos = member.find('.');
+
+    return member.substr(tokenPos+1, member.size()-(tokenPos + 1));
+}
+
 std::string IPath::GetPath() const
 {
     std::string path;

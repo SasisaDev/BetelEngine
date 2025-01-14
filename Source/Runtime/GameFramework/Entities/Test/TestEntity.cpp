@@ -23,6 +23,9 @@ void EntityRenderProxyTest::CreateResources(WorldRenderLayerRef* layerRef)
     shader = std::make_shared<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertFile->FetchAllBinary(), FragFile->FetchAllBinary(), descriptorsLayout);
 
     material = std::make_shared<IMaterial>(shader.get());
+
+    delete VertFile;
+    delete FragFile;
 }
 
 void EntityRenderProxyTest::Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef)

@@ -28,6 +28,11 @@ class IDirectory
 public:
     IDirectory(IPath path, uint8_t flags);
     IDirectory(const Entry& defaultEntry);
+    ~IDirectory() {
+        for(auto* dir : nestedDirectories) {
+            delete dir;
+        }
+    }
 
     virtual inline const Entry& GetEntry() const {return entry;}
     virtual inline const IPath& GetPath() const {return entry.path;}
