@@ -39,8 +39,9 @@ public:
                 return false;
             }
 
-            IFile* inputFile = IPlatform::Get()->OpenFile(input, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY);
-            IFile* outputFile = IPlatform::Get()->OpenFile(output, FILE_ACCESS_FLAG_WRITE | FILE_ACCESS_FLAG_BINARY);
+            // TODO: Rewrite
+            /*std::unique_ptr<IFile> inputFile = IPlatform::Get()->OpenFile(input, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY);
+            std::unique_ptr<IFile> outputFile = IPlatform::Get()->OpenFile(output, FILE_ACCESS_FLAG_WRITE | FILE_ACCESS_FLAG_BINARY);
 
             if(!factory->SuitableFor(inputFile)) {
                 assert(!"Specified factory doesn't support this file type.");
@@ -58,9 +59,7 @@ public:
 
             outAssetFile.WriteToDevice(outputFile);
 
-            delete inputFile;
-            delete outputFile;
-            return false;
+            return false;*/
         }
         return true;
     }

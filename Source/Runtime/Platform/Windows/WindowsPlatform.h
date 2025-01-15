@@ -14,6 +14,4 @@ public:
 	virtual std::string GetExecutablePath() override;
 
 	virtual void DebugPrint(const char* string) const override;
-
-	virtual IFile* OpenFile(IPath path, uint8_t accessFlags) override;
 };

@@ -104,7 +104,7 @@ void AssetLibrary::CrawlAssetsTyped(AssetType type)
 {
     IPlatform* platform = IPlatform::Get();
 
-    IDirectory* directory = platform->OpenDirectory("./Content", DIRECTORY_FLAG_RECURSIVE);
+    std::unique_ptr<IDirectory> directory = platform->OpenDirectory("./Content", DIRECTORY_FLAG_RECURSIVE);
     if(!directory->Exists()) {
         LOG(Warning, LogAsset, "Content directory does not exist. Are assets cooked?");
         return;
@@ -123,7 +123,7 @@ void AssetLibrary::CrawlAssetsTyped(AssetType type)
 
 void AssetLibrary::CrawlAssetsAll(std::string LocalDomain)
 {
-    IDirectory* directory = IPlatform::Get()->OpenLocalDirectory(LocalDomain + "/Content/", DIRECTORY_FLAG_RECURSIVE);
+    std::unique_ptr<IDirectory> directory = IPlatform::Get()->OpenLocalDirectory(LocalDomain + "/Content/", DIRECTORY_FLAG_RECURSIVE);
 
     if (!directory->Exists()) {
         LOG(Error, LogAsset, "Failed attempt at crawling local domain");

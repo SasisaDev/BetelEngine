@@ -10,13 +10,14 @@ class LocaleFile
 {
     friend class TextManager;
 
+    // TODO: can we wrap handles into smart pointer  
     std::vector<IFile*> fileHandles;
     std::string localeID;
     std::string localeName;
 
     std::unordered_map<std::string, std::string> LocaleMap;
 public:
-    void Load(std::vector<IFile*> files = {}){
+    void Load(std::vector<IFile*>& files){
         if(files.size() > 0) {
             fileHandles = files;
         }

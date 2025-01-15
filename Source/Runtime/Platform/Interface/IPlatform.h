@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 class IPlatform
 {
@@ -38,46 +39,46 @@ public:
 	virtual const char* PlatformName() const { return "Unknown"; }
 	virtual void DebugPrint(const char* string) const {}
 
-	virtual IFile* OpenFile(IPath path, uint8_t accessFlags) { return new IFile(path, accessFlags); }
-	virtual IDirectory* OpenDirectory(IPath path, uint8_t flags = 0) { return new IDirectory(IPath(path), flags); }
+	virtual std::unique_ptr<IFile> OpenFile(IPath path, uint8_t accessFlags) { return std::make_unique<IFile>(path, accessFlags); }
+	virtual std::unique_ptr<IDirectory> OpenDirectory(IPath path, uint8_t flags = 0) { return std::make_unique<IDirectory>(IPath(path), flags); }
 
 	/*
-     * If file is found, return IFile*, and nullptr if not 
+     * If file is found, return std::unique_ptr<IFile>, and nullptr if not 
      * Same Root folder as executable's folder.
      * Usage: OpenLocalFile("Content/Path/To/File")
      */
-    virtual IFile* OpenLocalFile(std::string path, uint8_t flags = EFileAccessFlags::FILE_ACCESS_FLAG_READ);
+    virtual std::unique_ptr<IFile> OpenLocalFile(std::string path, uint8_t flags = EFileAccessFlags::FILE_ACCESS_FLAG_READ);
 
     /*
-     * If directory is found, return IDirectory*, and nullptr if not 
+     * If directory is found, return std::unique_ptr<IDirectory>, and nullptr if not 
      * Same Root folder as executable's folder.
      * Usage: OpenLocalDirectory("Content/Path/To/Directory/")
      */
-    virtual IDirectory* OpenLocalDirectory(std::string path, uint8_t flags = 0);
+    virtual std::unique_ptr<IDirectory> OpenLocalDirectory(std::string path, uint8_t flags = 0);
 
     /*
-     * If file is found, return IFile*, and nullptr if not 
+     * If file is found, return std::unique_ptr<IFile>, and nullptr if not 
      * Usage: OpenContentFile("Path/To/File")
      */
-    virtual IFile* OpenContentFile(std::string path, uint8_t flags = EFileAccessFlags::FILE_ACCESS_FLAG_READ);
+    virtual std::unique_ptr<IFile> OpenContentFile(std::string path, uint8_t flags = EFileAccessFlags::FILE_ACCESS_FLAG_READ);
 
     /*
-     * If directory is found, return IDirectory*, and nullptr if not 
+     * If directory is found, return std::unique_ptr<IDirectory>, and nullptr if not 
      * Usage: OpenContentDirectory("Path/To/Directory/")
      */
-    virtual IDirectory* OpenContentDirectory(std::string path, uint8_t flags = 0);
+    virtual std::unique_ptr<IDirectory> OpenContentDirectory(std::string path, uint8_t flags = 0);
 
     /*
      * Tries to fetch requested file from all known path aliases
      * Doesn't take alias.
      * Usage: FetchLocalFiles("Content/Path/To/File")
      */
-    virtual std::vector<IFile*> FetchLocalFiles(std::string path, uint8_t flags = EFileAccessFlags::FILE_ACCESS_FLAG_READ) {return {};}
+    virtual std::vector<std::unique_ptr<IFile>> FetchLocalFiles(std::string path, uint8_t flags = EFileAccessFlags::FILE_ACCESS_FLAG_READ) {return {};}
     
     /*
      * Tries to fetch requested directory from all known path aliases
      * Doesn't take alias.
      * Usage: FetchLocalDirectories("Content/Path/To/Directory/")
      */
-    virtual std::vector<IDirectory*> FetchLocalDirectories(std::string path, uint8_t flags = 0) {return {};}
+    virtual std::vector<std::unique_ptr<IDirectory>> FetchLocalDirectories(std::string path, uint8_t flags = 0) {return {};}
 };

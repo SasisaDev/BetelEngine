@@ -46,15 +46,13 @@ public:
         }
         
         SettingsType* defaultSettings = new SettingsType();
-        IFile* settingsFile = IPlatform::Get()->OpenLocalFile("./Config/" + SettingsType::GetName() + ".ini", EFileAccessFlags::FILE_ACCESS_FLAG_READ | EFileAccessFlags::FILE_ACCESS_FLAG_BINARY | EFileAccessFlags::FILE_ACCESS_FLAG_ATE);
-        if(!settingsFile || !settingsFile->IsOpen()) {
+        std::unique_ptr<IFile> settingsFile = IPlatform::Get()->OpenLocalFile("./Config/" + SettingsType::GetName() + ".ini", EFileAccessFlags::FILE_ACCESS_FLAG_READ | EFileAccessFlags::FILE_ACCESS_FLAG_BINARY | EFileAccessFlags::FILE_ACCESS_FLAG_ATE);
+        if(!settingsFile.get() || !settingsFile->IsOpen()) {
             LOGF(Warning, LogSettings, "Settings file for \"%s\" was not find. Creating new one", SettingsType::GetName().c_str());
 
-            IFile* settingsFileWriter = IPlatform::Get()->OpenLocalFile("./Config/" + SettingsType::GetName() + ".ini", EFileAccessFlags::FILE_ACCESS_FLAG_WRITE);
+            std::unique_ptr<IFile> settingsFileWriter = IPlatform::Get()->OpenLocalFile("./Config/" + SettingsType::GetName() + ".ini", EFileAccessFlags::FILE_ACCESS_FLAG_WRITE);
             INIFile defaultINI = defaultSettings->Serialize();
             settingsFileWriter->Write(defaultINI.GenerateFileBuffer());
-            delete settingsFileWriter;
-            delete settingsFile;
             return defaultSettings;
         }
 
@@ -64,7 +62,6 @@ public:
 
         LoadedSettings.insert({SettingsType::GetName(), dynamic_cast<Settings*>(defaultSettings)});
 
-        delete settingsFile;
         return defaultSettings;
     }
 };

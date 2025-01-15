@@ -25,12 +25,12 @@ uint32_t ConvertChar::ToUInt8(char* buffer)
     return (uint32_t)buffer[0];
 }
 
-BlameMasterFile* AssetLoader::ParseBlameMasterFile(IFile* file)
+BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
 {
 #   define CHECKREAD(count) \
     if(buffer) \
         delete buffer; \
-    buffer = file->Fetch(count); \
+    buffer = BMF->FileHandle->Fetch(count); \
     if(buffer == nullptr) {\
         LOG(Error, LogAssetLoader, "Failed reading BMF file. EOF was not expected"); \
         delete BMF; \
@@ -38,9 +38,9 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(IFile* file)
     }
 
     BlameMasterFile* BMF = new BlameMasterFile;
-    BMF->FileHandle = file;
-    BMF->SetName(file->GetPath().GetName()); 
-    BMF->SetPath(file->GetPath().GetPath()); 
+    BMF->FileHandle = std::move(file);
+    BMF->SetName(BMF->FileHandle->GetPath().GetName()); 
+    BMF->SetPath(BMF->FileHandle->GetPath().GetPath()); 
     BMF->SetMounted(true);
 
     // TODO: Fetch header
@@ -99,11 +99,10 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(IFile* file)
 
 void AssetLoader::CrawlContent(std::string Path)
 {
-    IDirectory* directory = IPlatform::Get()->OpenLocalDirectory(Path);
+    std::unique_ptr<IDirectory> directory = IPlatform::Get()->OpenLocalDirectory(Path);
 
     if(!directory->Exists()) {
         LOGF(Error, LogAssetLoader, "Attempted to crawl directory \"%s\", but it doesn't exist.", Path.c_str());
-        delete directory;
         return;
     }
 
@@ -125,8 +124,6 @@ void AssetLoader::CrawlContent(std::string Path)
             }
         }
     }
-
-    delete directory;
 }
 
 BlameMasterFileObjectContainer AssetLoader::ReadObject(BlameMasterFile* master, uint32_t offset)
@@ -185,7 +182,7 @@ Resource* AssetLoader::LoadResource(std::string path)
 {
     // TODO: Make Archive Loading
 
-    IFile* file = IPlatform::Get()->OpenContentFile(path, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+    std::unique_ptr<IFile> file = IPlatform::Get()->OpenContentFile(path, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
     if(!file->IsOpen())
     {
         LOGF(Error, LogAssetLoader, "Attempted to load Resource \"%s\", but it doesn't exist", path.c_str());

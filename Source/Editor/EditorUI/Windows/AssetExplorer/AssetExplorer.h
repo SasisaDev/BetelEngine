@@ -62,9 +62,9 @@ public:
 
     void UpdateHierarchy()
     {
-        IDirectory *hierarchyDir = IPlatform::Get()->OpenLocalDirectory("Content", DIRECTORY_FLAG_RECURSIVE);
+        std::unique_ptr<IDirectory> hierarchyDir = IPlatform::Get()->OpenLocalDirectory("Content", DIRECTORY_FLAG_RECURSIVE);
 
-        if (!hierarchyDir || !hierarchyDir->Exists())
+        if (!hierarchyDir.get() || !hierarchyDir->Exists())
         {
             LOG(Fatal, LogAssetExplorer, "Failed to open ./Content/ folder, you should create it yourself if it doesn't exist!");
         }
@@ -74,7 +74,7 @@ public:
         HierarchyNode *gameNode = new HierarchyNode();
         gameNode->Name = "Game";
         gameNode->Path = hierarchyDir->GetPath();
-        PopulateNodeRecursive(gameNode, hierarchyDir);
+        PopulateNodeRecursive(gameNode, hierarchyDir.get());
         hierarchy.push_back(gameNode);
     }
 

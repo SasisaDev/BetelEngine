@@ -84,9 +84,3 @@ void WindowsPlatform::DebugPrint(const char* string) const
 	//OutputDebugStringW(std::wstring(string, string+strlen(string)).c_str());
 	OutputDebugStringA(string);
 }
-
-IFile* WindowsPlatform::OpenFile(IPath path, uint8_t accessFlags)
-{
-	return IPlatform::OpenFile(path, accessFlags);
-	//return new WindowsFile(path, accessFlags);
-}

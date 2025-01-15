@@ -14,8 +14,8 @@ void ShaderAsset::Deserialize(Artifact& data)
     SampleShadingEnable = data.GetBoolOrDefault("SampleShadingEnable", false);
 
     if(VertexShaderPath.size() > 1 && FragmentShaderPath.size() > 1) {
-        IFile* VertFile = IPlatform::Get()->OpenLocalFile(VertexShaderPath, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
-        IFile* FragFile = IPlatform::Get()->OpenLocalFile(FragmentShaderPath, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+        std::unique_ptr<IFile> VertFile = IPlatform::Get()->OpenLocalFile(VertexShaderPath, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+        std::unique_ptr<IFile> FragFile = IPlatform::Get()->OpenLocalFile(FragmentShaderPath, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
 
         if(!VertFile->IsOpen() || !FragFile->IsOpen()) {
             LOGF(Error, LogShaderAsset, "Shaders not found: \"%s\" or \"%s\"!", VertexShaderPath.c_str(), FragmentShaderPath.c_str());
@@ -31,8 +31,5 @@ void ShaderAsset::Deserialize(Artifact& data)
             LOGF(Error, LogWidget, "\tVertex Shader: \"%s\"", VertexShaderPath.c_str());
             LOGF(Error, LogWidget, "\tFragment Shader: \"%s\"", FragmentShaderPath.c_str());
         }
-
-        delete VertFile;
-        delete FragFile;
     }
 }

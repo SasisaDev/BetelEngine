@@ -73,12 +73,11 @@ class BlameMasterFile
     std::unordered_map<uint32_t, BlameObjectTableEntry> Table;
     std::string FilePath;
     std::string FileName;
-    IFile* FileHandle;
+    std::unique_ptr<IFile> FileHandle;
 protected:
     BlameMasterFileHeader FileHeader;
     BlameMasterFileTable FileTable;
 public:
-    ~BlameMasterFile(){delete FileHandle;}
 
     std::string& GetName() {return FileName;}
     void SetName(const std::string& Name) {FileName = Name;}

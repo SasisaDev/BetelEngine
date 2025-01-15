@@ -14,8 +14,8 @@ void EntityRenderProxyTest::CreateResources(WorldRenderLayerRef* layerRef)
     {
         return;
     }
-    IFile* VertFile = IPlatform::Get()->OpenFile("./Shaders/Test/Test.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
-    IFile* FragFile = IPlatform::Get()->OpenFile("./Shaders/Test/Test.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+    std::unique_ptr<IFile> VertFile = IPlatform::Get()->OpenFile("./Shaders/Test/Test.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+    std::unique_ptr<IFile> FragFile = IPlatform::Get()->OpenFile("./Shaders/Test/Test.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
 
     ShaderDescriptorLayout descriptorsLayout;
     descriptorsLayout.GenerateBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
@@ -23,9 +23,6 @@ void EntityRenderProxyTest::CreateResources(WorldRenderLayerRef* layerRef)
     shader = std::make_shared<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertFile->FetchAllBinary(), FragFile->FetchAllBinary(), descriptorsLayout);
 
     material = std::make_shared<IMaterial>(shader.get());
-
-    delete VertFile;
-    delete FragFile;
 }
 
 void EntityRenderProxyTest::Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef)

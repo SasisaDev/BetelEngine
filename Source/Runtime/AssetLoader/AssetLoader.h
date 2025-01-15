@@ -26,7 +26,7 @@ class AssetLoader
 {
     friend class AssetGarbageCollector;
 
-    BlameMasterFile* ParseBlameMasterFile(IFile* file);
+    BlameMasterFile* ParseBlameMasterFile(std::unique_ptr<IFile> file);
 protected:
     std::vector<BlameMasterFile*> blameMasters;
     std::vector<ArchiveFile*> resourceArchives;

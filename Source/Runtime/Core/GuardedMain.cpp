@@ -112,9 +112,9 @@ int GuardedMain(int argc, char* argv[])
 
 	app.GetEngine()->GetCanvasWidget()->AddChild(std::make_shared<PanelWidget>());
 
-	IDirectory* directory = IPlatform::Get()->OpenDirectory("./Content");
-	IDirectory* localDirectory = IPlatform::Get()->OpenLocalDirectory("./");
-	IDirectory* contentDirectory = IPlatform::Get()->OpenContentDirectory("./");
+	std::unique_ptr<IDirectory> directory = IPlatform::Get()->OpenDirectory("./Content");
+	std::unique_ptr<IDirectory> localDirectory = IPlatform::Get()->OpenLocalDirectory("./");
+	std::unique_ptr<IDirectory> contentDirectory = IPlatform::Get()->OpenContentDirectory("./");
 
 	Resource* testResourceShader = AssetLoader::Get().LoadResource("Shaders/Test/Test.vert.spv");
 

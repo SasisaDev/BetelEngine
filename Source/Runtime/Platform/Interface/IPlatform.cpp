@@ -30,28 +30,28 @@ std::string IPlatform::Internal_SeparateLocalPathDomain(std::string in, std::str
     return domain;
 }
 
-IFile* IPlatform::OpenLocalFile(std::string path, uint8_t flags) 
+std::unique_ptr<IFile> IPlatform::OpenLocalFile(std::string path, uint8_t flags) 
 {
     IPath realFilePath = ExecutableLocalPath + path;
 
     return OpenFile(realFilePath, flags);
 }
 
-IDirectory* IPlatform::OpenLocalDirectory(std::string path, uint8_t flags)
+std::unique_ptr<IDirectory> IPlatform::OpenLocalDirectory(std::string path, uint8_t flags)
 {
     IPath realDirPath = ExecutableLocalPath + path;
 
     return OpenDirectory(realDirPath, flags);
 }
 
-IFile* IPlatform::OpenContentFile(std::string path, uint8_t flags)
+std::unique_ptr<IFile> IPlatform::OpenContentFile(std::string path, uint8_t flags)
 {
     IPath realFilePath = ExecutableLocalPath + IPath("./Content/") + path; 
 
     return OpenFile(realFilePath, flags);
 }
 
-IDirectory* IPlatform::OpenContentDirectory(std::string path, uint8_t flags)
+std::unique_ptr<IDirectory> IPlatform::OpenContentDirectory(std::string path, uint8_t flags)
 {
     IPath realDirPath = ExecutableLocalPath + IPath("./Content/") + path;
 

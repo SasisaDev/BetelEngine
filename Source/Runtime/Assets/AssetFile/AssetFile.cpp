@@ -26,11 +26,9 @@ AssetFile& AssetFile::operator>>(Artifact& output)
     return *this;
 }
 
-void AssetFile::WriteToDevice(IFile* file)
+void AssetFile::WriteToDevice()
 {
-    if(file == nullptr) {
-        file = IPlatform::Get()->OpenLocalFile(path + ".asset", FILE_ACCESS_FLAG_WRITE | FILE_ACCESS_FLAG_BINARY);
-    }
+    std::unique_ptr<IFile> file = IPlatform::Get()->OpenLocalFile(path + ".asset", FILE_ACCESS_FLAG_WRITE | FILE_ACCESS_FLAG_BINARY);
 
     if(file == nullptr || !file->IsOpen()) {
         LOGF(Error, LogAsset, "Failed writing asset file \"%s\".", path.c_str());
@@ -46,12 +44,9 @@ void AssetFile::WriteToDevice(IFile* file)
     file->Write(buf.str());
 }
 
-void AssetFile::ReadFromDevice(IFile* _file)
+void AssetFile::ReadFromDevice()
 {
-    IFile* file = _file;
-    if(file == nullptr) {
-        file = IPlatform::Get()->OpenLocalFile(path + ".asset", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY);
-    }
+    std::unique_ptr<IFile> file = IPlatform::Get()->OpenLocalFile(path + ".asset", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY);
 
     if(file == nullptr || !file->IsOpen()) {
         LOGF(Error, LogAsset, "Failed reading asset file \"%s\". Doesn't exist.", path.c_str());

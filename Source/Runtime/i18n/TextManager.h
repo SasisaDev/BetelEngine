@@ -23,13 +23,13 @@ public:
     void Initialize() {
         // Fetch Current Locale
 
-        IDirectory* gameDir = IPlatform::Get()->OpenContentDirectory("i18n/");
-        IDirectory* editorDir = nullptr;
+        std::unique_ptr<IDirectory> gameDir = IPlatform::Get()->OpenContentDirectory("i18n/");
+        std::unique_ptr<IDirectory> editorDir = nullptr;
 #       ifdef EDITOR
         editorDir = IPlatform::Get()->OpenContentDirectory("Editor/i18n/");
 #       endif
 
-        if(gameDir == nullptr) {
+        if(gameDir.get() == nullptr || !gameDir->Exists()) {
             LOG(Error, LogI18N, "Could not find translation files");
             return;
         }
@@ -37,17 +37,16 @@ public:
         for(IDirectory* dir : gameDir->GetChildren()) {
             if(dir->IsDirectory()) continue;
 
-            if(IFile* file = IPlatform::Get()->OpenFile(dir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY)) {
+            std::vector<IFile*> files {IPlatform::Get()->OpenFile(dir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY).release()};
+            if(files[0]) {
                 LOGF(Log, LogI18N, "Found translation file: %s", dir->GetPath().GetPath().c_str());
-
-                std::vector<IFile*> files {file};
 
                 // Load Editor Translations if we're in Editor Mode
                 if(editorDir != nullptr) {
                     for(IDirectory* edDir : editorDir->GetChildren()) {
                         if(edDir->GetPath().GetName() == dir->GetPath().GetName()) {
                             LOGF(Log, LogI18N, "Found editor translation file: %s", edDir->GetPath().GetPath().c_str());
-                            files.push_back(IPlatform::Get()->OpenFile(edDir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY));
+                            files.push_back(IPlatform::Get()->OpenFile(edDir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY).release());
                         }
                     }
                 }
@@ -56,14 +55,8 @@ public:
                 locale->Load(files);
                 locale->localeID = dir->GetPath().GetName();
                 locales.push_back(locale);
-
-                for(auto* file : files)
-                {
-                    delete file;
-                }
             }
         }
-        delete gameDir;
     }
 
     bool SetLocale(std::string locale) {
