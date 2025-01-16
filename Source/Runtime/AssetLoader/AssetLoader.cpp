@@ -2,6 +2,7 @@
 
 #include <Log/Logger.h>
 #include <Platform/Platform.h>
+#include <Object/ObjectLibrary.h>
 
 #include <cstring>
 #include <memory>
@@ -43,7 +44,7 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
     BMF->SetPath(BMF->FileHandle->GetPath().GetPath()); 
     BMF->SetMounted(true);
 
-    // TODO: Fetch header
+    // Fetch header
     char* buffer = nullptr;
     CHECKREAD(3);
     memcpy(BMF->FileHeader.pSignature, buffer, 3);
@@ -78,7 +79,7 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
         return nullptr;
     }
 
-    // TODO: Fetch table
+    // Fetch table
     CHECKREAD(4);
     BMF->FileTable.uObjectCount = ConvertChar::ToUInt32(buffer);
 
@@ -86,11 +87,14 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
 
     for(int i = 0; i < BMF->FileTable.uObjectCount; ++i)
     {
+        // FIXME: Do we actually need 2 separate table entry containers?
         CHECKREAD(4);
         BMF->FileTable.pObjects[i].ID = ConvertChar::ToUInt32(buffer);
 
         CHECKREAD(4);
         BMF->FileTable.pObjects[i].offset = ConvertChar::ToUInt32(buffer);
+
+        BMF->Table[BMF->FileTable.pObjects[i].ID] = BMF->FileTable.pObjects[i].offset;
     }
 
     return BMF;
@@ -156,26 +160,67 @@ BlameMasterFileObjectContainer AssetLoader::ReadObject(BlameMasterFile* master, 
     CHECKREAD(container.object.uClassNameLength);
     memmove(container.object.pClassName, buffer, container.object.uClassNameLength);
 
+    CHECKREAD(2);
+    container.object.uNameLength = ConvertChar::ToUInt16(buffer);
+
+    CHECKREAD(container.object.uNameLength);
+    memmove(container.object.pName, buffer, container.object.uNameLength);
+
+    CHECKREAD(4);
+    container.object.uParent = ConvertChar::ToUInt32(buffer);
+
+    CHECKREAD(2);
+    container.object.uFieldsCount = ConvertChar::ToUInt16(buffer);
+
+    container.object.pFields = new BlameMasterFileObjectField[container.object.uFieldsCount];
+    for(int fieldIndex = 0; fieldIndex < container.object.uFieldsCount; ++fieldIndex)
+    {
+        CHECKREAD(1);
+        container.object.pFields[fieldIndex].uType = ConvertChar::ToUInt8(buffer);
+
+        CHECKREAD(1);
+        container.object.pFields[fieldIndex].uFieldNameLength = ConvertChar::ToUInt8(buffer);
+
+        CHECKREAD(container.object.pFields[fieldIndex].uFieldNameLength);
+        memmove(container.object.pFields[fieldIndex].pFieldName, buffer, container.object.pFields[fieldIndex].uFieldNameLength);
+        
+        CHECKREAD(4);
+        container.object.pFields[fieldIndex].uDataSize = ConvertChar::ToUInt32(buffer);
+
+        CHECKREAD(container.object.pFields[fieldIndex].uDataSize);
+        memmove(container.object.pFields[fieldIndex].pData, buffer, container.object.pFields[fieldIndex].uDataSize);
+    }
+
     return container;
 #   undef CHECKREAD
 }
 
 Object* AssetLoader::LoadObject(uint32_t ObjectID)
 {
-    Object* object = nullptr;
-
     for(BlameMasterFile* master : blameMasters)
     {
         if(master->bIsMounted)
         {
             if(master->Table.contains(ObjectID))
             {
-                BlameMasterFileObjectContainer container = ReadObject(master, master->Table[ObjectID].offset);
+                BlameMasterFileObjectContainer container = ReadObject(master, master->Table[ObjectID]);
+                
+                ObjectType* objType = ObjectLibrary::Get().GetObjectType(container.object.pClassName);
+                if(objType == nullptr) {
+                    LOG(Error, LogAssetLoader, "Failed loading object, specified Class Name doesn't exist");
+                    return nullptr;
+                }
+                
+                Object* object = objType->CreateInstance();
+
+                // TODO: object->Serialize();
+
+                return object;
             }
         }
     }
 
-    return object;
+    return nullptr;
 }
 
 Resource* AssetLoader::LoadResource(std::string path)

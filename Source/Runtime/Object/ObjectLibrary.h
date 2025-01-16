@@ -75,4 +75,12 @@ public:
         objectTypes[typeName] = new _ObjectTypeT;
         return true;
     }
+
+    inline ObjectType* GetObjectType(std::string Name) {
+        if(objectTypes.contains(Name))
+        {
+            return objectTypes[Name];
+        }
+        return nullptr;
+    }
 };

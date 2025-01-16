@@ -33,6 +33,9 @@ struct BlameMasterFileObjectField {
 struct BlameMasterFileObject {
     uint8_t uClassNameLength = 0;
     char* pClassName = nullptr;
+    uint16_t uNameLength = 0;
+    char* pName = nullptr;
+    uint32_t uParent = 0;
     uint16_t uFieldsCount = 0;
     BlameMasterFileObjectField* pFields = nullptr;
 };
@@ -70,7 +73,7 @@ class BlameMasterFile
     */ 
     bool bIsMounted = false;
 
-    std::unordered_map<uint32_t, BlameObjectTableEntry> Table;
+    std::unordered_map<uint32_t, uint32_t> Table;
     std::string FilePath;
     std::string FileName;
     std::unique_ptr<IFile> FileHandle;

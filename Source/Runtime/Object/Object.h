@@ -10,6 +10,9 @@
 
 class SerialArchive;
 
+/*
+ * Loaded objects may contain these flags, that define their runtime behaviour
+ */
 enum class ObjectFlags : uint8_t {
     // This object is created only for runtime use, do not save to disk. Destroy permamently once parent is unloaded
     Transient = (1 << 0),
@@ -17,8 +20,19 @@ enum class ObjectFlags : uint8_t {
     Unload = (1<<1),
     // This object was changed and needs changes to be saved (Save System or Asset System) 
     Dirty = (1<<2),
+    // Marks this object undestructable by GC
+    BypassGC = (1<<3),
 };
 
+/*
+ * Objects are the main data containers inside the engine
+ * Each object has it's unique 32bit ID, that must be consistent between all inner systems
+ * Alongside Name string, which is used by Editor and debug features to introduce user friendly naming
+ * 
+ * Automated behaviours of Object can be changed by setting flags
+ * 
+ * Each Object can contain multiple Children, as well as own Parent object  
+ */
 class Object
 #ifdef EDITOR
     : public IPropertyProvider
@@ -45,6 +59,7 @@ public:
 
     void SetFlag(ObjectFlags flag) {Flags |= (uint8_t)flag;}
 
+    // Marks object Dirty, meaning that the object has changed and should be saved again
     void Dirty() {Flags |= (uint8_t)ObjectFlags::Dirty;}
 
     template <typename ChildObjectT = Object>

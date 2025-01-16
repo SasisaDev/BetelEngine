@@ -1,5 +1,7 @@
 #include "ObjectLibrary.h"
 
+#include <AssetLoader/AssetLoader.h>
+
 void ObjectLibrary::RegisterObjectUsage(uint32_t id) {
     if(!objects.contains(id)) {
         assert(!"Passed Object ID is not registered in the engine");
@@ -60,8 +62,10 @@ Object* ObjectLibrary::LoadObject(uint32_t id)
         return objects[id].object;
     }
 
-    // TODO Load Object
-    Object* loadedObject = nullptr;
+    // Load Object
+    Object* loadedObject = AssetLoader::Get().LoadObject(id);
+    
+    objects[id].object = loadedObject;
 
     return loadedObject;
 }
