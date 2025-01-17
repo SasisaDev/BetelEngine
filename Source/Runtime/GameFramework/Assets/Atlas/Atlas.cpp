@@ -1,3 +1,5 @@
 #include "Atlas.h"
 
-bool ObjAtlasType::bRegistered = ObjectLibrary::Get().RegisterObjectType<ObjAtlasType>("ATLAS");
+#include <Object/ObjectTypeLibrary.h>
+
+bool ObjAtlasType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjAtlasType>("ATLAS");

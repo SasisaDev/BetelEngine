@@ -1,3 +1,5 @@
 #include "Animation.h"
 
-bool ObjAnimationType::bRegistered = ObjectLibrary::Get().RegisterObjectType<ObjAnimationType>("ANIM");
+#include <Object/ObjectTypeLibrary.h>
+
+bool ObjAnimationType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjAnimationType>("ANIM");

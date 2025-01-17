@@ -41,16 +41,12 @@ public:
     }
     ~ObjectRef() {InternalUnregisterUsage();}
 
-    inline bool IsValid() const {return ObjectLibrary::Get().IsObjectValid(objectID);} 
+    inline bool IsValid() const;
     inline bool IsLoaded() const {return ref;}
 
     inline _ObjectT* Get() const {return ref;} 
     inline uint32_t GetID() const {return objectID;} 
-    _ObjectT* Load() 
-    {
-        _ObjectT* obj = dynamic_cast<_ObjectT*>(ObjectLibrary::Get().LoadObject(objectID));
-        return obj;
-    }
+    _ObjectT* Load();
 };
 
 template <ObjectClass _ObjectT>

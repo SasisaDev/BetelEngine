@@ -2,6 +2,7 @@
 #include <Assets/AssetLibrary.h>
 #include <Platform/Platform.h>
 #include <UI/Widgets/Canvas/Canvas.h>
+#include <World/World.h>
 
 Engine* GEngine = nullptr;
 
@@ -50,17 +51,17 @@ void Engine::SetWorld(World* nWorld)
     EngineDelegates::OnWorldLoad.Broadcast(world);
 }
 
-void Engine::LoadWorld(ObjectRef<World> worldRef)
+void Engine::LoadWorld(uint32_t worldID)
 {
-    LOGF(Log, LogEngine, "Trying to load world: 0x%08X.", worldRef.GetID());
+    LOGF(Log, LogEngine, "Trying to load world: 0x%08X.", worldID);
 
-    if(!worldRef.IsValid())
+    if(!objectLibrary.IsObjectValid(worldID))
     {
         LOG(Error, LogEngine, "LoadWorld failed: passed World Reference is invalid.");
         return;
     }
 
-    if(worldRef.Load() == nullptr)
+    if(objectLibrary.LoadObject(worldID) == nullptr)
     {
         LOG(Error, LogEngine, "LoadWorld failed: passed World Reference is seemingly valid, but loading has failed.");
         return;

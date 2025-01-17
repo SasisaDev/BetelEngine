@@ -8,6 +8,7 @@
 #include <Timer/Timer.h>
 #include <Input/InputEvent.h>
 #include <Object/ObjectLibrary.h>
+#include <Engine/Engine.h>
 
 class World : public Object
 {
@@ -44,7 +45,7 @@ public:
     template<EntityClass EntityType>
     EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo = EntitySpawnInfo::Empty)
     {
-        EntityType* spawnedEntity = ObjectLibrary::Get().CreateObject<EntityType>(name);
+        EntityType* spawnedEntity = GEngine->GetObjectLibrary().CreateObject<EntityType>(name);
         spawnedEntity->DisplayName = name;
         spawnedEntity->Reparent(this);
         spawnedEntity->transform.Location = spawnInfo.Location;

@@ -40,7 +40,7 @@ uint32_t ObjectLibrary::GenerateObjectID()
 
 uint32_t ObjectLibrary::GenerateObjectIDSlow()
 {
-    for(uint32_t id = 0; id < objects.max_size(); ++id)
+    for(uint32_t id = 1; id < objects.max_size(); ++id)
     {
         if(!objects.contains(id)) {
             return id;

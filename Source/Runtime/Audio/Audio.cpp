@@ -1,5 +1,5 @@
 #include "Audio.h"
 
-#include <Object/ObjectLibrary.h>
+#include <Object/ObjectTypeLibrary.h>
 
-bool ObjAudioType::bRegistered = ObjectLibrary::Get().RegisterObjectType<ObjAudioType>("AUDIO");
+bool ObjAudioType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjAudioType>("AUDIO");

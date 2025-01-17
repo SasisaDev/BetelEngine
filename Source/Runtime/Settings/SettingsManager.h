@@ -3,6 +3,7 @@
 #include <map>
 #include <string>
 #include <concepts>
+#include <Platform/Platform.h>
 #include "INI/Ini.h"
 
 class Settings;

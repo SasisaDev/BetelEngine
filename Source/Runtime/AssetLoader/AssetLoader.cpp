@@ -3,6 +3,8 @@
 #include <Log/Logger.h>
 #include <Platform/Platform.h>
 #include <Object/ObjectLibrary.h>
+#include <Object/ObjectTypeLibrary.h>
+#include <Engine/Engine.h>
 
 #include <cstring>
 #include <memory>
@@ -205,13 +207,27 @@ Object* AssetLoader::LoadObject(uint32_t ObjectID)
             {
                 BlameMasterFileObjectContainer container = ReadObject(master, master->Table[ObjectID]);
                 
-                ObjectType* objType = ObjectLibrary::Get().GetObjectType(container.object.pClassName);
+                ObjectType* objType = ObjectTypeLibrary::Get().GetObjectType(container.object.pClassName);
                 if(objType == nullptr) {
                     LOG(Error, LogAssetLoader, "Failed loading object, specified Class Name doesn't exist");
                     return nullptr;
                 }
                 
                 Object* object = objType->CreateInstance();
+
+                object->Rename(container.object.pName);
+                object->SetID(ObjectID);
+
+                // TODO: Should all parent chain be loaded if we only want some child class?
+                if(container.object.uParent != 0) {
+                    Object* parent = GEngine->GetObjectLibrary().LoadObject(container.object.uParent);
+                    if(parent == nullptr) {
+                        LOG(Error, LogAssetLoader, "Failed loading object, Parent is not loaded");
+                        return nullptr;
+                    }
+
+                    object->Reparent(parent);
+                }
 
                 // TODO: object->Serialize();
 

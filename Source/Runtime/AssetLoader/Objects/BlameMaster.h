@@ -27,6 +27,7 @@ struct BlameMasterFileObjectField {
     uint8_t uFieldNameLength = 0;
     char* pFieldName = nullptr;
     uint8_t uType = 0;
+    uint32_t uDataSize = 0;
     void* pData = nullptr;
 };
 

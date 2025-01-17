@@ -24,6 +24,7 @@
 #include <World/Entities/Camera/Camera.h>
 #include <AssetLoader/AssetLoader.h>
 #include <GameFramework/Entities/Tilemap/Tilemap.h>
+#include <World/World.h>
 
 int GuardedMain(int argc, char* argv[])
 {

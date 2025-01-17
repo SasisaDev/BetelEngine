@@ -5,6 +5,8 @@
 
 #include <i18n/Text.h>
 
+#include <World/World.h>
+
 class EditorSceneOutliner : public EditorToolkitWindow
 {
     Text TabName = Text("EditorUI", "SceneOutliner", "TabName");

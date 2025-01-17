@@ -37,7 +37,9 @@ public:
         for(IDirectory* dir : gameDir->GetChildren()) {
             if(dir->IsDirectory()) continue;
 
-            std::vector<IFile*> files {IPlatform::Get()->OpenFile(dir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY).release()};
+            std::vector<IFile*> files;
+            files.reserve(2);
+            files.push_back(IPlatform::Get()->OpenFile(dir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY).release());
             if(files[0]) {
                 LOGF(Log, LogI18N, "Found translation file: %s", dir->GetPath().GetPath().c_str());
 
@@ -47,6 +49,7 @@ public:
                         if(edDir->GetPath().GetName() == dir->GetPath().GetName()) {
                             LOGF(Log, LogI18N, "Found editor translation file: %s", edDir->GetPath().GetPath().c_str());
                             files.push_back(IPlatform::Get()->OpenFile(edDir->GetPath(), FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY).release());
+                            break;
                         }
                     }
                 }

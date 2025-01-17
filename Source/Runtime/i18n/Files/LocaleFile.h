@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <Platform/Platform.h>
+#include <Log/Logger.h>
 
 class LocaleFile 
 {
@@ -17,7 +18,7 @@ class LocaleFile
 
     std::unordered_map<std::string, std::string> LocaleMap;
 public:
-    void Load(std::vector<IFile*>& files){
+    void Load(const std::vector<IFile*>& files){
         if(files.size() > 0) {
             fileHandles = files;
         }

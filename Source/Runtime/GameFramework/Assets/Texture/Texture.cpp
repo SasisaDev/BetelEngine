@@ -1,3 +1,5 @@
 #include "Texture.h"
 
-bool ObjTextureType::bRegistered = ObjectLibrary::Get().RegisterObjectType<ObjTextureType>("TEX");
+#include <Object/ObjectTypeLibrary.h>
+
+bool ObjTextureType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjTextureType>("TEX");

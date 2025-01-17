@@ -3,14 +3,14 @@
 #include "EngineDelegates.h"
 #include "Tickable.h"
 #include <Assets/AssetLibrary.h>
-#include <Assets/AssetSmartPointers.h>
-#include <World/World.h>
-#include <UI/Widget.h>
 #include <Input/InputManager.h>
 #include <i18n/TextManager.h>
 #include <AssetLoader/GC/AssetGarbageCollector.h>
 #include <Timer/Timer.h>
-#include <Object/ObjectRef.h>
+#include <Object/ObjectLibrary.h>
+
+class World;
+class Widget;
 
 class Engine
 {
@@ -22,6 +22,7 @@ protected:
     InputManager inputManager;
     TextManager textManager;
     AssetGarbageCollector GC;
+    ObjectLibrary objectLibrary;
 
     World* world = nullptr;
 
@@ -36,6 +37,7 @@ public:
     AssetLibrary& GetAssetLibrary() {return assetLibrary;}
     InputManager& GetInputManager() {return inputManager;}
     TextManager& GetTextManager() {return textManager;}
+    ObjectLibrary& GetObjectLibrary() {return objectLibrary;}
 
     void SetGameFocused(bool bIsFocused) {IsGameFocused = bIsFocused;} 
     bool GetGameFocused() {return IsGameFocused;}
@@ -43,7 +45,7 @@ public:
 #pragma region "World API"
     // Shouldn't be used, instead use Engine::LoadWorld
     void SetWorld(World* world);
-    void LoadWorld(ObjectRef<World> worldRef);
+    void LoadWorld(uint32_t ID);
     inline World* GetWorld() const {return world;}
 #pragma endregion "World API"
 

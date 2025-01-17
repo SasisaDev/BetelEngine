@@ -9,6 +9,7 @@
 #endif
 
 class SerialArchive;
+class ObjectType;
 
 /*
  * Loaded objects may contain these flags, that define their runtime behaviour
@@ -32,6 +33,8 @@ enum class ObjectFlags : uint8_t {
  * Automated behaviours of Object can be changed by setting flags
  * 
  * Each Object can contain multiple Children, as well as own Parent object  
+ * 
+ * Object ID 0 is reserved for None; 
  */
 class Object
 #ifdef EDITOR
@@ -40,8 +43,8 @@ class Object
 {
 protected:
     uint8_t Flags = 0;
-    uint32_t ID;
-    std::string Name;
+    uint32_t ID = 0;
+    std::string Name = "";
     
     std::vector<Object*> Children;
     Object* Parent = nullptr;
@@ -51,11 +54,16 @@ public:
 
     void Reparent(Object* newParent);
     void Rename(std::string newName);
-    // TODO: Maybe make this closed? It can cause big issues
+    // TODO: Maybe make this private? It can cause big issues
     void SetID(uint32_t newID) {ID = newID;}
 
     inline uint32_t GetID() const {return ID;}
-    inline std::string GetName() const {return Name;}
+    inline const std::string& GetName() const {return Name;}
+    /*
+     * Returns this object's type
+     * Must be overriden in every new Object class
+    */
+    static std::string GetType() {return "OBJ";}
 
     void SetFlag(ObjectFlags flag) {Flags |= (uint8_t)flag;}
 

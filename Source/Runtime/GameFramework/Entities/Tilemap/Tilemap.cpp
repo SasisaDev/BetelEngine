@@ -1,8 +1,9 @@
 #include "Tilemap.h"
 #include <Object/ObjectLibrary.h>
+#include <Object/ObjectTypeLibrary.h>
 #include <World/World.h>
 
-bool EntTilemapType::bRegistered = ObjectLibrary::Get().RegisterObjectType<EntTilemapType>("TILEMAP");
+bool EntTilemapType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<EntTilemapType>("TILEMAP");
 
 void EntTilemap::RemoveLayer(size_t index)
 {
