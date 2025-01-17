@@ -5,7 +5,7 @@
 template <ObjectClass _ObjectT>
 inline bool ObjectRef<_ObjectT>::IsValid() const 
 {
-    return ObjectLibrary::Get().IsObjectValid(objectID);
+    return GEngine->GetObjectLibrary().IsObjectValid(objectID);
 }
 
 template <ObjectClass _ObjectT>
