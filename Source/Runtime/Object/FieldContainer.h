@@ -130,7 +130,7 @@ struct ObjectFieldObject : public ObjectFieldUInt
 #define GetAndSet(ObjectType, CType, Def) \
 void Set##ObjectType (std::string Name, CType Value) {\
     if(Fields.contains(Name)) {\
-        if(Fields[Name]->Type == ObjectFieldType:: ##ObjectType){ \
+        if(Fields[Name]->Type == ObjectFieldType::ObjectType){ \
             ((ObjectField##ObjectType *)(Fields[Name]))->Store(Value);\
         } else {\
             delete Fields[Name]; \
@@ -142,7 +142,7 @@ void Set##ObjectType (std::string Name, CType Value) {\
 }\
 \
 CType Get##ObjectType (std::string Name, CType Default = Def) {\
-    if(!Fields.contains(Name) || Fields[Name]->Type != ObjectFieldType:: ##ObjectType) {\
+    if(!Fields.contains(Name) || Fields[Name]->Type != ObjectFieldType::ObjectType) {\
         return Default;\
     }\
     return ((ObjectField##ObjectType *)(Fields[Name]))->Load();\
