@@ -9,6 +9,19 @@
 #include <cstring>
 #include <memory>
 
+float ConvertChar::ToFloat(char* buffer)
+{
+    return *reinterpret_cast<float*>(buffer);
+}
+
+int32_t ConvertChar::ToInt32(char* buffer)
+{
+    return (int32_t)buffer[3] << 24 |
+           (int32_t)buffer[2] << 16 |
+           (int32_t)buffer[1] << 8  |
+           (int32_t)buffer[0];
+}
+
 uint32_t ConvertChar::ToUInt32(char* buffer)
 {
     return (uint32_t)buffer[3] << 24 |
@@ -227,6 +240,45 @@ Object* AssetLoader::LoadObject(uint32_t ObjectID)
                     }
 
                     object->Reparent(parent);
+                }
+
+                FieldContainer fields;
+
+                for(int fieldID = 0; fieldID < container.object.uFieldsCount; ++fieldID) {
+                    BlameMasterFileObjectField field = container.object.pFields[fieldID];
+                    switch(field.uType) {
+                        case (uint8_t)ObjectFieldType::Int: {
+                            fields.SetInt(field.pFieldName, ConvertChar::ToInt32((char*)(field.pData)));
+                            break;
+                        }
+                        case (uint8_t)ObjectFieldType::UInt: {
+                            fields.SetUInt(field.pFieldName, ConvertChar::ToUInt32((char*)(field.pData)));
+                            break;
+                        }
+                        case (uint8_t)ObjectFieldType::Float: {
+                            fields.SetFloat(field.pFieldName, ConvertChar::ToFloat((char*)(field.pData)));
+                            break;
+                        }
+                        case (uint8_t)ObjectFieldType::Double: {
+                            // TODO: Double
+                            fields.SetFloat(field.pFieldName, ConvertChar::ToFloat((char*)(field.pData)));
+                            break;
+                        }
+                        case (uint8_t)ObjectFieldType::String: {
+                            std::string str((char*)(field.pData), field.uDataSize);
+                            fields.SetString(field.pFieldName, str);
+                            break;
+                        }
+                        case (uint8_t)ObjectFieldType::Text: {
+                            std::string str((char*)(field.pData), field.uDataSize);
+                            fields.SetText(field.pFieldName, str);
+                            break;
+                        }
+                        default: {
+                            LOGF(Error, LogAssetLoader, "Unsupported field type: %u", field.uType);
+                            break;
+                        }
+                    }
                 }
 
                 // TODO: object->Serialize();

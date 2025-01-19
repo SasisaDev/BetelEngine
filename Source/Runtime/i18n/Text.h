@@ -15,6 +15,9 @@ class Text
 public:
     Text() {}
     Text(std::string domain, std::string subdomain, std::string name) : Domain(domain), Subdomain(subdomain), Name(name) {}
+    Text(std::string fullID) {
+        // TODO
+    }
     
     std::string& Get();
 

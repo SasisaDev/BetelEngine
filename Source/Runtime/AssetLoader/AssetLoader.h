@@ -17,6 +17,10 @@
 
 struct ConvertChar 
 {
+    static float ToFloat(char* buffer);
+
+    static int32_t ToInt32(char* buffer);
+
     static uint32_t ToUInt32(char* buffer);
     static uint32_t ToUInt16(char* buffer);
     static uint32_t ToUInt8(char* buffer);

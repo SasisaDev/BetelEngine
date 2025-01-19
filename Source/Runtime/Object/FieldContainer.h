@@ -7,47 +7,44 @@
 enum class ObjectFieldType : uint8_t
 {
     // int32_t
-    Int,
+    Int = 0x00,
     // uint32_t
-    UInt,
+    UInt = 0x01,
     // float
-    Float,
+    Float = 0x02,
     // double
-    Double,
-    // {uint32_t, const char*}
-    String,
-    // {uint32_t, const char*}
-    Text,
+    Double = 0x03,
+    // const char*
+    String = 0x04,
+    // const char*
+    Text = 0x05,
     // uint32_t
-    Object,
+    Object = 0x06,
     /* 
      * {
      *     ObjectFieldType type;
      *     uint32_t count;
-     *     void* data;
+     *     char* data;
      * }
      */
-    Array,
+    Array = 0x07,
     /* 
      * {
      *     ObjectFieldType keyType;
      *     ObjectFieldType valueType;
      *     uint32_t count;
-     *     {void* key, void* value}[count];
+     *     {char* key, char* value}[count];
      * }
      */
-    Map,
-    // {uint32_t, void*}
-    Custom,
+    Map = 0x08,
+    // char*
+    Custom = 0x09,
 };
 
 struct ObjectField
 {
     ObjectFieldType Type;
     ObjectField(ObjectFieldType type) : Type(type) {}
-
-    virtual inline std::vector<char> Serialize() {}
-    virtual void Deserialize(uint32_t size, char* buffer){}
 };
 
 struct ObjectFieldInt : public ObjectField
@@ -61,22 +58,6 @@ struct ObjectFieldInt : public ObjectField
 
     int32_t Load() {
         return Data;
-    }
-
-    virtual inline std::vector<char> Serialize() override {
-        std::vector<char> buffer(4);
-        buffer[0] = (Data >> 24) & 0xFF;
-        buffer[1] = (Data >> 16) & 0xFF;
-        buffer[2] = (Data >> 8) & 0xFF;
-        buffer[3] = Data & 0xFF;
-        return buffer;
-    }
-
-    virtual void Deserialize(uint32_t size, char* buffer) override {
-        Data =  (int32_t)buffer[3] << 24 |
-                (int32_t)buffer[2] << 16 |
-                (int32_t)buffer[1] << 8  |
-                (int32_t)buffer[0];
     }
 };
 
@@ -134,24 +115,16 @@ struct ObjectFieldString : public ObjectField
     const std::string& Load() {
         return Data;
     }
+};
 
-    virtual inline std::vector<char> Serialize() override {
-        std::vector<char> buffer;
-        
-        buffer.resize(sizeof(uint32_t) + Data.size());
-        buffer[0] = (Data.size() >> 24) & 0xFF;
-        buffer[1] = (Data.size() >> 16) & 0xFF;
-        buffer[2] = (Data.size() >> 8) & 0xFF;
-        buffer[3] = Data.size() & 0xFF;
+struct ObjectFieldText : public ObjectFieldString
+{
+    ObjectFieldText() {Type = ObjectFieldType::Text;}
+};
 
-        buffer.insert(buffer.begin() + 4, Data.begin(), Data.end());
-
-        return buffer;
-    }
-
-    virtual void Deserialize(uint32_t size, char* buffer) override {
-        Data = std::string(buffer);
-    }
+struct ObjectFieldObject : public ObjectFieldUInt
+{
+    ObjectFieldObject() {Type = ObjectFieldType::Object;}
 };
 
 #define GetAndSet(ObjectType, CType, Def) \
@@ -189,6 +162,8 @@ public:
     GetAndSet(Float, float, 0);
     GetAndSet(Double, double, 0);
     GetAndSet(String, const std::string&, {});
+    GetAndSet(Text, const std::string&, {});
+    GetAndSet(Object, uint32_t, 0);
     
 };
 
