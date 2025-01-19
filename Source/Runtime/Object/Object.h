@@ -4,11 +4,12 @@
 #include <vector>
 #include <cstdint>
 
+#include "FieldContainer.h"
+
 #ifdef EDITOR
 #   include <Reflection/IPropertyProvider.h>
 #endif
 
-class SerialArchive;
 class ObjectType;
 
 /*
@@ -93,8 +94,8 @@ public:
             return dynamic_cast<ParentObjectT*>(Parent);
         }
     }
-
-    virtual void Serialize(SerialArchive& archive){}
+    
+    virtual void Serialize(FieldContainer& container){}
     
     //~Reflection API start
 #ifdef EDITOR 

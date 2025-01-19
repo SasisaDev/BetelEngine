@@ -3,6 +3,8 @@
 #include <unordered_map>
 #include <cstdint>
 #include <string>
+#include <memory>
+#include <Platform/Interface/Files/IFile.h>
 
 #define BLAME_MASTER_FILE_EXT "bmf"
 #define BLAME_MASTER_FILE_MAGIC 0xBE7E1115
