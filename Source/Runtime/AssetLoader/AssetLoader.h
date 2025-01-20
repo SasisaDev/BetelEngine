@@ -26,6 +26,12 @@ struct ConvertChar
     static uint32_t ToUInt8(char* buffer);
 };
 
+struct LoadedObjectDescriptor
+{
+    Object* object = nullptr;
+    uint32_t parent = 0;
+};
+
 class AssetLoader
 {
     friend class AssetGarbageCollector;
@@ -49,7 +55,7 @@ public:
      *
      * Returns nullptr if object doesn't exist
     */
-    Object* LoadObject(uint32_t ObjectID);
+    LoadedObjectDescriptor LoadObject(uint32_t ObjectID);
 
     /* 
      * Loads Asset from system's File System or Archive File

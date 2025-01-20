@@ -128,7 +128,7 @@ struct ObjectFieldObject : public ObjectFieldUInt
 };
 
 #define GetAndSet(ObjectType, CType, Def) \
-void Set##ObjectType (std::string Name, CType Value) {\
+void Set##ObjectType (const std::string& Name, CType Value) {\
     if(Fields.contains(Name)) {\
         if(Fields[Name]->Type == ObjectFieldType::ObjectType){ \
             ((ObjectField##ObjectType *)(Fields[Name]))->Store(Value);\
@@ -141,7 +141,7 @@ void Set##ObjectType (std::string Name, CType Value) {\
     }\
 }\
 \
-CType Get##ObjectType (std::string Name, CType Default = Def) {\
+CType Get##ObjectType (const std::string& Name, CType Default = Def) {\
     if(!Fields.contains(Name) || Fields[Name]->Type != ObjectFieldType::ObjectType) {\
         return Default;\
     }\
@@ -151,11 +151,15 @@ CType Get##ObjectType (std::string Name, CType Default = Def) {\
 class FieldContainer
 {
     std::unordered_map<std::string, ObjectField*> Fields;
+    bool bSaving = false;
 public:
     FieldContainer(){}
     FieldContainer(size_t Size) {
         Fields.reserve(Size);
     }
+
+    inline bool IsSaving() const {return bSaving;}
+    inline bool SetSaving() {bSaving = true;}
 
     GetAndSet(Int, int32_t, 0);
     GetAndSet(UInt, uint32_t, 0);

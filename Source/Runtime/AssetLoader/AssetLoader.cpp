@@ -2,9 +2,9 @@
 
 #include <Log/Logger.h>
 #include <Platform/Platform.h>
-#include <Object/ObjectLibrary.h>
 #include <Object/ObjectTypeLibrary.h>
 #include <Engine/Engine.h>
+#include <Object/Object.h>
 
 #include <cstring>
 #include <memory>
@@ -210,8 +210,13 @@ BlameMasterFileObjectContainer AssetLoader::ReadObject(BlameMasterFile* master, 
 #   undef CHECKREAD
 }
 
-Object* AssetLoader::LoadObject(uint32_t ObjectID)
+LoadedObjectDescriptor AssetLoader::LoadObject(uint32_t ObjectID)
 {
+    if(ObjectID == 0) {
+        assert(!"Attempt at loading Nullptr Object with ID 0");
+        return {};
+    }
+
     for(BlameMasterFile* master : blameMasters)
     {
         if(master->bIsMounted)
@@ -223,7 +228,7 @@ Object* AssetLoader::LoadObject(uint32_t ObjectID)
                 ObjectType* objType = ObjectTypeLibrary::Get().GetObjectType(container.object.pClassName);
                 if(objType == nullptr) {
                     LOG(Error, LogAssetLoader, "Failed loading object, specified Class Name doesn't exist");
-                    return nullptr;
+                    return {};
                 }
                 
                 Object* object = objType->CreateInstance();
@@ -231,18 +236,7 @@ Object* AssetLoader::LoadObject(uint32_t ObjectID)
                 object->Rename(container.object.pName);
                 object->SetID(ObjectID);
 
-                // TODO: Should all parent chain be loaded if we only want some child class?
-                if(container.object.uParent != 0) {
-                    Object* parent = GEngine->GetObjectLibrary().LoadObject(container.object.uParent);
-                    if(parent == nullptr) {
-                        LOG(Error, LogAssetLoader, "Failed loading object, Parent is not loaded");
-                        return nullptr;
-                    }
-
-                    object->Reparent(parent);
-                }
-
-                FieldContainer fields;
+                FieldContainer fields(container.object.uFieldsCount);
 
                 for(int fieldID = 0; fieldID < container.object.uFieldsCount; ++fieldID) {
                     BlameMasterFileObjectField field = container.object.pFields[fieldID];
@@ -281,14 +275,14 @@ Object* AssetLoader::LoadObject(uint32_t ObjectID)
                     }
                 }
 
-                // TODO: object->Serialize();
+                object->Serialize(fields);
 
-                return object;
+                return {object, container.object.uParent};
             }
         }
     }
 
-    return nullptr;
+    return {nullptr, 0};
 }
 
 Resource* AssetLoader::LoadResource(std::string path)

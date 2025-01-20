@@ -63,11 +63,23 @@ Object* ObjectLibrary::LoadObject(uint32_t id)
     }
 
     // Load Object
-    Object* loadedObject = AssetLoader::Get().LoadObject(id);
+    LoadedObjectDescriptor loadedObject = AssetLoader::Get().LoadObject(id);
     
-    objects[id].object = loadedObject;
+    objects[id].object = loadedObject.object;
 
-    return loadedObject;
+    // Reparent Object
+    if(loadedObject.object != nullptr && loadedObject.parent != 0)
+    {
+        // FIXME: Should we load parent if it's not loaded?
+        Object* parent = LoadObject(loadedObject.parent);
+        if(parent == nullptr) {
+            assert(!"Attempt to reparent object to an invalid parent object");
+        } else {
+            loadedObject.object->Reparent(parent);
+        }
+    }
+
+    return loadedObject.object;
 }
 
 bool ObjectLibrary::IsObjectValid(uint32_t id) const

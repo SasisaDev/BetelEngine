@@ -25,7 +25,7 @@ class EntTilemapChunkType : public ObjectType
 {
     static bool bRegistered;
 public:
-    virtual Object* CreateInstance() { return new EntTilemapChunk; }
+    virtual Object* CreateInstance() override { return new EntTilemapChunk; }
     virtual bool ShowInEditor() override { return false; }
 };
 
