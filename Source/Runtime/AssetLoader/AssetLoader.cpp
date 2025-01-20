@@ -98,7 +98,9 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
     CHECKREAD(4);
     BMF->FileTable.uObjectCount = ConvertChar::ToUInt32(buffer);
 
+    // Allocate memory
     BMF->FileTable.pObjects = new BlameObjectTableEntry[BMF->FileTable.uObjectCount];
+    BMF->Table.reserve(BMF->FileTable.uObjectCount);
 
     for(int i = 0; i < BMF->FileTable.uObjectCount; ++i)
     {
@@ -287,18 +289,23 @@ LoadedObjectDescriptor AssetLoader::LoadObject(uint32_t ObjectID)
 
 Resource* AssetLoader::LoadResource(std::string path)
 {
-    // TODO: Make Archive Loading
-
     std::unique_ptr<IFile> file = IPlatform::Get()->OpenContentFile(path, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
-    if(!file->IsOpen())
+    if(file->IsOpen())
     {
-        LOGF(Error, LogAssetLoader, "Attempted to load Resource \"%s\", but it doesn't exist", path.c_str());
-        return nullptr;
+        LOGF(Log, LogAssetLoader, "Loaded Resource \"%s\".", path.c_str());
+        return new Resource(file->FetchAllBinary());
     }
 
-    Resource* resource = new Resource(file->FetchAllBinary());
+    // If requested resource is not found in local filesystem, search in archive files
+    for(ArchiveFile* arch : resourceArchives)
+    {
+        if(arch->Table.contains(ArchiveUtility::Hash64(path))) {
+            // TODO: Read resource
+            break;
+        }
+    }
 
-    LOGF(Log, LogAssetLoader, "Loaded Resource \"%s\".", path.c_str());
+    LOGF(Error, LogAssetLoader, "Failed loading Resource: \"%s\". It doesn't exist or read permission is denied.", path.c_str());
 
-    return resource;
+    return nullptr;
 }
