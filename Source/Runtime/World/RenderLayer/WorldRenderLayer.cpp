@@ -311,9 +311,9 @@ bool WorldRenderLayerRef::Recreate()
 
     vkDeviceWaitIdle(device);
 
-    // FIXME: Crushes ImGui for some reason
-    //vkDestroyImage(device, pixelPerfectDepthImage, nullptr);
-    //vkDestroyImageView(device, pixelPerfectDepthImageView, nullptr);
+    vkDestroyImage(device, pixelPerfectDepthImage, nullptr);
+    vkDestroyImageView(device, pixelPerfectDepthImageView, nullptr);
+    vkFreeMemory(device, pixelPerfectDepthImageMemory, nullptr);
 
     for(VkImage image : pixelPerfectImages){
         vkDestroyImage(device, image, nullptr);
@@ -321,6 +321,10 @@ bool WorldRenderLayerRef::Recreate()
 
     for(VkImageView view : pixelPerfectImageViews){
         vkDestroyImageView(device, view, nullptr);
+    }
+
+    for(VkDeviceMemory mem : pixelPerfectImageMemories){
+        vkFreeMemory(device, mem, nullptr);
     }
 
     for(VkFramebuffer fb : pixelPerfectImageFramebuffers){
@@ -334,6 +338,8 @@ bool WorldRenderLayerRef::Recreate()
 
     // Update Upscale Buffer
     CalculateAspectRatioCompensationData();
+
+    bDirty = false;
     
     return true;
 }
@@ -763,6 +769,7 @@ WorldRenderLayerRef::~WorldRenderLayerRef()
 
     vkDestroyImage(IRenderUtility::GetDevice(), pixelPerfectDepthImage, nullptr);
     vkDestroyImageView(IRenderUtility::GetDevice(), pixelPerfectDepthImageView, nullptr);
+    vkDestroyImageView(IRenderUtility::GetDevice(), pixelPerfectDepthImageView, nullptr);
     
     for(VkImage image : pixelPerfectImages){
         vkDestroyImage(IRenderUtility::GetDevice(), image, nullptr);
@@ -770,6 +777,10 @@ WorldRenderLayerRef::~WorldRenderLayerRef()
 
     for(VkImageView view : pixelPerfectImageViews){
         vkDestroyImageView(IRenderUtility::GetDevice(), view, nullptr);
+    }
+
+    for(VkDeviceMemory mem : pixelPerfectImageMemories){
+        vkFreeMemory(IRenderUtility::GetDevice(), mem, nullptr);
     }
 
     for(VkFramebuffer fb : pixelPerfectImageFramebuffers){

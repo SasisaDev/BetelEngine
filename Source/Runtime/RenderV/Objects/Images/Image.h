@@ -8,6 +8,7 @@ protected:
     VkImage image;
     VkDeviceMemory deviceMemory;
 public:
+    ~Image();
 
     inline VkImage GetImageObject() {return image;}
     inline VkDeviceMemory GetDeviceMemoryObject() const { return deviceMemory; }

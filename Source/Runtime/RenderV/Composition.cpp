@@ -259,6 +259,29 @@ void IRenderComposition::NotifyLayersRecreateResources()
     }
 }
 
+void IRenderComposition::MakeLayersDirty()
+{
+    for(IRenderLayerRef* layer : Layers) {
+        layer->SetDirty();
+    }
+}
+
+void IRenderComposition::StartFrame(VkCommandBuffer cmdBuffer)
+{
+    if(bCompositionDirty) {
+        // TODO: Recreate();
+        bCompositionDirty = false;
+    } else {
+        for(size_t layerRefId = 0; layerRefId < Layers.size(); layerRefId++)
+        {
+            if(Layers[layerRefId]->IsDirty())
+            {
+                Layers[layerRefId]->Recreate();
+            }
+        }
+    }
+}
+
 void IRenderComposition::Render(VkCommandBuffer cmdBuffer)
 {
     if(bPauseRender) {

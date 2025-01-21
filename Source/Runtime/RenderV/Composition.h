@@ -73,6 +73,8 @@ protected:
     RenderDependencyList<IRenderLayerRef> DependencyList;
 
     ERenderCompositionType compositionType;
+
+    bool bCompositionDirty = false;
 public:
     IRenderComposition();
 
@@ -105,6 +107,9 @@ public:
 
     inline VkSurfaceKHR GetSurface() const {return surface;}
     inline VkSwapchainKHR GetSwapchain() const {return swapchain;}
+
+    // Mark composition Dirty, leading to it's recreation
+    inline void SetDirty() {bCompositionDirty = true;}
     
     /*
      * Some elements of rendering may go beyond the game viewport
@@ -124,16 +129,20 @@ public:
             newValue.offset.x != GameViewport.offset.x || newValue.offset.y != GameViewport.offset.y) 
         {
             GameViewport = newValue; 
-            NotifyLayersRecreateResources();
+            MakeLayersDirty();
         }
     }
     inline void SetOffset(VkOffset2D newValue) {offset = newValue;}
     inline void SetExtent(VkExtent2D newValue) {extent = newValue;}
 
-    // Forces layer refs to recreate their resources
+    // Forces layer refs to recreate their resources 
+    // Should not be called directly due to risk in interrupting CmdBuffer recording
     void NotifyLayersRecreateResources();
 
-    void StartFrame(VkCommandBuffer cmdBuffer){}
+    // Set all layers as dirty
+    void MakeLayersDirty();
+
+    void StartFrame(VkCommandBuffer cmdBuffer);
     void Render(VkCommandBuffer cmdBuffer);
     void EndFrame(VkCommandBuffer cmdBuffer){}
 

@@ -11,6 +11,8 @@ class IRenderLayerRef
 {
     IRenderLayer* parentLayer = nullptr;
     IRenderComposition* parentComposition = nullptr;
+protected:
+    bool bDirty = false;
 public:
     void SetParentLayer(IRenderLayer* newParentLayer)
     {
@@ -28,8 +30,11 @@ public:
     }
     inline IRenderComposition* GetParentComposition() const {return parentComposition;}
 
+    inline void SetDirty() {bDirty = true;}
+    inline bool IsDirty() {return bDirty;}
+
     virtual bool Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList){return false;}
-    virtual bool Recreate() {return false;}
+    virtual bool Recreate() {bDirty = false; return false;}
 
     virtual void Prepare(VkDevice device, IRenderLayerRef* previousLayer){}
 
