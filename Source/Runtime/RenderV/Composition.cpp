@@ -1,6 +1,7 @@
 #include "Composition.h"
 #include <RenderV/Utility.h>
 #include <Log/Logger.h>
+#include <array>
 
 void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composition) 
 {
@@ -73,12 +74,12 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
 
     auto queueFamilyIndices = IRenderUtility::FindQueueFamilies(physDevice, surface);
 
-    uint32_t indices[] = {queueFamilyIndices.graphicsFamily.value(), queueFamilyIndices.presentFamily.value()};
+    std::array<uint32_t, 2> indices = {queueFamilyIndices.graphicsFamily.value(), queueFamilyIndices.presentFamily.value()};
 
     if (queueFamilyIndices.graphicsFamily != queueFamilyIndices.presentFamily) {
         createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
         createInfo.queueFamilyIndexCount = 2;
-        createInfo.pQueueFamilyIndices = indices;
+        createInfo.pQueueFamilyIndices = indices.data();
     } else {
         createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
         createInfo.queueFamilyIndexCount = 0;
@@ -221,9 +222,17 @@ bool IRenderComposition::Recreate(IRenderCompositionInitializer* initializer)
         for (size_t i = 0; i < imageViews.size(); i++) {
             vkDestroyImageView(IRenderUtility::GetDevice(), imageViews[i], nullptr);
         }
+
+        for (size_t i = 0; i < aquireSemaphores.size(); i++) {
+            vkDestroySemaphore(IRenderUtility::GetDevice(), aquireSemaphores[i], nullptr);
+        }
     }
 
+    VkSwapchainKHR oldSwapchain = swapchain;
+
     initializer->Initialize(this);
+
+    vkDestroySwapchainKHR(IRenderUtility::GetDevice(), oldSwapchain, nullptr);
 
     for(IRenderLayerRef* layerRef : Layers) {
         layerRef->Recreate();
