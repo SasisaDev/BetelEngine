@@ -30,6 +30,7 @@ struct UpscaleGPUStorage
 class WorldRenderLayerRef : public IRenderLayerRef
 {
     void CalculateAspectRatioCompensationData();
+    void CreatePixelPerfectResources();
 protected:
     World* world;
     VkExtent2D viewport;

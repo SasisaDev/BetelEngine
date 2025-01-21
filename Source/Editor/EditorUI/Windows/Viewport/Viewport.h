@@ -8,6 +8,8 @@
 class EditorViewport : public EditorToolkitWindow
 {
     EditorTextureData ShowOverlayImageW{};
+
+    int Width = 0, Height = 0;
 public:
     const char* GetName()override{return "Game";}
 
@@ -26,6 +28,9 @@ public:
         static bool first_init = true;
         if(first_init) {
             EditorImageLoader::Get().LoadTextureFromFile("./Editor/ShowOverlayW16.png", 16, 16, &ShowOverlayImageW);
+            ImVec2 availableSize = ImGui::GetContentRegionAvail();
+            Width = availableSize.x;
+            Height = availableSize.y;
 
             first_init = false;
         }
@@ -53,6 +58,12 @@ public:
                 ImGuiID dockID = ImGui::GetWindowDockID();
                 
             }
+            
+            // TODO: Handle window resize in editor
+            ImVec2 availableSize = ImGui::GetContentRegionAvail();
+            WorldRenderLayerRef* layer = dynamic_cast<WorldRenderLayerRef*>(comp->GetLayer(WorldLayerID));
+
+            layer->SetViewportSize({static_cast<unsigned int>(availableSize.x), static_cast<unsigned int>(availableSize.y)});
 
             // Set game viewport
             ImGuiWindow *window = ImGui::GetCurrentWindowRead();

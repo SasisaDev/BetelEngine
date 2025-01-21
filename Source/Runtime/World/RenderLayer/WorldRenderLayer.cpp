@@ -45,56 +45,12 @@ void WorldRenderLayerRef::CalculateAspectRatioCompensationData()
     UpscaleDataSSBO->Write(&UpscaleDataStorage);
 }
 
-void WorldRenderLayerRef::onWorldLoad(World* loadedWorld)
+void WorldRenderLayerRef::CreatePixelPerfectResources()
 {
-    world = loadedWorld;
-
-    // Create Render Proxies and subscribe to world events
-    if(!world){
-        return;
-    }
-
-    world->OnEntitySpawned.BindMember(this, &WorldRenderLayerRef::onWorldEntitySpawned);
-
-    for(Entity* entity : world->GetEntities()) {
-        if(EntityRenderProxy* renderProxy = entity->CreateRenderProxy()) {
-            renderProxy->CreateResources(this);
-            renderProxies.push_back(renderProxy);
-        }
-    }
-}
-
-void WorldRenderLayerRef::onWorldEntitySpawned(Entity* entity)
-{
-    if(entity){
-        if(EntityRenderProxy* renderProxy = entity->CreateRenderProxy()) {
-            renderProxy->CreateResources(this);
-            renderProxies.push_back(renderProxy);
-        }
-    }
-}
-
-WorldRenderLayerRef* WorldRenderLayerRef::SubscribeWorldLoad(MulticastDelegate<World*>* delegate)
-{
-    delegate->BindMember(this, &WorldRenderLayerRef::onWorldLoad);
-
-    return this;
-}
-
-WorldRenderLayerRef* WorldRenderLayerRef::SubscribeWorldUnload(MulticastDelegate<World*>* delegate)
-{
-    delegate->BindMember(this, &WorldRenderLayerRef::onWorldUnload);
-
-    return this;
-}
-
-bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList)
-{
-    VkPhysicalDevice physDevice = IRenderUtility::GetPhysicalDevice();
+    VkDevice device = IRenderUtility::GetDevice();
 
     const size_t framesInFlight = GetParentComposition()->GetFramesInFlight();
 
-    // Create Depth Buffer
     VkFormat depthImageFormat = IRenderUtility::FindDepthFormat();
     
     {
@@ -255,6 +211,58 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
             LOG(Fatal, LogWorldRenderLayer,  "failed to create framebuffer!");
         }
     }
+}
+
+void WorldRenderLayerRef::onWorldLoad(World* loadedWorld)
+{
+    world = loadedWorld;
+
+    // Create Render Proxies and subscribe to world events
+    if(!world){
+        return;
+    }
+
+    world->OnEntitySpawned.BindMember(this, &WorldRenderLayerRef::onWorldEntitySpawned);
+
+    for(Entity* entity : world->GetEntities()) {
+        if(EntityRenderProxy* renderProxy = entity->CreateRenderProxy()) {
+            renderProxy->CreateResources(this);
+            renderProxies.push_back(renderProxy);
+        }
+    }
+}
+
+void WorldRenderLayerRef::onWorldEntitySpawned(Entity* entity)
+{
+    if(entity){
+        if(EntityRenderProxy* renderProxy = entity->CreateRenderProxy()) {
+            renderProxy->CreateResources(this);
+            renderProxies.push_back(renderProxy);
+        }
+    }
+}
+
+WorldRenderLayerRef* WorldRenderLayerRef::SubscribeWorldLoad(MulticastDelegate<World*>* delegate)
+{
+    delegate->BindMember(this, &WorldRenderLayerRef::onWorldLoad);
+
+    return this;
+}
+
+WorldRenderLayerRef* WorldRenderLayerRef::SubscribeWorldUnload(MulticastDelegate<World*>* delegate)
+{
+    delegate->BindMember(this, &WorldRenderLayerRef::onWorldUnload);
+
+    return this;
+}
+
+bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList)
+{
+    VkPhysicalDevice physDevice = IRenderUtility::GetPhysicalDevice();
+
+    const size_t framesInFlight = GetParentComposition()->GetFramesInFlight();
+
+    CreatePixelPerfectResources();
 
     VkSamplerCreateInfo samplerInfo{};
     samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
@@ -299,9 +307,30 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
 
 bool WorldRenderLayerRef::Recreate() 
 {
-    // TODO
-    // Recreate viewport framebuffers ?
-    // Update GPU Data SSBO
+    VkDevice device = IRenderUtility::GetDevice();
+
+    vkDeviceWaitIdle(device);
+
+    // FIXME: Crushes ImGui for some reason
+    //vkDestroyImage(device, pixelPerfectDepthImage, nullptr);
+    //vkDestroyImageView(device, pixelPerfectDepthImageView, nullptr);
+
+    for(VkImage image : pixelPerfectImages){
+        vkDestroyImage(device, image, nullptr);
+    }
+
+    for(VkImageView view : pixelPerfectImageViews){
+        vkDestroyImageView(device, view, nullptr);
+    }
+
+    for(VkFramebuffer fb : pixelPerfectImageFramebuffers){
+        vkDestroyFramebuffer(device, fb, nullptr);
+    }
+
+    vkDeviceWaitIdle(device);
+
+    // Recreate Framebuffers
+    CreatePixelPerfectResources();
 
     // Update Upscale Buffer
     CalculateAspectRatioCompensationData();
@@ -731,6 +760,9 @@ WorldRenderLayerRef::~WorldRenderLayerRef()
     for(auto proxy : renderProxies){
         delete proxy;
     }
+
+    vkDestroyImage(IRenderUtility::GetDevice(), pixelPerfectDepthImage, nullptr);
+    vkDestroyImageView(IRenderUtility::GetDevice(), pixelPerfectDepthImageView, nullptr);
     
     for(VkImage image : pixelPerfectImages){
         vkDestroyImage(IRenderUtility::GetDevice(), image, nullptr);
