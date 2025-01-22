@@ -84,3 +84,8 @@ void WindowsPlatform::DebugPrint(const char* string) const
 	//OutputDebugStringW(std::wstring(string, string+strlen(string)).c_str());
 	OutputDebugStringA(string);
 }
+
+void WindowsPlatform::ShowMessageWindow(const std::string_view& name, const char* content) const
+{
+	MessageBox(NULL, content, name.data(), MB_OK);
+}

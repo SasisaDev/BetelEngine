@@ -147,7 +147,7 @@ void RenderCompositionInitializerSurface::Initialize(IRenderComposition* composi
         // At the current time initial composition framebuffer creation
         // Requires a render pass, which we get from one of the existing layers,
         // Hoping for it to exist and be valid. If it's not, the crush will occur.
-        VkRenderPass pass;
+        VkRenderPass pass = {};
         for(IRenderLayerRef* ref : composition->GetLayerRefs()) {
             if (ref->GetParentLayer()->GetCompositionCompatRenderPass() != VK_NULL_HANDLE) {
                 pass = ref->GetParentLayer()->GetCompositionCompatRenderPass();

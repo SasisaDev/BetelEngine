@@ -156,7 +156,8 @@ target_compile_definitions(EditorASAN PUBLIC EDITOR)
 
 set_property(TARGET EditorASAN PROPERTY CXX_STANDARD 20)
 
-target_compile_options(EditorASAN PUBLIC "/fsanitize=address" "/Zi" "/MT" "/INCREMENTAL:NO") 
+target_compile_options(EditorASAN PUBLIC "/fsanitize=address" "/Zi" "/MT" "/sdl" "/permissive-") 
+target_link_options(EditorASAN PUBLIC "/INCREMENTAL:NO")
 if(WIN32)
   target_link_options(EditorASAN PUBLIC "/subsystem:console")
 endif()
