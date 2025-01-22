@@ -6,6 +6,11 @@ extern int GuardedMain(int argc, char* argv[]);
 
 #include <Windows.h>
 
+int main(int argc, char* argv[])
+{
+	return GuardedMain(argc, argv);
+}
+
 int WinMain(
 		HINSTANCE hInstance,
 		HINSTANCE hPrevInstance,

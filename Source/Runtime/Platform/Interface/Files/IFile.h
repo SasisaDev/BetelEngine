@@ -38,7 +38,13 @@ public:
 
 	virtual size_t Position() {return file.tellg();}
 	virtual void Seek(size_t offset, uint8_t seekOrigin);
+	// Peeks into next bytes without progressing cursor
+	// Returns nullptr if meets EOF
+	// WARNING: Don't forget to delete[] buffer after data isn't needed anymore!
 	virtual char* Peek(size_t count);
+	// Fetches next several bytes of a file
+	// Returns nullptr if meets EOF
+	// WARNING: Don't forget to delete[] buffer after data isn't needed anymore!
 	virtual char* Fetch(size_t count);
 	virtual std::string FetchAll();
 

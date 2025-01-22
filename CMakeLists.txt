@@ -141,6 +141,27 @@ target_compile_definitions(Editor PUBLIC EDITOR)
 
 set_property(TARGET Editor PROPERTY CXX_STANDARD 20)
 
+# Address Sanitizer Builds
+
+add_executable(EditorASAN ${Sources} ${EditorSources})
+
+target_link_libraries(EditorASAN Vulkan-Headers SDL2::SDL2-static glm-header-only)
+
+target_include_directories(EditorASAN PRIVATE "Source/Runtime" "Source/Editor")
+
+target_include_directories(EditorASAN PRIVATE "Source/ThirdParty")
+target_include_directories(EditorASAN PRIVATE "Source/ThirdParty/imgui")
+
+target_compile_definitions(EditorASAN PUBLIC EDITOR)
+
+set_property(TARGET EditorASAN PROPERTY CXX_STANDARD 20)
+
+target_compile_options(EditorASAN PUBLIC "/fsanitize=address" "/Zi" "/MT" "/INCREMENTAL:NO") 
+if(WIN32)
+  target_link_options(EditorASAN PUBLIC "/subsystem:console")
+endif()
+#set(CMAKE_EXE_LINKER_FLAGS "/subsystem:console ${CMAKE_EXE_LINKER_FLAGS} /subsystem:console")
+
 # Shaders
 add_shaders(Shaders "Shaders/TriangleUpscale/TriangleUpscale.vert" "Shaders/TriangleUpscale/TriangleUpscale.frag" "Shaders/Test/Test.vert" "Shaders/Test/Test.frag"
                     "Shaders/UI_Brush_Texture/UI_Brush_Texture.frag" "Shaders/UI_Brush_Texture/UI_Brush_Texture.vert" "Shaders/SpriteMasked/SpriteMasked.frag" "Shaders/SpriteMasked/SpriteMasked.vert"

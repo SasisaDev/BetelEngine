@@ -159,7 +159,7 @@ public:
     }
 
     inline bool IsSaving() const {return bSaving;}
-    inline bool SetSaving() {bSaving = true;}
+    inline void SetSaving() {bSaving = true;}
 
     GetAndSet(Int, int32_t, 0);
     GetAndSet(UInt, uint32_t, 0);

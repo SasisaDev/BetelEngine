@@ -23,6 +23,10 @@ struct BlameObjectTableEntry {
 struct BlameMasterFileTable {
     uint32_t uObjectCount = 0;
     BlameObjectTableEntry* pObjects = nullptr;
+
+    ~BlameMasterFileTable() {
+        delete[] pObjects;
+    }
 };
 
 struct BlameMasterFileObjectField {
@@ -31,6 +35,11 @@ struct BlameMasterFileObjectField {
     uint8_t uType = 0;
     uint32_t uDataSize = 0;
     void* pData = nullptr;
+
+    ~BlameMasterFileObjectField() {
+        delete[] pFieldName;
+        delete[] pData;
+    }
 };
 
 struct BlameMasterFileObject {
@@ -41,6 +50,12 @@ struct BlameMasterFileObject {
     uint32_t uParent = 0;
     uint16_t uFieldsCount = 0;
     BlameMasterFileObjectField* pFields = nullptr;
+
+    ~BlameMasterFileObject() {
+        delete[] pClassName;
+        delete[] pName;
+        delete[] pFields;
+    }
 };
 
 // Used to store a pointer to an Object, that will then be copied into memory
