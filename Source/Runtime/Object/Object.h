@@ -52,6 +52,7 @@ protected:
 public:
     Object() {}
     Object(uint32_t id) {ID = id;}
+    virtual ~Object(){}
 
     void Reparent(Object* newParent);
     void Rename(std::string newName);

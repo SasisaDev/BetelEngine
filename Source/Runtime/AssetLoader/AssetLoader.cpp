@@ -44,6 +44,7 @@ uint32_t ConvertChar::ToUInt8(char* buffer)
 BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
 {
 #   define CHECKREAD(count) \
+    delete[] buffer;\
     buffer = BMF->FileHandle->Fetch(count); \
     if(buffer == nullptr) {\
         LOG(Error, LogAssetLoader, "Failed reading BMF file. EOF was not expected"); \
@@ -69,7 +70,7 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
         return nullptr;
     }
 
-    delete[] buffer;
+    
     CHECKREAD(4);
     BMF->FileHeader.uMagic = (uint32_t)buffer[0] << 24 |
                              (uint32_t)buffer[1] << 16 |
@@ -84,7 +85,6 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
         return nullptr;
     }
     
-    delete[] buffer;
     CHECKREAD(2);
     BMF->FileHeader.uVersion = (uint16_t)buffer[0] << 8  |
                                (uint16_t)buffer[1];
@@ -98,7 +98,6 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
     }
 
     // Fetch table
-    delete[] buffer;
     CHECKREAD(4);
     BMF->FileTable.uObjectCount = ConvertChar::ToUInt32(buffer);
 
@@ -109,11 +108,9 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
     for(int i = 0; i < BMF->FileTable.uObjectCount; ++i)
     {
         // FIXME: Do we actually need 2 separate table entry containers?
-        delete[] buffer;
         CHECKREAD(4);
         BMF->FileTable.pObjects[i].ID = ConvertChar::ToUInt32(buffer);
 
-        delete[] buffer;
         CHECKREAD(4);
         BMF->FileTable.pObjects[i].offset = ConvertChar::ToUInt32(buffer);
 
@@ -157,6 +154,7 @@ void AssetLoader::CrawlContent(std::string Path)
 BlameMasterFileObjectContainer AssetLoader::ReadObject(BlameMasterFile* master, uint32_t offset)
 {
 #   define CHECKREAD(count) \
+    delete[] buffer;\
     buffer = master->FileHandle->Fetch(count); \
     if(buffer == nullptr) {\
         LOG(Error, LogAssetLoader, "Failed reading BMF file. EOF was not expected"); \
@@ -172,7 +170,6 @@ BlameMasterFileObjectContainer AssetLoader::ReadObject(BlameMasterFile* master, 
     CHECKREAD(4);
     container.uObjectSize = ConvertChar::ToUInt32(buffer);
 
-    delete[] buffer;
     CHECKREAD(1);
     container.object.uClassNameLength = ConvertChar::ToUInt8(buffer);
     if(container.object.uClassNameLength == 0)
@@ -181,46 +178,36 @@ BlameMasterFileObjectContainer AssetLoader::ReadObject(BlameMasterFile* master, 
         return {0};
     }
 
-    delete[] buffer;
     CHECKREAD(container.object.uClassNameLength);
     memmove(container.object.pClassName, buffer, container.object.uClassNameLength);
 
-    delete[] buffer;
     CHECKREAD(2);
     container.object.uNameLength = ConvertChar::ToUInt16(buffer);
 
-    delete[] buffer;
     CHECKREAD(container.object.uNameLength);
     memmove(container.object.pName, buffer, container.object.uNameLength);
 
-    delete[] buffer;
     CHECKREAD(4);
     container.object.uParent = ConvertChar::ToUInt32(buffer);
 
-    delete[] buffer;
     CHECKREAD(2);
     container.object.uFieldsCount = ConvertChar::ToUInt16(buffer);
 
     container.object.pFields = new BlameMasterFileObjectField[container.object.uFieldsCount];
     for(int fieldIndex = 0; fieldIndex < container.object.uFieldsCount; ++fieldIndex)
     {
-        delete[] buffer;
         CHECKREAD(1);
         container.object.pFields[fieldIndex].uType = ConvertChar::ToUInt8(buffer);
 
-        delete[] buffer;
         CHECKREAD(1);
         container.object.pFields[fieldIndex].uFieldNameLength = ConvertChar::ToUInt8(buffer);
 
-        delete[] buffer;
         CHECKREAD(container.object.pFields[fieldIndex].uFieldNameLength);
         memmove(container.object.pFields[fieldIndex].pFieldName, buffer, container.object.pFields[fieldIndex].uFieldNameLength);
-        
-        delete[] buffer;
+
         CHECKREAD(4);
         container.object.pFields[fieldIndex].uDataSize = ConvertChar::ToUInt32(buffer);
 
-        delete[] buffer;
         CHECKREAD(container.object.pFields[fieldIndex].uDataSize);
         memmove(container.object.pFields[fieldIndex].pData, buffer, container.object.pFields[fieldIndex].uDataSize);
     }

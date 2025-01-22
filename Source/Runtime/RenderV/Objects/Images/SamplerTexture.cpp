@@ -4,7 +4,6 @@
 
 ISamplerTexture::~ISamplerTexture()
 {
-    delete buffer;
     vkDestroyImage(IRenderUtility::GetDevice(), image, nullptr);
     vkFreeMemory(IRenderUtility::GetDevice(), imageMemory, nullptr);
     vkDestroySampler(IRenderUtility::GetDevice(), sampler, nullptr);
@@ -19,7 +18,7 @@ void ISamplerTexture::InitializeTexture(int dimX, int dimY, unsigned char* data,
 
     VkDeviceSize imageSize = dimX * dimY * channels;
 
-    buffer = new Buffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, data);
+    buffer = std::make_unique<Buffer>(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, data);
 
     VkImageCreateInfo imageInfo{};
     imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;

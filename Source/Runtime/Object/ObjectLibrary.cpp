@@ -2,6 +2,10 @@
 
 #include <AssetLoader/AssetLoader.h>
 
+ObjectLibrary::~ObjectLibrary()
+{
+}
+
 void ObjectLibrary::RegisterObjectUsage(uint32_t id) {
     if(!objects.contains(id)) {
         assert(!"Passed Object ID is not registered in the engine");
@@ -27,7 +31,7 @@ void ObjectLibrary::UnregisterObjectUsage(uint32_t id) {
 
 void ObjectLibrary::AddObject(uint32_t id, Object* preloaded)
 {
-    objects[id] = {preloaded};
+    objects.emplace(id, preloaded);
     if(id > LastObjectID) {
         LastObjectID = id;
     }

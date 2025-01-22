@@ -1,5 +1,38 @@
 #include "Texture.h"
 
 #include <Object/ObjectTypeLibrary.h>
+#include <Resources/Resource.h>
+#include <AssetLoader/AssetLoader.h>
+#include <stb/stb_image.h>
 
 bool ObjTextureType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjTextureType>("TEX");
+
+void ObjTexture::LoadTexture()
+{
+    if(path.empty()) {
+        return;
+    }
+
+    Resource *Image = AssetLoader::Get().LoadResource(path);
+
+    int texWidth, texHeight, texChannels;
+    unsigned char* pixels = stbi_load_from_memory(reinterpret_cast<stbi_uc*>(Image->GetBuffer().data()), Image->GetBuffer().size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+    texture = std::make_unique<ISamplerTexture>(texWidth, texHeight, pixels);
+
+    stbi_image_free(pixels);
+    delete Image;
+}
+
+void ObjTexture::Serialize(FieldContainer& cont)
+{
+    if(cont.IsSaving())
+    {
+        cont.SetString("path", path);
+    } 
+    else 
+    {
+        path = cont.GetString("tex");
+        LoadTexture();
+    }
+}

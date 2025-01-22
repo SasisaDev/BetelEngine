@@ -11,9 +11,12 @@
 #include <RenderV/Objects/Images/SamplerTexture.h>
 
 #include <GameFramework/Assets/Sprite/Sprite.h>
+#include <GameFramework/Assets/Atlas/Atlas.h>
 #include <Object/ObjectRef.h>
 
 #include <Math/Vertex.h>
+
+#include <memory>
 
 struct SpriteEntityPushConstants
 {
@@ -25,14 +28,14 @@ struct SpriteEntityPushConstants
 
 class SpriteRenderProxy : public EntityRenderProxy
 {
-    std::shared_ptr<IShader> shader;
-    std::shared_ptr<IMaterial> material;
-    std::shared_ptr<ISamplerTexture> texture;
+    std::unique_ptr<IShader> shader;
+    std::unique_ptr<IMaterial> material;
+    std::unique_ptr<ISamplerTexture> texture;
 
     SpriteEntityPushConstants constants;
 
-    static Buffer* vertexBuffer;
-    static Buffer* indexBuffer;
+    static std::unique_ptr<Buffer> vertexBuffer;
+    static std::unique_ptr<Buffer> indexBuffer;
 public:
     SpriteRenderProxy(Entity* DefaultParent) : EntityRenderProxy(DefaultParent) {}
     virtual void CreateResources(WorldRenderLayerRef* layerRef) override;
@@ -43,6 +46,8 @@ public:
 class SpriteEntity : public Entity
 {
     ObjectRef<ObjSprite> sprite;
+    ObjectRef<ObjAtlas> atlas;
+    uint16_t spriteID;
 public:
     AssetPtr<MaterialAsset> material;
     //AssetPtr<Texture2D> texture;
@@ -51,9 +56,21 @@ public:
         DisplayName = "Sprite";
     }
 
+    virtual void MakeSizeMatchTexture();
+
     virtual void SetSprite(ObjectRef<ObjSprite>& newSprite) {
         sprite = newSprite;
-        // TODO: Change object's size and other transforms to match the sprite to enforce pixel-perfect look 
+        MakeSizeMatchTexture();
+    }
+
+    virtual void SetAtlas(ObjectRef<ObjAtlas>& newAtlas) {
+        atlas = newAtlas;
+        MakeSizeMatchTexture();
+    }
+
+    virtual void SetAtlasRect(uint16_t id) {
+        spriteID = id;
+        MakeSizeMatchTexture();
     }
 
     virtual void Tick(float deltaTime) override;

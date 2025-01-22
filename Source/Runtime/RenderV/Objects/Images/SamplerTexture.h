@@ -2,11 +2,12 @@
 
 #include <RenderV/Vulkan/vkloader.h>
 #include "../Buffers/Buffer.h"
+#include <memory>
 
 class ISamplerTexture
 {
 protected:
-    Buffer *buffer;
+    std::unique_ptr<Buffer> buffer;
     VkDeviceMemory imageMemory;
     VkImage image;
     VkImageView imageView;
@@ -20,7 +21,7 @@ public:
     ~ISamplerTexture();
     
 
-    inline Buffer* GetBuffer() {return buffer;}
+    inline Buffer* GetBuffer() {return buffer.get();}
     inline VkDeviceMemory GetImageMemory() {return imageMemory;}
     inline VkImage GetImage() {return image;}
     inline VkImageView GetImageView() {return imageView;}

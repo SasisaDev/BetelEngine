@@ -3,16 +3,16 @@
 #include <stb/stb_image.h>
 #include <Math/Models.h>
 
-Buffer* SpriteRenderProxy::vertexBuffer = nullptr;
-Buffer* SpriteRenderProxy::indexBuffer = nullptr;
+std::unique_ptr<Buffer> SpriteRenderProxy::vertexBuffer;
+std::unique_ptr<Buffer> SpriteRenderProxy::indexBuffer;
 
 void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
 {
     // Create Static Resources
-    if (SpriteRenderProxy::vertexBuffer == nullptr || SpriteRenderProxy::indexBuffer == nullptr) 
+    if (SpriteRenderProxy::vertexBuffer.get() == nullptr || SpriteRenderProxy::indexBuffer.get() == nullptr) 
     {
-        SpriteRenderProxy::vertexBuffer = new Buffer(BetelModel::Quad.VerticesSize(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, BetelModel::Quad.VerticesData());
-        SpriteRenderProxy::indexBuffer = new Buffer(BetelModel::Quad.IndicesSize(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, BetelModel::Quad.IndicesData());
+        SpriteRenderProxy::vertexBuffer = std::make_unique<Buffer>(BetelModel::Quad.VerticesSize(), VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, BetelModel::Quad.VerticesData());
+        SpriteRenderProxy::indexBuffer = std::make_unique<Buffer>(BetelModel::Quad.IndicesSize(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT, BetelModel::Quad.IndicesData());
     }
 
     if(shader.get() != nullptr && shader->IsValid())
@@ -55,17 +55,21 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
     sCreateInfo.Blending.Enabled = true;
     sCreateInfo.Blending.WriteAlpha = true;
 
-    shader = std::make_shared<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertShader->GetBuffer(), FragShader->GetBuffer(), descriptorsLayout, sCreateInfo);
+    shader = std::make_unique<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertShader->GetBuffer(), FragShader->GetBuffer(), descriptorsLayout, sCreateInfo);
 
     Resource *SpriteImage = AssetLoader::Get().LoadResource("Sprites/TestSemi.png");
 
     int texWidth, texHeight, texChannels;
     unsigned char* pixels = stbi_load_from_memory(reinterpret_cast<stbi_uc*>(SpriteImage->GetBuffer().data()), SpriteImage->GetBuffer().size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
-    // TODO: Finish it and refine
-    texture = std::make_shared<ISamplerTexture>(texWidth, texHeight, pixels);
+    delete SpriteImage;
 
-    material = std::make_shared<IMaterial>(shader.get());
+    // TODO: Finish it and refine
+    texture = std::make_unique<ISamplerTexture>(texWidth, texHeight, pixels);
+
+    stbi_image_free(pixels);
+
+    material = std::make_unique<IMaterial>(shader.get());
 
     material->SetSampler(1, texture->GetImageView(), texture->GetSampler());
 
@@ -98,6 +102,11 @@ void SpriteRenderProxy::Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* l
     vkCmdDrawIndexed(cmdBuffer, 6, 1, 0, 0, 0);
 
     IRenderUtility::EndDebugLabel(cmdBuffer);
+}
+
+void SpriteEntity::MakeSizeMatchTexture()
+{
+
 }
 
 void SpriteEntity::Tick(float deltaTime)

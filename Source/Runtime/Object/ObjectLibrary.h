@@ -14,6 +14,7 @@ struct ObjectDescriptor
 
     ObjectDescriptor(Object* objPtr) {object = objPtr;}
     ObjectDescriptor() {}
+    ~ObjectDescriptor() {delete object;}
 };
 
 class ObjectLibrary
@@ -24,7 +25,7 @@ class ObjectLibrary
     void RegisterObjectUsage(uint32_t id);
     void UnregisterObjectUsage(uint32_t id);
 
-    uint32_t LastObjectID = 1;
+    uint32_t LastObjectID = 0;
     uint32_t GenerateObjectID();
     // Generates unique Object ID, taking holes in a map into an account. It's way slower, but creates denser distribution
     uint32_t GenerateObjectIDSlow();
@@ -35,6 +36,7 @@ protected:
 
     void AddObject(uint32_t id, Object* preloaded = nullptr);
 public:
+    ~ObjectLibrary();
 
     template <ObjectClass _ObjectT>
     _ObjectT* CreateObject(std::string Name, bool Transient = true) {
@@ -48,7 +50,7 @@ public:
             object->SetFlag(ObjectFlags::Transient);
         }
 
-        objects[objectID] = ObjectDescriptor(object);
+        objects.emplace(objectID, object);
         return object;
     }
 
