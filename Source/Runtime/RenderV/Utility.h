@@ -85,6 +85,10 @@ public:
         vkFreeCommandBuffers(GetDevice(), singleTimePool, 1, &cmdBuffer);
     }
 
+    static inline void Cleanup() {
+        vkDestroyCommandPool(GetDevice(), singleTimePool, nullptr);
+    }
+
     static inline void ImageBarrier(VkCommandBuffer cmdBuffer, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout,
                                     VkPipelineStageFlags src = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VkPipelineStageFlags dst = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
                                     VkAccessFlags srcFlag = 0, VkAccessFlags dstFlag = 0)

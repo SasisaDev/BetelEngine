@@ -218,6 +218,7 @@ IShader::~IShader()
     vkDestroyShaderModule(IRenderUtility::GetDevice(), fragModule, nullptr);
     vkDestroyShaderModule(IRenderUtility::GetDevice(), vertModule, nullptr);
 
+    vkDestroyDescriptorSetLayout(IRenderUtility::GetDevice(), descSetLayout, nullptr);
     vkDestroyPipelineLayout(IRenderUtility::GetDevice(), pipelineLayout, nullptr);
     vkDestroyPipeline(IRenderUtility::GetDevice(), pipeline, nullptr);
 }

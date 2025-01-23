@@ -1,6 +1,7 @@
 #include "ObjectLibrary.h"
 
 #include <AssetLoader/AssetLoader.h>
+#include <Engine/Engine.h>
 
 ObjectLibrary::~ObjectLibrary()
 {
@@ -68,7 +69,7 @@ Object* ObjectLibrary::LoadObject(uint32_t id)
     }
 
     // Load Object
-    LoadedObjectDescriptor loadedObject = AssetLoader::Get().LoadObject(id);
+    LoadedObjectDescriptor loadedObject = GEngine->GetAssetLoader()->LoadObject(id);
     
     objects[id].object = loadedObject.object;
 

@@ -2,6 +2,7 @@
 #include <World/RenderLayer/WorldRenderLayer.h>
 #include <stb/stb_image.h>
 #include <Math/Models.h>
+#include <Engine/Engine.h>
 
 void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
 {
@@ -16,8 +17,8 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
     {
         return;
     }
-    Resource *VertShader = AssetLoader::Get().LoadResource("Shaders/SpriteMasked/SpriteMasked.vert.spv");
-    Resource *FragShader = AssetLoader::Get().LoadResource("Shaders/SpriteMasked/SpriteMasked.frag.spv");
+    Resource *VertShader = GEngine->GetAssetLoader()->LoadResource("Shaders/SpriteMasked/SpriteMasked.vert.spv");
+    Resource *FragShader = GEngine->GetAssetLoader()->LoadResource("Shaders/SpriteMasked/SpriteMasked.frag.spv");
 
     if(VertShader == nullptr || FragShader == nullptr)
     {
@@ -54,7 +55,7 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
 
     shader = std::make_unique<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertShader->GetBuffer(), FragShader->GetBuffer(), descriptorsLayout, sCreateInfo);
 
-    Resource *SpriteImage = AssetLoader::Get().LoadResource("Sprites/TestSemi.png");
+    Resource *SpriteImage = GEngine->GetAssetLoader()->LoadResource("Sprites/TestSemi.png");
 
     int texWidth, texHeight, texChannels;
     unsigned char* pixels = stbi_load_from_memory(reinterpret_cast<stbi_uc*>(SpriteImage->GetBuffer().data()), SpriteImage->GetBuffer().size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);

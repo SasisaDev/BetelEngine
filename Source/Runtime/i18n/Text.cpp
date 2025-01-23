@@ -14,5 +14,5 @@ std::string& Text::Get()
         return NOENGINE;
     }
 
-    return TranslationMemoize.emplace(GEngine->GetTextManager().Fetch(Domain, Subdomain, Name));
+    return TranslationMemoize.emplace(GEngine->GetTextManager()->Fetch(Domain, Subdomain, Name));
 }

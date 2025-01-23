@@ -96,7 +96,7 @@ int GuardedMain(int argc, char* argv[])
 #endif
 
 	// TODO: Delete these synthetic calls
-	app.GetEngine()->SetWorld(new World);
+	app.GetEngine()->SetWorld(app.GetEngine()->GetObjectLibrary()->CreateObject<World>("Transient World"));
 	app.GetEngine()->LoadWorld(0xABCD0123);
 
 	app.GetEngine()->GetWorld()->SetBackgroundColor(Vec3(0.75, 0.5, 0));
@@ -117,7 +117,7 @@ int GuardedMain(int argc, char* argv[])
 	std::unique_ptr<IDirectory> localDirectory = IPlatform::Get()->OpenLocalDirectory("./");
 	std::unique_ptr<IDirectory> contentDirectory = IPlatform::Get()->OpenContentDirectory("./");
 
-	Resource* testResourceShader = AssetLoader::Get().LoadResource("Shaders/Test/Test.vert.spv");
+	Resource* testResourceShader = GEngine->GetAssetLoader()->LoadResource("Shaders/Test/Test.vert.spv");
 
 	/*AssetFile assetFile("Editor/Content/AssetFile");
 	assetFile.ReadFromDevice();*/

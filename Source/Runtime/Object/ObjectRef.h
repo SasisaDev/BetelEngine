@@ -54,26 +54,27 @@ class WeakObjectRef : public ObjectRef<_ObjectT>
 template <ObjectClass _ObjectT>
 inline void ObjectRef<_ObjectT>::InternalRegisterUsage() 
 {
+    // FIXME: These checks aren't required if we destroy ObjectLibrary last and avoid singletons
     if(GEngine != nullptr)
-        GEngine->GetObjectLibrary().RegisterObjectUsage(objectID);
+        GEngine->GetObjectLibrary()->RegisterObjectUsage(objectID);
 }
 
 template <ObjectClass _ObjectT>
 inline void ObjectRef<_ObjectT>::InternalUnregisterUsage() 
 {
     if(GEngine != nullptr)
-        GEngine->GetObjectLibrary().UnregisterObjectUsage(objectID);
+        GEngine->GetObjectLibrary()->UnregisterObjectUsage(objectID);
 }
 
 template <ObjectClass _ObjectT>
 inline bool ObjectRef<_ObjectT>::IsValid() const 
 {
-    return GEngine->GetObjectLibrary().IsObjectValid(objectID);
+    return GEngine->GetObjectLibrary()->IsObjectValid(objectID);
 }
 
 template <ObjectClass _ObjectT>
 _ObjectT* ObjectRef<_ObjectT>::Load() 
 {
-    _ObjectT* obj = dynamic_cast<_ObjectT*>(GEngine->GetObjectLibrary().LoadObject(objectID));
+    _ObjectT* obj = dynamic_cast<_ObjectT*>(GEngine->GetObjectLibrary()->LoadObject(objectID));
     return obj;
 }

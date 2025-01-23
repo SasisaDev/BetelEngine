@@ -12,6 +12,7 @@ IMaterial::IMaterial(IShader* shader)
 
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    poolInfo.flags = 0;
     poolInfo.poolSizeCount = poolSizes.size();
     poolInfo.pPoolSizes = poolSizes.data();
     poolInfo.maxSets = IRenderUtility::GetFramesInFlight();
@@ -107,5 +108,7 @@ void IMaterial::SetBuffer(uint32_t binding, VkBuffer buffer, uint32_t size, bool
 }
 
 IMaterial::~IMaterial() {
+    //vkFreeDescriptorSets(IRenderUtility::GetDevice(), descriptorPool, descriptorSets.size(), descriptorSets.data());
+
     vkDestroyDescriptorPool(IRenderUtility::GetDevice(), descriptorPool, nullptr);
 }

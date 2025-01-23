@@ -26,28 +26,67 @@ void Engine::HandleIncomingInputEvent(InputEvent &event)
 }
 
 Engine::Engine()
-    : objectLibrary(), GC()
 {
     GEngine = this;
 
+    tickManager = new TickableManager();
+    timerManager = new TimerManager();
+
     // Initialize i18n
-    textManager.Initialize();
+    textManager = new TextManager();
+    textManager->Initialize();
 
     // Subscribe to input events
-    inputManager.OnInputEvent.BindMember(this, &Engine::HandleIncomingInputEvent);
+    inputManager = new InputManager();
+    inputManager->OnInputEvent.BindMember(this, &Engine::HandleIncomingInputEvent);
 
     canvasWidget = std::make_shared<CanvasWidget>();
 
+    // Initialize Object Library
+    objectLibrary = new ObjectLibrary;
+
     // Crawl all assets
+    assetLibrary = new AssetLibrary();
     AssetLibrary::Get().CrawlAssetsAll("./Content");
-    AssetLoader::Get().CrawlContent();
+
+    assetLoader = new AssetLoader();
+    assetLoader->CrawlContent();
+
+    GC = new AssetGarbageCollector();
+
 }
 
 Engine::~Engine()
 {
+    // Set GEngine to equall nullptr immediately
+    // To prevent other classes from attemping using it while in closing state 
+    GEngine = nullptr;
+
     world = nullptr;
 
+    delete GC;
+    GC = nullptr;
     
+    delete assetLoader;
+    assetLoader = nullptr;
+    
+    delete assetLibrary;
+    assetLibrary = nullptr;
+    
+    delete objectLibrary;
+    objectLibrary = nullptr;
+    
+    delete inputManager;
+    inputManager = nullptr;
+    
+    delete textManager;
+    textManager = nullptr;
+    
+    delete timerManager;
+    timerManager = nullptr;
+    
+    delete tickManager;
+    tickManager = nullptr;
 }
 
 void Engine::SetWorld(World* nWorld)
@@ -63,13 +102,13 @@ void Engine::LoadWorld(uint32_t worldID)
 {
     LOGF(Log, LogEngine, "Trying to load world: 0x%08X.", worldID);
 
-    if(!objectLibrary.IsObjectValid(worldID))
+    if(!objectLibrary->IsObjectValid(worldID))
     {
         LOG(Error, LogEngine, "LoadWorld failed: passed World Reference is invalid.");
         return;
     }
 
-    if(objectLibrary.LoadObject(worldID) == nullptr)
+    if(objectLibrary->LoadObject(worldID) == nullptr)
     {
         LOG(Error, LogEngine, "LoadWorld failed: passed World Reference is seemingly valid, but loading has failed.");
         return;
@@ -80,8 +119,8 @@ void Engine::LoadWorld(uint32_t worldID)
 
 void Engine::Tick(float DeltaTime)
 {
-    tickManager.Tick(DeltaTime);
-    timerManager.Tick(DeltaTime);
+    tickManager->Tick(DeltaTime);
+    timerManager->Tick(DeltaTime);
 
     world->Tick(DeltaTime);
 

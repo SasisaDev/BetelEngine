@@ -156,10 +156,15 @@ target_compile_definitions(EditorASAN PUBLIC EDITOR)
 
 set_property(TARGET EditorASAN PROPERTY CXX_STANDARD 20)
 
-target_compile_options(EditorASAN PUBLIC "/fsanitize=address" "/Zi" "/MT" "/sdl" "/permissive-") 
-target_link_options(EditorASAN PUBLIC "/INCREMENTAL:NO")
-if(WIN32)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  message(STATUS "ASAN: Detected MSVC")
+  target_compile_options(EditorASAN PUBLIC "/MTd" "/fsanitize=address" "/Zi" "/sdl" "/permissive-") 
+  target_link_options(EditorASAN PUBLIC "/INCREMENTAL:NO")
   target_link_options(EditorASAN PUBLIC "/subsystem:console")
+else()
+  message(STATUS "ASAN: Detected GNU or LLVM")
+  target_compile_options(EditorASAN PUBLIC "-fsanitize=address") 
+  target_link_options(EditorASAN PUBLIC "-fsanitize=address")
 endif()
 #set(CMAKE_EXE_LINKER_FLAGS "/subsystem:console ${CMAKE_EXE_LINKER_FLAGS} /subsystem:console")
 

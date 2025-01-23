@@ -8,6 +8,7 @@
 #include <AssetLoader/GC/AssetGarbageCollector.h>
 #include <Timer/Timer.h>
 #include <Object/ObjectLibrary.h>
+#include <AssetLoader/AssetLoader.h>
 
 class World;
 class Widget;
@@ -16,13 +17,14 @@ class Engine
 {
     virtual void HandleIncomingInputEvent(InputEvent &event);
 protected:
-    TickableManager tickManager;
-    TimerManager timerManager;
-    AssetLibrary assetLibrary;
-    InputManager inputManager;
-    TextManager textManager;
-    AssetGarbageCollector GC;
-    ObjectLibrary objectLibrary;
+    TickableManager* tickManager;
+    TimerManager* timerManager;
+    AssetLibrary* assetLibrary;
+    InputManager* inputManager;
+    TextManager* textManager;
+    AssetGarbageCollector* GC;
+    ObjectLibrary* objectLibrary;
+    AssetLoader* assetLoader;
 
     World* world = nullptr;
 
@@ -33,12 +35,13 @@ public:
     Engine();
     ~Engine();
 
-    TickableManager& GetTickManager() {return tickManager;}
-    TimerManager& GetTimer() {return timerManager;}
-    AssetLibrary& GetAssetLibrary() {return assetLibrary;}
-    InputManager& GetInputManager() {return inputManager;}
-    TextManager& GetTextManager() {return textManager;}
-    ObjectLibrary& GetObjectLibrary() {return objectLibrary;}
+    TickableManager* GetTickManager() {return tickManager;}
+    TimerManager* GetTimer() {return timerManager;}
+    AssetLibrary* GetAssetLibrary() {return assetLibrary;}
+    InputManager* GetInputManager() {return inputManager;}
+    TextManager* GetTextManager() {return textManager;}
+    ObjectLibrary* GetObjectLibrary() {return objectLibrary;}
+    AssetLoader* GetAssetLoader() {return assetLoader;}
 
     void SetGameFocused(bool bIsFocused) {IsGameFocused = bIsFocused;} 
     bool GetGameFocused() {return IsGameFocused;}

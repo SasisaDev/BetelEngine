@@ -14,7 +14,7 @@ class EditorTranslator : public EditorToolkitWindow
 public:
     EditorTranslator() {
         Visible = false;
-        utf8Japanese = GEngine->GetTextManager().GetLocales()[1]->Get("LocaleName");
+        utf8Japanese = GEngine->GetTextManager()->GetLocales()[1]->Get("LocaleName");
     }
 
     virtual void OnGUI(Window* window) {

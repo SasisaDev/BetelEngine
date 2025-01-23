@@ -484,8 +484,8 @@ void WorldRenderLayer::CreateUpscaleMaterial()
     //IFile* VertFile = IPlatform::Get()->OpenLocalFile("Shaders/TriangleUpscale/TriangleUpscale.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
     //IFile* FragFile = IPlatform::Get()->OpenLocalFile("Shaders/TriangleUpscale/TriangleUpscale.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
 
-    Resource *VertShader = AssetLoader::Get().LoadResource("Shaders/TriangleUpscale/TriangleUpscale.vert.spv");
-    Resource *FragShader = AssetLoader::Get().LoadResource("Shaders/TriangleUpscale/TriangleUpscale.frag.spv");
+    Resource *VertShader = GEngine->GetAssetLoader()->LoadResource("Shaders/TriangleUpscale/TriangleUpscale.vert.spv");
+    Resource *FragShader = GEngine->GetAssetLoader()->LoadResource("Shaders/TriangleUpscale/TriangleUpscale.frag.spv");
 
     if(VertShader == nullptr || FragShader == nullptr)
     {

@@ -41,10 +41,6 @@ protected:
     std::vector<BlameMasterFile*> blameMasters;
     std::vector<ArchiveFile*> resourceArchives;
 public:
-    static AssetLoader& Get() {
-        static AssetLoader loader;
-        return loader;
-    }
 
     void CrawlContent(std::string Path = "./Content");
 

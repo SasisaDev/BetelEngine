@@ -4,6 +4,7 @@
 #include <Resources/Resource.h>
 #include <AssetLoader/AssetLoader.h>
 #include <stb/stb_image.h>
+#include <Engine/Engine.h>
 
 bool ObjTextureType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjTextureType>("TEX");
 
@@ -13,7 +14,7 @@ void ObjTexture::LoadTexture()
         return;
     }
 
-    Resource *Image = AssetLoader::Get().LoadResource(path);
+    Resource *Image = GEngine->GetAssetLoader()->LoadResource(path);
 
     int texWidth, texHeight, texChannels;
     unsigned char* pixels = stbi_load_from_memory(reinterpret_cast<stbi_uc*>(Image->GetBuffer().data()), Image->GetBuffer().size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);

@@ -46,7 +46,7 @@ public:
     template<EntityClass EntityType>
     EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo = EntitySpawnInfo::Empty)
     {
-        EntityType* spawnedEntity = GEngine->GetObjectLibrary().CreateObject<EntityType>(name);
+        EntityType* spawnedEntity = GEngine->GetObjectLibrary()->CreateObject<EntityType>(name);
         spawnedEntity->DisplayName = name;
         spawnedEntity->Reparent(this);
         spawnedEntity->transform.Location = spawnInfo.Location;

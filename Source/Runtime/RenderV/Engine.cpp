@@ -14,6 +14,12 @@ IRenderEngine::~IRenderEngine()
     for(IRenderLayer* layer : Layers) {
         delete layer;
     }
+
+#   if !defined(NDEBUG)
+    vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+#   endif
+
+    IRenderUtility::Cleanup();
     
     vkFreeCommandBuffers(device, cmdPool, 1, &cmdBuffer);
     vkDestroyCommandPool(device, cmdPool, nullptr);

@@ -54,7 +54,7 @@ Editor::Editor() {
     edToolkit = new EditorToolkitBase;
 
     //Gizmo = new EditorGizmo();
-    GApplication->GetEngine()->GetInputManager().OnInputEvent.BindMember(this, &Editor::HandleIncomingInputEvent);
+    GApplication->GetEngine()->GetInputManager()->OnInputEvent.BindMember(this, &Editor::HandleIncomingInputEvent);
     EngineDelegates::OnWorldLoad.BindMember(this, &Editor::EventLoadWorld);
 
     CurrentWorld = GApplication->GetEngine()->GetWorld();
