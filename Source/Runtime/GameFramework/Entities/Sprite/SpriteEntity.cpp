@@ -3,9 +3,6 @@
 #include <stb/stb_image.h>
 #include <Math/Models.h>
 
-std::unique_ptr<Buffer> SpriteRenderProxy::vertexBuffer;
-std::unique_ptr<Buffer> SpriteRenderProxy::indexBuffer;
-
 void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
 {
     // Create Static Resources

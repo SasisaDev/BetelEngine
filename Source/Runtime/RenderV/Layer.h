@@ -11,6 +11,8 @@ protected:
     VkRenderPass renderPass;
     std::string localName;
 public:
+    virtual ~IRenderLayer();
+
     static IRenderLayerRef* CreateRef();
 
     inline VkRenderPass GetRenderPass() const {return renderPass;}

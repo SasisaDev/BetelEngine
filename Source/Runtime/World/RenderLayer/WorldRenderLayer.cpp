@@ -224,8 +224,8 @@ void WorldRenderLayerRef::onWorldLoad(World* loadedWorld)
 
     world->OnEntitySpawned.BindMember(this, &WorldRenderLayerRef::onWorldEntitySpawned);
 
-    for(Entity* entity : world->GetEntities()) {
-        if(EntityRenderProxy* renderProxy = entity->CreateRenderProxy()) {
+    for(const ObjectRef<Entity>& entity : world->GetEntities()) {
+        if(EntityRenderProxy* renderProxy = entity.Get()->CreateRenderProxy()) {
             renderProxy->CreateResources(this);
             renderProxies.push_back(renderProxy);
         }
@@ -768,7 +768,6 @@ WorldRenderLayerRef::~WorldRenderLayerRef()
     }
 
     vkDestroyImage(IRenderUtility::GetDevice(), pixelPerfectDepthImage, nullptr);
-    vkDestroyImageView(IRenderUtility::GetDevice(), pixelPerfectDepthImageView, nullptr);
     vkDestroyImageView(IRenderUtility::GetDevice(), pixelPerfectDepthImageView, nullptr);
     
     for(VkImage image : pixelPerfectImages){

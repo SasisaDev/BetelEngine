@@ -5,6 +5,23 @@
 
 #include <Log/Logger.h>
 
+IRenderEngine::~IRenderEngine()
+{
+    for(IRenderComposition* comp : Compositions) {
+        delete comp;
+    }
+
+    for(IRenderLayer* layer : Layers) {
+        delete layer;
+    }
+    
+    vkFreeCommandBuffers(device, cmdPool, 1, &cmdBuffer);
+    vkDestroyCommandPool(device, cmdPool, nullptr);
+    vkDestroySemaphore(device, submitSemaphore, nullptr);
+    vkDestroyDevice(device, nullptr);
+    vkDestroyInstance(instance, nullptr);
+}
+
 VkPhysicalDevice IRenderEngine::InternalPickPhysDevice(std::vector<VkPhysicalDevice> &PhysicalDevices)
 {
     for(int i = 0; i < PhysicalDevices.size(); i++)

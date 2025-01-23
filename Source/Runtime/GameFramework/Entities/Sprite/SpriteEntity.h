@@ -26,6 +26,7 @@ struct SpriteEntityPushConstants
     glm::int32_t Depth = 0;
 };
 
+// TODO: Add Batch rendering
 class SpriteRenderProxy : public EntityRenderProxy
 {
     std::unique_ptr<IShader> shader;
@@ -34,8 +35,8 @@ class SpriteRenderProxy : public EntityRenderProxy
 
     SpriteEntityPushConstants constants;
 
-    static std::unique_ptr<Buffer> vertexBuffer;
-    static std::unique_ptr<Buffer> indexBuffer;
+    std::unique_ptr<Buffer> vertexBuffer;
+    std::unique_ptr<Buffer> indexBuffer;
 public:
     SpriteRenderProxy(Entity* DefaultParent) : EntityRenderProxy(DefaultParent) {}
     virtual void CreateResources(WorldRenderLayerRef* layerRef) override;

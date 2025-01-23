@@ -30,9 +30,9 @@ public:
         HitResult result;
         result.Hitpoint = hitpoint;
 
-        for(Entity* ent : world->GetEntities()) {
-            IVec3 loc = ent->GetLocation();
-            Vec3 bbox = ent->GetBoundingBox();
+        for(const ObjectRef<Entity>& ent : world->GetEntities()) {
+            IVec3 loc = ent.Get()->GetLocation();
+            Vec3 bbox = ent.Get()->GetBoundingBox();
             bool isXHit = false;
             bool isYHit = false;
             // This is terrible, but okay for testing
@@ -48,7 +48,7 @@ public:
             }
 
             if(isXHit && isYHit) {
-                result.HitEntities.push_back(ent);
+                result.HitEntities.push_back(ent.Get());
                 // TODO: Multiscan, etc.
                 break;
             }

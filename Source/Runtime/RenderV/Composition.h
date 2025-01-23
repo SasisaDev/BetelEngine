@@ -77,6 +77,7 @@ protected:
     bool bCompositionDirty = false;
 public:
     IRenderComposition();
+    ~IRenderComposition();
 
     inline ERenderCompositionType GetType() const {return compositionType;}
     

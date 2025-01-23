@@ -31,6 +31,7 @@ protected:
     bool IsGameFocused = true;
 public:
     Engine();
+    ~Engine();
 
     TickableManager& GetTickManager() {return tickManager;}
     TimerManager& GetTimer() {return timerManager;}

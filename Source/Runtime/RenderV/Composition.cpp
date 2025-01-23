@@ -191,6 +191,31 @@ IRenderComposition::IRenderComposition()
 
 }
 
+IRenderComposition::~IRenderComposition()
+{
+    VkDevice dev = IRenderUtility::GetDevice();
+
+    for(IRenderLayerRef* ref : Layers) {
+        delete ref;
+    }
+
+    for(VkSemaphore semaphore : aquireSemaphores) {
+        vkDestroySemaphore(dev, semaphore, nullptr);
+    }
+
+    for(VkFramebuffer fb : framebuffers) {
+        vkDestroyFramebuffer(dev, fb, nullptr);
+    }
+
+    for(VkImageView imgv : imageViews) {
+        vkDestroyImageView(dev, imgv, nullptr);
+    }
+
+    vkDestroySwapchainKHR(dev, swapchain, nullptr);
+
+    vkDestroySurfaceKHR(IRenderUtility::GetInstance(), surface, nullptr);
+}
+
 bool IRenderComposition::Initialize(IRenderCompositionInitializer* initializer)
 {
     compositionType = initializer->GetType();

@@ -134,6 +134,12 @@ Application::~Application()
 
 	delete GameEngine;
 	GameEngine = nullptr;
+
+	delete Settings;
+	Settings = nullptr;
+
+	delete Windows;
+	Windows = nullptr;
 }
 
 window_t Application::CreateWindow(WindowCreateInfo& createInfo)

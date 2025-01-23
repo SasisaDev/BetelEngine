@@ -50,6 +50,7 @@ protected:
     std::vector<const char*> InternalAssembleDeviceLayers();
 
 public:
+    ~IRenderEngine();
 
     bool Initialize(std::vector<const char*> extensions = {}, std::vector<const char*> layers = {});
     void UpdateQueueFamilies(VkSurfaceKHR surface);

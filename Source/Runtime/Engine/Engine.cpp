@@ -26,6 +26,7 @@ void Engine::HandleIncomingInputEvent(InputEvent &event)
 }
 
 Engine::Engine()
+    : objectLibrary(), GC()
 {
     GEngine = this;
 
@@ -40,6 +41,13 @@ Engine::Engine()
     // Crawl all assets
     AssetLibrary::Get().CrawlAssetsAll("./Content");
     AssetLoader::Get().CrawlContent();
+}
+
+Engine::~Engine()
+{
+    world = nullptr;
+
+    
 }
 
 void Engine::SetWorld(World* nWorld)

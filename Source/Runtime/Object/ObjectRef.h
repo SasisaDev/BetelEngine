@@ -9,22 +9,15 @@ class Object;
 template <ObjectClass _ObjectT>
 class ObjectRef
 {
-    virtual void InternalRegisterUsage()
-    {
-        // TODO: Uncomment this once Library system is fully integrated
-        //ObjectLibrary::Get().RegisterObjectUsage(objectID);
-    }
-    virtual void InternalUnregisterUsage()
-    {
-        //ObjectLibrary::Get().UnregisterObjectUsage(objectID);
-    }
+    virtual void InternalRegisterUsage();
+    virtual void InternalUnregisterUsage();
 protected:
     _ObjectT* ref = nullptr;
     uint32_t objectID = 0;
 
 public:
     ObjectRef() {}
-    ObjectRef(ObjectRef<_ObjectT> &otherObjectRef) {
+    ObjectRef(const ObjectRef<_ObjectT> &otherObjectRef) {
         ref = otherObjectRef.ref;
         objectID = otherObjectRef.objectID;
         if(objectID) {
@@ -49,9 +42,38 @@ public:
     _ObjectT* Load();
 };
 
+#include <Engine/Engine.h>
+
 template <ObjectClass _ObjectT>
 class WeakObjectRef : public ObjectRef<_ObjectT>
 {
     virtual void InternalRegisterUsage() override {return;} 
     virtual void InternalUnregisterUsage() override {return;} 
 };
+
+template <ObjectClass _ObjectT>
+inline void ObjectRef<_ObjectT>::InternalRegisterUsage() 
+{
+    if(GEngine != nullptr)
+        GEngine->GetObjectLibrary().RegisterObjectUsage(objectID);
+}
+
+template <ObjectClass _ObjectT>
+inline void ObjectRef<_ObjectT>::InternalUnregisterUsage() 
+{
+    if(GEngine != nullptr)
+        GEngine->GetObjectLibrary().UnregisterObjectUsage(objectID);
+}
+
+template <ObjectClass _ObjectT>
+inline bool ObjectRef<_ObjectT>::IsValid() const 
+{
+    return GEngine->GetObjectLibrary().IsObjectValid(objectID);
+}
+
+template <ObjectClass _ObjectT>
+_ObjectT* ObjectRef<_ObjectT>::Load() 
+{
+    _ObjectT* obj = dynamic_cast<_ObjectT*>(GEngine->GetObjectLibrary().LoadObject(objectID));
+    return obj;
+}

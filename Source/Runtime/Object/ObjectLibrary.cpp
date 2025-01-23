@@ -4,6 +4,7 @@
 
 ObjectLibrary::~ObjectLibrary()
 {
+    objects.clear();
 }
 
 void ObjectLibrary::RegisterObjectUsage(uint32_t id) {

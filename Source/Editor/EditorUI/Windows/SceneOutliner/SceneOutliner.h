@@ -52,8 +52,8 @@ public:
         if(ImGui::Begin(GetName(), 0, ImGuiWindowFlags_NoCollapse)){
             ImGui::Text("%s", world->GetWorldName().c_str());
             
-            for(Entity* entity : world->GetEntities()) {
-                EntityContainer(entity);
+            for(const ObjectRef<Entity>& entity : world->GetEntities()) {
+                EntityContainer(entity.Get());
             }
         }
         ImGui::End();

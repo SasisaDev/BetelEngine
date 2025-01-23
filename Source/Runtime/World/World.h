@@ -8,6 +8,7 @@
 #include <Timer/Timer.h>
 #include <Input/InputEvent.h>
 #include <Object/ObjectLibrary.h>
+#include <Object/ObjectRef.h>
 #include <Engine/Engine.h>
 
 class World : public Object
@@ -16,7 +17,7 @@ class World : public Object
 protected:
     TimerManager timerManager;
 
-    std::vector<Entity*> entities;
+    std::vector<ObjectRef<Entity>> entities;
 
     bool BackgroundGradient = false;
     Vec3 BackgroundColor;
@@ -49,14 +50,14 @@ public:
         spawnedEntity->DisplayName = name;
         spawnedEntity->Reparent(this);
         spawnedEntity->transform.Location = spawnInfo.Location;
-        entities.push_back(spawnedEntity);
+        entities.emplace_back(spawnedEntity);
 
         OnEntitySpawned.Broadcast(spawnedEntity);
 
         return spawnedEntity;
     }
 
-    inline std::vector<Entity*> GetEntities() const {return entities;}
+    inline const std::vector<ObjectRef<Entity>>& GetEntities() const {return entities;}
 
     void SetWorldCameraPosition(IVec2 pos) {CameraPosition = pos;}
     void SetWorldCameraRotation(IVec2 rot) {CameraRotation = rot;}

@@ -14,6 +14,8 @@ class IRenderLayerRef
 protected:
     bool bDirty = false;
 public:
+    virtual ~IRenderLayerRef() {}
+
     void SetParentLayer(IRenderLayer* newParentLayer)
     {
         assert((parentLayer == nullptr) && "Layer ref must never be reparanted under normal conditions");
