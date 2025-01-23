@@ -7,6 +7,8 @@
 #include "Object.h"
 #include "ObjectConcept.h"
 
+class AssetLoader;
+
 struct ObjectDescriptor
 {
     Object* object = nullptr;
@@ -29,13 +31,16 @@ class ObjectLibrary
     uint32_t GenerateObjectID();
     // Generates unique Object ID, taking holes in a map into an account. It's way slower, but creates denser distribution
     uint32_t GenerateObjectIDSlow();
-protected:
-    friend class AssetLoader;
 
+    AssetLoader *loader;
+protected:
     std::unordered_map<uint32_t, ObjectDescriptor> objects;
 
     void AddObject(uint32_t id, Object* preloaded = nullptr);
 public:
+    ObjectLibrary(AssetLoader* assetLoader) : loader(assetLoader) {
+        assert(loader != nullptr && "ObjectLibrary ctor: assetLoader == nullptr");
+    }
     ~ObjectLibrary();
 
     template <ObjectClass _ObjectT>

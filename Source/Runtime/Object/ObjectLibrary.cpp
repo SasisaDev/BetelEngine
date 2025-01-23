@@ -69,7 +69,7 @@ Object* ObjectLibrary::LoadObject(uint32_t id)
     }
 
     // Load Object
-    LoadedObjectDescriptor loadedObject = GEngine->GetAssetLoader()->LoadObject(id);
+    LoadedObjectDescriptor loadedObject = loader->LoadObject(id);
     
     objects[id].object = loadedObject.object;
 

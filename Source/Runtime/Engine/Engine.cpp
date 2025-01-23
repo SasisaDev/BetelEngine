@@ -42,15 +42,17 @@ Engine::Engine()
 
     canvasWidget = std::make_shared<CanvasWidget>();
 
-    // Initialize Object Library
-    objectLibrary = new ObjectLibrary;
-
     // Crawl all assets
+    // TODO: Remove outdated code
     assetLibrary = new AssetLibrary();
     AssetLibrary::Get().CrawlAssetsAll("./Content");
 
+    // Initialize AssetLoader & Crawl content
     assetLoader = new AssetLoader();
     assetLoader->CrawlContent();
+
+    // Initialize Object Library
+    objectLibrary = new ObjectLibrary(assetLoader);
 
     GC = new AssetGarbageCollector();
 
@@ -67,14 +69,14 @@ Engine::~Engine()
     delete GC;
     GC = nullptr;
     
-    delete assetLoader;
-    assetLoader = nullptr;
-    
     delete assetLibrary;
     assetLibrary = nullptr;
     
     delete objectLibrary;
     objectLibrary = nullptr;
+
+    delete assetLoader;
+    assetLoader = nullptr;
     
     delete inputManager;
     inputManager = nullptr;

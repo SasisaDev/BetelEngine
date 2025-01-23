@@ -23,8 +23,8 @@ protected:
     InputManager* inputManager;
     TextManager* textManager;
     AssetGarbageCollector* GC;
-    ObjectLibrary* objectLibrary;
     AssetLoader* assetLoader;
+    ObjectLibrary* objectLibrary;
 
     World* world = nullptr;
 
