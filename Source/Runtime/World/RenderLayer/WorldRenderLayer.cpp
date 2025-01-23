@@ -293,7 +293,7 @@ bool WorldRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
     SceneDataStorages.resize(GetParentComposition()->GetFramesInFlight());
     for(const WorldRenderLayerGPUStorage& storage : SceneDataStorages)
     {
-        SceneDataSSBOs.push_back(new Buffer(sizeof(WorldRenderLayerGPUStorage), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
+        SceneDataSSBOs.emplace_back(new Buffer(sizeof(WorldRenderLayerGPUStorage), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT));
     }
 
     // Create Upscale Data SSBO
@@ -787,6 +787,12 @@ WorldRenderLayerRef::~WorldRenderLayerRef()
     }
 
     vkDestroySampler(IRenderUtility::GetDevice(), pixelPerfectSampler, nullptr);
+
+    for(auto* buffer : SceneDataSSBOs) {
+        delete buffer;
+    }
+
+    delete UpscaleDataSSBO;
 }
 
 bool WorldRenderLayer::Deinitialize()

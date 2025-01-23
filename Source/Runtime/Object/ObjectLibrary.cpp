@@ -3,9 +3,15 @@
 #include <AssetLoader/AssetLoader.h>
 #include <Engine/Engine.h>
 
+ObjectDescriptor::~ObjectDescriptor() 
+{
+    delete object;
+    object = nullptr;
+}
+
 ObjectLibrary::~ObjectLibrary()
 {
-    objects.clear();
+    
 }
 
 void ObjectLibrary::RegisterObjectUsage(uint32_t id) {
@@ -15,6 +21,17 @@ void ObjectLibrary::RegisterObjectUsage(uint32_t id) {
     }
 
     objects[id].usages += 1;
+
+    if(objects[id].usages > 1) {
+        return;
+    }
+
+    // If usages were 0, but now 1, yet object is not yet unloaded, remove mark
+    if(Object* obj = objects[id].object) {
+            if(obj->HasFlag(ObjectFlags::Unload)) {
+                obj->UnsetFlag(ObjectFlags::Unload);
+            }
+    }
 }
 
 void ObjectLibrary::UnregisterObjectUsage(uint32_t id) {
@@ -23,12 +40,18 @@ void ObjectLibrary::UnregisterObjectUsage(uint32_t id) {
         return;
     }
 
-    if(objects[id].usages == 0) {
-        assert(!"Object is not in use already. This assert indicates object lifecycle malfunction");
+    assert(objects[id].usages != 0 && "Object is not in use already. This assert indicates object lifecycle malfunction");
+
+    objects[id].usages -= 1;
+
+    if(objects[id].usages != 0) {
         return;
     }
 
-    objects[id].usages -= 1;
+    // If usages == 0, mark object for unloading
+    if(Object* obj = objects[id].object) {
+            obj->SetFlag(ObjectFlags::Unload);
+    }
 }
 
 void ObjectLibrary::AddObject(uint32_t id, Object* preloaded)

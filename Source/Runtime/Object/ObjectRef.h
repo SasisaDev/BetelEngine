@@ -40,6 +40,8 @@ public:
     inline _ObjectT* Get() const {return ref;} 
     inline uint32_t GetID() const {return objectID;} 
     _ObjectT* Load();
+
+    inline _ObjectT* operator ->() const {return Get();} 
 };
 
 #include <Engine/Engine.h>

@@ -3,6 +3,8 @@
 #include <map>
 #include <unordered_map>
 #include <cassert>
+#include <memory>
+#include <atomic>
 
 #include "Object.h"
 #include "ObjectConcept.h"
@@ -11,12 +13,12 @@ class AssetLoader;
 
 struct ObjectDescriptor
 {
-    Object* object = nullptr;
-    uint32_t usages = 0;
+    Object *object;
+    std::atomic_uint32_t usages = 0;
 
     ObjectDescriptor(Object* objPtr) {object = objPtr;}
     ObjectDescriptor() {}
-    ~ObjectDescriptor() {delete object;}
+    ~ObjectDescriptor();
 };
 
 class ObjectLibrary

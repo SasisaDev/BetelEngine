@@ -129,11 +129,11 @@ void Application::Initialize()
 
 Application::~Application()
 {
-	delete Render;
-	Render = nullptr;
-
 	delete GameEngine;
 	GameEngine = nullptr;
+
+	delete Render;
+	Render = nullptr;
 
 	delete Settings;
 	Settings = nullptr;

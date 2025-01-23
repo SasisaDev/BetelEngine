@@ -68,6 +68,8 @@ public:
     static std::string GetType() {return "OBJ";}
 
     void SetFlag(ObjectFlags flag) {Flags |= (uint8_t)flag;}
+    void UnsetFlag(ObjectFlags flag) {Flags &= ~(uint8_t)flag;}
+    bool HasFlag(ObjectFlags flag) {return (Flags & (uint8_t)flag) == (uint8_t)flag;}
 
     // Marks object Dirty, meaning that the object has changed and should be saved again
     void Dirty() {Flags |= (uint8_t)ObjectFlags::Dirty;}

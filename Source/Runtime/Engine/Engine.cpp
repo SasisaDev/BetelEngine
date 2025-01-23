@@ -54,7 +54,7 @@ Engine::Engine()
     // Initialize Object Library
     objectLibrary = new ObjectLibrary(assetLoader);
 
-    GC = new AssetGarbageCollector();
+    GC = new AssetGarbageCollector(objectLibrary);
 
 }
 

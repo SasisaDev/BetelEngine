@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 
 #include <World/Entity.h>
 
@@ -9,7 +10,7 @@
 class EntTilemapChunk;
 
 struct TilemapLayerData {
-    Buffer* UBO;
+    std::unique_ptr<Buffer> UBO;
 
     virtual std::string GetType() {return "TilemapLayerData";}
 };

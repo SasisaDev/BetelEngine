@@ -25,6 +25,7 @@
 #include <AssetLoader/AssetLoader.h>
 #include <GameFramework/Entities/Tilemap/Tilemap.h>
 #include <World/World.h>
+#include <GameFramework/Assets/Texture/Texture.h>
 
 int GuardedMain(int argc, char* argv[])
 {
@@ -118,6 +119,16 @@ int GuardedMain(int argc, char* argv[])
 	std::unique_ptr<IDirectory> contentDirectory = IPlatform::Get()->OpenContentDirectory("./");
 
 	Resource* testResourceShader = GEngine->GetAssetLoader()->LoadResource("Shaders/Test/Test.vert.spv");
+
+	// Testing Sprite System
+	ObjectRef<ObjTexture> texture = app.GetEngine()->GetObjectLibrary()->CreateObject<ObjTexture>("Test Texture");
+	texture->SetPath("Textures/test.png");
+	texture->LoadTexture();
+
+	ObjectRef<ObjAtlas> atlas = app.GetEngine()->GetObjectLibrary()->CreateObject<ObjAtlas>("Test Atlas");
+	atlas->SetTexture(texture);
+	atlas->SetSpriteRect(0, {0, 0, 540/2, 540/2});
+	atlas->SetSpriteRect(1, {540/2, 540/2, 540, 540});
 
 	/*AssetFile assetFile("Editor/Content/AssetFile");
 	assetFile.ReadFromDevice();*/

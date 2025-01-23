@@ -4,10 +4,12 @@
 
 ISamplerTexture::~ISamplerTexture()
 {
-    vkDestroyImage(IRenderUtility::GetDevice(), image, nullptr);
-    vkFreeMemory(IRenderUtility::GetDevice(), imageMemory, nullptr);
-    vkDestroySampler(IRenderUtility::GetDevice(), sampler, nullptr);
-    vkDestroyImageView(IRenderUtility::GetDevice(), imageView, nullptr);
+    VkDevice dev = IRenderUtility::GetDevice();
+
+    vkDestroyImage(dev, image, nullptr);
+    vkFreeMemory(dev, imageMemory, nullptr);
+    vkDestroySampler(dev, sampler, nullptr);
+    vkDestroyImageView(dev, imageView, nullptr);
 }
 
 void ISamplerTexture::InitializeTexture(int dimX, int dimY, unsigned char* data, int channels)

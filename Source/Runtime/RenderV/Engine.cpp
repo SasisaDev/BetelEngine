@@ -7,6 +7,8 @@
 
 IRenderEngine::~IRenderEngine()
 {
+    vkDeviceWaitIdle(device);
+
     for(IRenderComposition* comp : Compositions) {
         delete comp;
     }
@@ -15,16 +17,16 @@ IRenderEngine::~IRenderEngine()
         delete layer;
     }
 
+    IRenderUtility::Cleanup();
+    
+    vkDestroyCommandPool(device, cmdPool, nullptr);
+    vkDestroySemaphore(device, submitSemaphore, nullptr); 
+    vkDestroyDevice(device, nullptr);
+
 #   if !defined(NDEBUG)
     vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #   endif
 
-    IRenderUtility::Cleanup();
-    
-    vkFreeCommandBuffers(device, cmdPool, 1, &cmdBuffer);
-    vkDestroyCommandPool(device, cmdPool, nullptr);
-    vkDestroySemaphore(device, submitSemaphore, nullptr);
-    vkDestroyDevice(device, nullptr);
     vkDestroyInstance(instance, nullptr);
 }
 
