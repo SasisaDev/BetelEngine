@@ -17,4 +17,5 @@ class ObjAnimationType : public ObjectType
     static bool bRegistered;
 public:
     virtual Object* CreateInstance() override { return new ObjAnimation; }
+    virtual std::string_view DisplayName() override {return "Animation";}
 };

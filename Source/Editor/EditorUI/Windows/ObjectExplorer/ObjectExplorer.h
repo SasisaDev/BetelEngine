@@ -4,37 +4,39 @@
 
 #include <Toolkit/ToolkitWindow.h>
 #include <Core/Application/Application.h>
+#include <Object/ObjectTypeLibrary.h>
 
 #include <imgui/imgui_internal.h>
+#include <EditorUI/WindowLibrary/BetelInputs.h>
 
-class EditorAssetExplorer : public EditorToolkitWindow
+class EditorObjectExplorer : public EditorToolkitWindow
 {
     struct HierarchyNode
     {
         std::string Name;
-        IPath Path;
+        std::string ID;
+        std::string Parent;
         bool Selected = false;
         bool Open = false;
-        std::vector<HierarchyNode *> Children;
+        std::vector<HierarchyNode> Children;
     };
 
-    std::set<std::string> InvisibleDirectoryNames = {
-        "i18n"
-    };
 protected:
-    Text TabName = Text("EditorUI", "AssetExplorer", "TabName");
+    Text TabName = Text("EditorUI", "ObjectExplorer", "TabName");
     std::string TranslatedName;
 
-    const char *HierarchyName = "##AssetsHierarchy";
-    const char *ContentsName = "##AssetsContents";
+    const char *HierarchyName = "##ObjectsHierarchy";
+    const char *ContentsName = "##ObjectsContents";
+    const char *FilterName = "##ObjectsFilter";
+    std::string Filter;
 
-    std::vector<HierarchyNode *> hierarchy;
+    std::vector<HierarchyNode> hierarchy;
     HierarchyNode *currentSelection = nullptr;
 
     ImGuiTreeNodeFlags baseTreeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
 public:
-    EditorAssetExplorer()
+    EditorObjectExplorer()
     {
         TranslatedName = TabName.Get();
         UpdateHierarchy();
@@ -42,76 +44,72 @@ public:
 
     virtual const char* GetName() override {return TranslatedName.c_str();}
 
-    void PopulateNodeRecursive(HierarchyNode *node, IDirectory *dir)
-    {
-        for (IDirectory *child : dir->GetChildren())
-        {
-            if (!child->IsDirectory())
-                continue;
-
-            if(InvisibleDirectoryNames.contains(child->GetPath().GetName()))
-                continue;
-
-            HierarchyNode *newNode = new HierarchyNode();
-            newNode->Name = child->GetPath().GetName();
-            newNode->Path = child->GetPath();
-            PopulateNodeRecursive(newNode, child);
-            node->Children.push_back(newNode);
-        }
-    }
-
     void UpdateHierarchy()
     {
-        std::unique_ptr<IDirectory> hierarchyDir = IPlatform::Get()->OpenLocalDirectory("Content", DIRECTORY_FLAG_RECURSIVE);
+        ObjectTypeLibrary &lib = ObjectTypeLibrary::Get();
+        auto map = lib.GetObjectTypes();
 
-        if (!hierarchyDir.get() || !hierarchyDir->Exists())
-        {
-            LOG(Fatal, LogAssetExplorer, "Failed to open ./Content/ folder, you should create it yourself if it doesn't exist!");
-        }
-
+        // Clear outdated hierarchy
         hierarchy.clear();
 
-        HierarchyNode *gameNode = new HierarchyNode();
-        gameNode->Name = "Game";
-        gameNode->Path = hierarchyDir->GetPath();
-        PopulateNodeRecursive(gameNode, hierarchyDir.get());
-        hierarchy.push_back(gameNode);
-    }
+        // Search through the whole types map to build hierarchy
+        for(auto it = map.begin(); it != map.end(); it++) {
+            if(!it->second->ShowInEditor()) {
+                continue;
+            }
 
-    void UnselectAll(std::vector<HierarchyNode *> nodes)
-    {
-        for (HierarchyNode *child : nodes)
-        {
-            child->Selected = false;
-            UnselectAll(child->Children);
+            HierarchyNode node;
+            node.ID = it->first;
+            node.Name = it->second->DisplayName();
+            
+            // Add to the global hierarchy if has no parent
+            // FIXME: Or to parent if it has a parent
+            if(it->second->GetParent().empty()) {
+                hierarchy.emplace_back(node);
+            } else {
+                for(HierarchyNode& parent : hierarchy) {
+                    if(parent.ID == it->second->GetParent()) {
+                        parent.Children.emplace_back(node);
+                    }
+                }
+            }
         }
     }
 
-    void DrawHierarchyElementRecursive(HierarchyNode *node, bool indent)
+    void UnselectAll(std::vector<HierarchyNode> &nodes)
+    {
+        for (HierarchyNode& child : nodes)
+        {
+            child.Selected = false;
+            UnselectAll(child.Children);
+        }
+    }
+
+    void DrawHierarchyElementRecursive(HierarchyNode& node, bool indent)
     {
 
         ImGuiTreeNodeFlags nodeFlags = baseTreeFlags;
-        if (node->Selected)
+        if (node.Selected)
             nodeFlags |= ImGuiTreeNodeFlags_Selected;
 
-        if (node->Children.size() == 0)
+        if (node.Children.size() == 0)
             nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
-        node->Open = ImGui::TreeNodeEx(node->Path.GetPath().c_str(), nodeFlags, node->Name.c_str());
+        node.Open = ImGui::TreeNodeEx(node.ID.data(), nodeFlags, node.Name.c_str());
         if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
         {
-            currentSelection = node;
+            currentSelection = &node;
             UnselectAll(hierarchy);
-            node->Selected = true;
+            node.Selected = true;
         }
 
         // FIXME: Leafs are considered open, but they should not. Should local ImGui code be changed?
-        if (node->Children.size() == 0)
-            node->Open = false;
+        if (node.Children.size() == 0)
+            node.Open = false;
 
-        if (node->Open)
+        if (node.Open)
         {
-            for (HierarchyNode *child : node->Children)
+            for (HierarchyNode &child : node.Children)
             {
                 DrawHierarchyElementRecursive(child, true);
             }
@@ -121,7 +119,7 @@ public:
 
     virtual void OnGUI(Window *window)
     {
-        AssetLibrary &lib = AssetLibrary::Get();
+        ObjectTypeLibrary &lib = ObjectTypeLibrary::Get();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::SetNextWindowBgAlpha(1);
@@ -130,7 +128,7 @@ public:
             ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
             ImGuiViewport *viewport = ImGui::GetWindowViewport();
 
-            ImGuiID dockspace_id = ImGui::GetID("AssetExplorerDockSpace");
+            ImGuiID dockspace_id = ImGui::GetID("ObjectExplorerDockSpace");
             ImGui::SetNextWindowBgAlpha(.0f);
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
 
@@ -143,10 +141,12 @@ public:
                 ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
                 ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
-                auto dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.2f, nullptr, &dockspace_id);
+                auto dock_id_top = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Up, 0.045f, nullptr, &dockspace_id);
+                auto dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.12f, nullptr, &dockspace_id);
 
                 // we now dock our windows into the docking node we made above
                 ImGui::DockBuilderDockWindow(ContentsName, dockspace_id);
+                ImGui::DockBuilderDockWindow(FilterName, dock_id_top);
                 ImGui::DockBuilderDockWindow(HierarchyName, dock_id_left);
                 ImGui::DockBuilderFinish(dockspace_id);
             }
@@ -155,9 +155,18 @@ public:
             noTab_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
 
             ImGui::SetNextWindowClass(&noTab_class);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(6, 6));
+            if (ImGui::Begin(FilterName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove))
+            {
+                BImGui::InputString("Filter", Filter);
+            }
+            ImGui::PopStyleVar();
+            ImGui::End();
+
+            ImGui::SetNextWindowClass(&noTab_class);
             if (ImGui::Begin(HierarchyName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove))
             {
-                for (HierarchyNode *node : hierarchy)
+                for (HierarchyNode &node : hierarchy)
                 {
                     DrawHierarchyElementRecursive(node, false);
                 }
@@ -169,7 +178,7 @@ public:
             {
                 if(currentSelection) 
                 {
-
+                    
                 }
             }
             ImGui::End();

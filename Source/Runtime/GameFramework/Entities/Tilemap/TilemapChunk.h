@@ -27,5 +27,6 @@ class EntTilemapChunkType : public ObjectType
 public:
     virtual Object* CreateInstance() override { return new EntTilemapChunk; }
     virtual bool ShowInEditor() override { return false; }
+    virtual std::string_view DisplayName() override {return "TilemapChunk";}
 };
 

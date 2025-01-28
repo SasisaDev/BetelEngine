@@ -46,5 +46,7 @@ class EntTilemapType : public ObjectType
     static bool bRegistered;
 public:
     virtual Object* CreateInstance() { return new EntTilemap; }
+    virtual bool ShowInEditor() override { return false; }
+    virtual std::string_view DisplayName() override {return "Tilemap";}
 };
 

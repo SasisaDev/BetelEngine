@@ -31,4 +31,5 @@ class ObjTextureType : public ObjectType
     static bool bRegistered;
 public:
     virtual Object* CreateInstance() override { return new ObjTexture; }
+    virtual std::string_view DisplayName() override {return "Texture";}
 };

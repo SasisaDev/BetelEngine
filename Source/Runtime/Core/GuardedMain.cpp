@@ -130,6 +130,8 @@ int GuardedMain(int argc, char* argv[])
 	atlas->SetSpriteRect(0, {0, 0, 540/2, 540/2});
 	atlas->SetSpriteRect(1, {540/2, 540/2, 540, 540});
 
+	std::string atlasType = atlas->GetType();
+
 	/*AssetFile assetFile("Editor/Content/AssetFile");
 	assetFile.ReadFromDevice();*/
 

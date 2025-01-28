@@ -32,4 +32,8 @@ public:
         }
         return nullptr;
     }
+
+    inline const std::unordered_map<std::string, ObjectType*>& GetObjectTypes() {
+        return objectTypes;
+    }
 };

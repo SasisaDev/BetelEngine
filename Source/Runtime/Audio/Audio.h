@@ -18,4 +18,5 @@ class ObjAudioType : public ObjectType
     static bool bRegistered;
 public:
     virtual Object* CreateInstance() override { return new ObjAudio; }
+    virtual std::string_view DisplayName() override {return "Audio";}
 };

@@ -22,4 +22,5 @@ class ObjBrushSpriteType : public ObjectType
     static bool bRegistered;
 public:
     virtual Object* CreateInstance() override { return new ObjBrushSprite; }
+    virtual std::string_view DisplayName() override {return "Brush Sprite";}
 };

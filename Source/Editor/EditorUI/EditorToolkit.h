@@ -11,6 +11,7 @@
 #include "Windows/MainToolbar/MainToolbar.h"
 #include "Windows/Settings/GameSettings.h"
 #include "Windows/AssetExplorer/AssetExplorer.h"
+#include "Windows/ObjectExplorer/ObjectExplorer.h"
 
 class EditorToolkitBase : public EditorToolkit {
     bool firstInitialization = true;
@@ -19,6 +20,7 @@ class EditorToolkitBase : public EditorToolkit {
     EditorViewport gameViewport;
     EditorLogViewer logViewer;
     EditorAssetExplorer assetExplorer;
+    EditorObjectExplorer objectExplorer;
 
     EditorTranslator translator;
 
@@ -126,6 +128,7 @@ public:
         gameViewport.DrawGUI(window);
         logViewer.DrawGUI(window);
         assetExplorer.DrawGUI(window);
+        objectExplorer.DrawGUI(window);
 
         // Windows
         translator.DrawGUI(window);

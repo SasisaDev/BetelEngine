@@ -41,7 +41,7 @@ public:
     inline uint32_t GetID() const {return objectID;} 
     _ObjectT* Load();
 
-    inline _ObjectT* operator ->() const {return Get();} 
+    inline _ObjectT* operator ->() const {return ref;} 
 };
 
 #include <Engine/Engine.h>

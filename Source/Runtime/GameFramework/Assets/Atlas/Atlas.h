@@ -12,6 +12,8 @@ class ObjAtlas : public Object
     ObjectRef<ObjTexture> texture;
     std::map<uint16_t, IVec4> sprites;
 public:
+    static std::string GetType() {return "ATLAS";}
+public:
     void SetTexture(const ObjectRef<ObjTexture>& newTex) {texture = newTex;}
 
     inline const IVec4& GetSpriteRect(uint16_t id) const;
@@ -30,4 +32,5 @@ class ObjAtlasType : public ObjectType
     static bool bRegistered;
 public:
     virtual Object* CreateInstance() override { return new ObjAtlas; }
+    virtual std::string_view DisplayName() override {return "Atlas";}
 };
