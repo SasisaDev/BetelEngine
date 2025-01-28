@@ -12,6 +12,7 @@
 
 class ObjectType;
 class World;
+class Entity;
 
 /*
  * Loaded objects may contain these flags, that define their runtime behaviour
@@ -103,9 +104,6 @@ public:
     
     //~Reflection API start
 #ifdef EDITOR 
-    virtual bool CanDragIntoWorld() {return false;}
-    virtual void OnDraggedIntoWorld(World* world) {} 
-
     virtual PropertyContainer GetEditorReflectedProperties() override;
 #endif
     //~Reflection API stop
@@ -116,6 +114,8 @@ class ObjectType
 public:
     virtual Object* CreateInstance() { return new Object; }
     virtual bool ShowInEditor() { return true; }
+    virtual bool CanDragIntoWorld() {return false;}
+    virtual Entity* GetWorldEntity() {return nullptr;}
     virtual std::string_view DisplayName() {return "Object";}
     virtual std::string_view GetParent() {return "";}
 };

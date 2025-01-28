@@ -102,12 +102,12 @@ void SpriteRenderProxy::Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* l
     IRenderUtility::EndDebugLabel(cmdBuffer);
 }
 
-void SpriteEntity::MakeSizeMatchTexture()
+void EntSprite::MakeSizeMatchTexture()
 {
 
 }
 
-void SpriteEntity::Tick(float deltaTime)
+void EntSprite::Tick(float deltaTime)
 {
     // TODO: Remove experiment code
     static float param = 0;

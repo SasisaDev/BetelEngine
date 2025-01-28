@@ -115,6 +115,9 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
         BMF->FileTable.pObjects[i].offset = ConvertChar::ToUInt32(buffer);
 
         BMF->Table[BMF->FileTable.pObjects[i].ID] = BMF->FileTable.pObjects[i].offset;
+
+        // Notify Object Library, that new Object ID is registered
+        OnNewObjectID.Broadcast(BMF->FileTable.pObjects[i].ID);
     }
     
     delete[] buffer;
@@ -179,12 +182,14 @@ BlameMasterFileObjectContainer AssetLoader::ReadObject(BlameMasterFile* master, 
     }
 
     CHECKREAD(container.object.uClassNameLength);
+    container.object.pClassName = new char[container.object.uClassNameLength];
     memmove(container.object.pClassName, buffer, container.object.uClassNameLength);
 
     CHECKREAD(2);
     container.object.uNameLength = ConvertChar::ToUInt16(buffer);
 
     CHECKREAD(container.object.uNameLength);
+    container.object.pName = new char[container.object.uNameLength];
     memmove(container.object.pName, buffer, container.object.uNameLength);
 
     CHECKREAD(4);
@@ -199,16 +204,18 @@ BlameMasterFileObjectContainer AssetLoader::ReadObject(BlameMasterFile* master, 
         CHECKREAD(1);
         container.object.pFields[fieldIndex].uType = ConvertChar::ToUInt8(buffer);
 
-        CHECKREAD(1);
-        container.object.pFields[fieldIndex].uFieldNameLength = ConvertChar::ToUInt8(buffer);
+        CHECKREAD(2);
+        container.object.pFields[fieldIndex].uFieldNameLength = ConvertChar::ToUInt16(buffer);
 
         CHECKREAD(container.object.pFields[fieldIndex].uFieldNameLength);
+        container.object.pFields[fieldIndex].pFieldName = new char[container.object.pFields[fieldIndex].uFieldNameLength];
         memmove(container.object.pFields[fieldIndex].pFieldName, buffer, container.object.pFields[fieldIndex].uFieldNameLength);
 
         CHECKREAD(4);
         container.object.pFields[fieldIndex].uDataSize = ConvertChar::ToUInt32(buffer);
 
         CHECKREAD(container.object.pFields[fieldIndex].uDataSize);
+        container.object.pFields[fieldIndex].pData = new char[container.object.pFields[fieldIndex].uDataSize];
         memmove(container.object.pFields[fieldIndex].pData, buffer, container.object.pFields[fieldIndex].uDataSize);
     }
 

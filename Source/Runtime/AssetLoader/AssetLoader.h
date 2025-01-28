@@ -14,6 +14,7 @@
 
 #include <Resources/Resource.h>
 #include <Object/Object.h>
+#include <Delegate/Delegate.h>
 
 struct ConvertChar 
 {
@@ -41,6 +42,8 @@ protected:
     std::vector<BlameMasterFile*> blameMasters;
     std::vector<ArchiveFile*> resourceArchives;
 public:
+
+    MulticastDelegate<uint32_t> OnNewObjectID;
 
     void CrawlContent(std::string Path = "./Content");
 

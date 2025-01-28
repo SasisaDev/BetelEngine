@@ -22,5 +22,7 @@ class ObjSpriteType : public ObjectType
     static bool bRegistered;
 public:
     virtual Object* CreateInstance() override { return new ObjSprite; }
+    virtual bool CanDragIntoWorld() override {return true;}
+    virtual Entity* GetWorldEntity() override;
     virtual std::string_view DisplayName() override {return "Sprite";}
 };

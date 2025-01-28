@@ -49,7 +49,7 @@ struct ObjectField
 
 struct ObjectFieldInt : public ObjectField
 {
-    ObjectFieldInt() : ObjectField(ObjectFieldType::Int) {}
+    ObjectFieldInt(int32_t dat) : ObjectField(ObjectFieldType::Int), Data(dat) {}
     int32_t Data;
 
     void Store(int32_t newData) {
@@ -63,7 +63,7 @@ struct ObjectFieldInt : public ObjectField
 
 struct ObjectFieldUInt : public ObjectField
 {
-    ObjectFieldUInt() : ObjectField(ObjectFieldType::UInt) {}
+    ObjectFieldUInt(uint32_t dat) : ObjectField(ObjectFieldType::UInt), Data(dat) {}
     uint32_t Data;
 
     void Store(uint32_t newData) {
@@ -77,7 +77,7 @@ struct ObjectFieldUInt : public ObjectField
 
 struct ObjectFieldFloat : public ObjectField
 {
-    ObjectFieldFloat() : ObjectField(ObjectFieldType::Float) {}
+    ObjectFieldFloat(float dat) : ObjectField(ObjectFieldType::Float), Data(dat) {}
     float Data;
 
     void Store(float newData) {
@@ -91,7 +91,7 @@ struct ObjectFieldFloat : public ObjectField
 
 struct ObjectFieldDouble : public ObjectField
 {
-    ObjectFieldDouble() : ObjectField(ObjectFieldType::Double) {}
+    ObjectFieldDouble(double dat) : ObjectField(ObjectFieldType::Double), Data(dat) {}
     double Data;
 
     void Store(double newData) {
@@ -105,7 +105,7 @@ struct ObjectFieldDouble : public ObjectField
 
 struct ObjectFieldString : public ObjectField
 {
-    ObjectFieldString() : ObjectField(ObjectFieldType::String) {}
+    ObjectFieldString(const std::string & nDat) : ObjectField(ObjectFieldType::String), Data(nDat) {}
     std::string Data;
 
     void Store(const std::string& newData) {
@@ -119,12 +119,12 @@ struct ObjectFieldString : public ObjectField
 
 struct ObjectFieldText : public ObjectFieldString
 {
-    ObjectFieldText() {Type = ObjectFieldType::Text;}
+    ObjectFieldText(const std::string& dat) : ObjectFieldString(dat) {Type = ObjectFieldType::Text;}
 };
 
 struct ObjectFieldObject : public ObjectFieldUInt
 {
-    ObjectFieldObject() {Type = ObjectFieldType::Object;}
+    ObjectFieldObject(uint32_t id) : ObjectFieldUInt(id) {Type = ObjectFieldType::Object;}
 };
 
 #define GetAndSet(ObjectType, CType, Def) \
@@ -134,10 +134,10 @@ void Set##ObjectType (const std::string& Name, CType Value) {\
             ((ObjectField##ObjectType *)(Fields[Name]))->Store(Value);\
         } else {\
             delete Fields[Name]; \
-            Fields[Name] = new ObjectField##ObjectType();\
+            Fields[Name] = new ObjectField##ObjectType( Value );\
         } \
     } else{\
-        Fields[Name] = new ObjectField##ObjectType();\
+        Fields[Name] = new ObjectField##ObjectType( Value );\
     }\
 }\
 \

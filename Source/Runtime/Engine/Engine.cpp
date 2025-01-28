@@ -47,15 +47,16 @@ Engine::Engine()
     assetLibrary = new AssetLibrary();
     AssetLibrary::Get().CrawlAssetsAll("./Content");
 
-    // Initialize AssetLoader & Crawl content
+    // Initialize AssetLoader
     assetLoader = new AssetLoader();
-    assetLoader->CrawlContent();
 
     // Initialize Object Library
     objectLibrary = new ObjectLibrary(assetLoader);
 
     GC = new AssetGarbageCollector(objectLibrary);
 
+    // Crawl Content
+    assetLoader->CrawlContent();
 }
 
 Engine::~Engine()

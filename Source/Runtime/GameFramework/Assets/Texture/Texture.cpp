@@ -33,7 +33,7 @@ void ObjTexture::Serialize(FieldContainer& cont)
     } 
     else 
     {
-        path = cont.GetString("tex");
+        path = cont.GetString("path");
         LoadTexture();
     }
 }

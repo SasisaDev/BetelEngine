@@ -42,7 +42,7 @@ public:
         UpdateHierarchy();
     }
 
-    virtual const char* GetName() override {return TranslatedName.c_str();}
+    virtual const char *GetName() override { return TranslatedName.c_str(); }
 
     void UpdateHierarchy()
     {
@@ -52,23 +52,36 @@ public:
         // Clear outdated hierarchy
         hierarchy.clear();
 
+        // Add All category
+        HierarchyNode allNode;
+        allNode.ID = "__ALL__";
+        allNode.Name = "All*";
+        hierarchy.push_back(allNode);
+
         // Search through the whole types map to build hierarchy
-        for(auto it = map.begin(); it != map.end(); it++) {
-            if(!it->second->ShowInEditor()) {
+        for (auto it = map.begin(); it != map.end(); it++)
+        {
+            if (!it->second->ShowInEditor())
+            {
                 continue;
             }
 
             HierarchyNode node;
             node.ID = it->first;
             node.Name = it->second->DisplayName();
-            
+
             // Add to the global hierarchy if has no parent
             // FIXME: Or to parent if it has a parent
-            if(it->second->GetParent().empty()) {
+            if (it->second->GetParent().empty())
+            {
                 hierarchy.emplace_back(node);
-            } else {
-                for(HierarchyNode& parent : hierarchy) {
-                    if(parent.ID == it->second->GetParent()) {
+            }
+            else
+            {
+                for (HierarchyNode &parent : hierarchy)
+                {
+                    if (parent.ID == it->second->GetParent())
+                    {
                         parent.Children.emplace_back(node);
                     }
                 }
@@ -78,14 +91,14 @@ public:
 
     void UnselectAll(std::vector<HierarchyNode> &nodes)
     {
-        for (HierarchyNode& child : nodes)
+        for (HierarchyNode &child : nodes)
         {
             child.Selected = false;
             UnselectAll(child.Children);
         }
     }
 
-    void DrawHierarchyElementRecursive(HierarchyNode& node, bool indent)
+    void DrawHierarchyElementRecursive(HierarchyNode &node, bool indent)
     {
 
         ImGuiTreeNodeFlags nodeFlags = baseTreeFlags;
@@ -176,9 +189,16 @@ public:
             ImGui::SetNextWindowClass(&noTab_class);
             if (ImGui::Begin(ContentsName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove))
             {
-                if(currentSelection) 
+                if (currentSelection)
                 {
-                    
+                    if (currentSelection->ID == "__ALL__")
+                    {
+                        // Display all objects
+                    }
+                    else
+                    {
+                        // Display objects of category
+                    }
                 }
             }
             ImGui::End();

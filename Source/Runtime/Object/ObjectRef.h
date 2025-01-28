@@ -77,6 +77,10 @@ inline bool ObjectRef<_ObjectT>::IsValid() const
 template <ObjectClass _ObjectT>
 _ObjectT* ObjectRef<_ObjectT>::Load() 
 {
+    if(ref != nullptr) 
+        return ref;
+    
     _ObjectT* obj = dynamic_cast<_ObjectT*>(GEngine->GetObjectLibrary()->LoadObject(objectID));
+    ref = obj;
     return obj;
 }

@@ -9,9 +9,25 @@ ObjectDescriptor::~ObjectDescriptor()
     object = nullptr;
 }
 
+ObjectLibrary::ObjectLibrary(AssetLoader* assetLoader)
+ : loader(assetLoader) 
+{
+    assert(loader != nullptr && "ObjectLibrary ctor: assetLoader == nullptr");
+    
+    loader->OnNewObjectID.BindMember(this, &ObjectLibrary::RegisterObjectID);
+}
+
 ObjectLibrary::~ObjectLibrary()
 {
     
+}
+
+void ObjectLibrary::RegisterObjectID(uint32_t ID)
+{
+    if(objects.contains(ID)) {
+        assert(!"Passed Object ID is already registered in the engine");
+    }
+    objects.emplace(ID, nullptr);
 }
 
 void ObjectLibrary::RegisterObjectUsage(uint32_t id) {

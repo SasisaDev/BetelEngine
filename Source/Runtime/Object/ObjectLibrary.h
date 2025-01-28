@@ -34,15 +34,15 @@ class ObjectLibrary
     // Generates unique Object ID, taking holes in a map into an account. It's way slower, but creates denser distribution
     uint32_t GenerateObjectIDSlow();
 
+    void RegisterObjectID(uint32_t ID);
+
     AssetLoader *loader;
 protected:
     std::unordered_map<uint32_t, ObjectDescriptor> objects;
 
     void AddObject(uint32_t id, Object* preloaded = nullptr);
 public:
-    ObjectLibrary(AssetLoader* assetLoader) : loader(assetLoader) {
-        assert(loader != nullptr && "ObjectLibrary ctor: assetLoader == nullptr");
-    }
+    ObjectLibrary(AssetLoader* assetLoader);
     ~ObjectLibrary();
 
     template <ObjectClass _ObjectT>

@@ -21,13 +21,14 @@ IRenderEngine::~IRenderEngine()
     
     vkDestroyCommandPool(device, cmdPool, nullptr);
     vkDestroySemaphore(device, submitSemaphore, nullptr); 
-    vkDestroyDevice(device, nullptr);
+    // FIXME: Eliminate errors on device and instance destruction and uncomment
+    //vkDestroyDevice(device, nullptr);
 
 #   if !defined(NDEBUG)
     vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #   endif
 
-    vkDestroyInstance(instance, nullptr);
+    //vkDestroyInstance(instance, nullptr);
 }
 
 VkPhysicalDevice IRenderEngine::InternalPickPhysDevice(std::vector<VkPhysicalDevice> &PhysicalDevices)

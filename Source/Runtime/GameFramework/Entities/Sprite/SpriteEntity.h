@@ -44,7 +44,7 @@ public:
     virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef) override;
 };
 
-class SpriteEntity : public Entity
+class EntSprite : public Entity
 {
     ObjectRef<ObjSprite> sprite;
     ObjectRef<ObjAtlas> atlas;
@@ -53,7 +53,7 @@ public:
     AssetPtr<MaterialAsset> material;
     //AssetPtr<Texture2D> texture;
 
-    SpriteEntity() {
+    EntSprite() {
         DisplayName = "Sprite";
     }
 
