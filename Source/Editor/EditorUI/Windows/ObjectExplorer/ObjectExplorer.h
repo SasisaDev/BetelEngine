@@ -32,8 +32,11 @@ protected:
 
     std::vector<HierarchyNode> hierarchy;
     HierarchyNode *currentSelection = nullptr;
+    HierarchyNode *previousSelection = nullptr;
 
     ImGuiTreeNodeFlags baseTreeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+    std::vector<Object*> displayedObjects;
 
 public:
     EditorObjectExplorer()
@@ -89,6 +92,26 @@ public:
         }
     }
 
+    void UpdateDisplayedObjects()
+    {
+        if(!currentSelection){
+            displayedObjects.clear();
+            return; 
+        }
+        if (currentSelection->ID == "__ALL__")
+        {
+            // Display all objects
+            displayedObjects = GEngine->GetObjectLibrary()->GetAllObjects();
+        }
+        else
+        {
+            // Display objects of category
+            displayedObjects = GEngine->GetObjectLibrary()->GetObjectsOfTypeID(currentSelection->ID);
+        }
+        
+        // TODO: Implement name filtering
+    }
+
     void UnselectAll(std::vector<HierarchyNode> &nodes)
     {
         for (HierarchyNode &child : nodes)
@@ -127,6 +150,18 @@ public:
                 DrawHierarchyElementRecursive(child, true);
             }
             ImGui::TreePop();
+        }
+    }
+
+    void DrawObjects()
+    {
+        for(Object* obj : displayedObjects)
+        {
+            if(ImGui::Button(obj->GetName().c_str()))
+            {
+                // TODO: Create Edit View Factory, that takes Type String and constructs appropriate Edit View
+                const std::string& type = obj->GetType();
+            }
         }
     }
 
@@ -183,23 +218,19 @@ public:
                 {
                     DrawHierarchyElementRecursive(node, false);
                 }
+
+                if(previousSelection != currentSelection)
+                {
+                    UpdateDisplayedObjects();
+                    previousSelection = currentSelection;
+                }
             }
             ImGui::End();
 
             ImGui::SetNextWindowClass(&noTab_class);
             if (ImGui::Begin(ContentsName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove))
             {
-                if (currentSelection)
-                {
-                    if (currentSelection->ID == "__ALL__")
-                    {
-                        // Display all objects
-                    }
-                    else
-                    {
-                        // Display objects of category
-                    }
-                }
+                DrawObjects();
             }
             ImGui::End();
         }

@@ -6,7 +6,7 @@
 #include <memory>
 #include <Platform/Interface/Files/IFile.h>
 
-#define BLAME_MASTER_FILE_EXT "bmf"
+#define BLAME_MASTER_FILE_EXT "bem"
 #define BLAME_MASTER_FILE_MAGIC 0xBE7E1115
 #define BLAME_MASTER_FILE_VERSION 0
 

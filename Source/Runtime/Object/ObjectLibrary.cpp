@@ -131,3 +131,37 @@ bool ObjectLibrary::IsObjectValid(uint32_t id) const
 {
     return objects.contains(id);
 }
+
+std::vector<Object*> ObjectLibrary::GetAllObjects(bool excludeTransient)
+{
+    std::vector<Object*> objs;
+    objs.reserve(16);
+
+    for(auto it = objects.begin(); it != objects.end(); ++it)
+    {
+        if(it->second.object && (excludeTransient) ? !it->second.object->HasFlag(ObjectFlags::Transient) : true)
+        {
+            objs.push_back(it->second.object);
+        }
+    }
+
+    return objs;
+}
+
+std::vector<Object*> ObjectLibrary::GetObjectsOfTypeID(const std::string& typeID, bool excludeTransient)
+{
+    std::vector<Object*> objs;
+    objs.reserve(16);
+
+    for(auto it = objects.begin(); it != objects.end(); ++it)
+    {
+        if( it->second.object 
+            && it->second.object->GetType() == typeID 
+            && (excludeTransient) ? !it->second.object->HasFlag(ObjectFlags::Transient) : true)
+        {
+            objs.push_back(it->second.object);
+        }
+    }
+
+    return objs;
+}

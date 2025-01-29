@@ -70,4 +70,20 @@ public:
      * It may result in broken pointers, use with caution.
     */
     Object* DestroyObject(uint32_t id);
+
+    /*
+     * Goes through all registered objects and returns a vector of pointers to loaded objects 
+     *
+     * WARNING: Very heavy function, use with care!
+     */
+    std::vector<Object*> GetAllObjects(bool excludeTransient = false);
+
+    /*
+     * Goes through all registered objects and returns a vector of objects with specified Type ID 
+     * 
+     * At Runtime will only go through currently loaded objects
+     * 
+     * WARNING: Very heavy function, use with care!
+     */
+    std::vector<Object*> GetObjectsOfTypeID(const std::string& typeID, bool excludeTransient = false);
 };
