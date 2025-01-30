@@ -14,7 +14,7 @@ struct TilemapLayerAtlasGPUData {
 
 struct TilemapLayerAtlasData : public TilemapLayerData {
     TilemapLayerAtlasGPUData GPUData;
-    virtual std::string GetType() {return "TilemapLayerAtlasData";}
+    virtual std::string GetStaticType() {return "TilemapLayerAtlasData";}
 };
 
 class TilemapLayerAtlas : public TilemapLayer

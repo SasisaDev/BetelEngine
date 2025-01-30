@@ -51,6 +51,7 @@ public:
         _ObjectT* object = new _ObjectT();
         object->SetID(objectID);
         object->Rename(Name);
+        object->Type = _ObjectT::GetStaticType();
 
         // Set Transient flag
         if(Transient) {

@@ -130,7 +130,7 @@ int GuardedMain(int argc, char* argv[])
 	atlas->SetSpriteRect(0, {0, 0, 540/2, 540/2});
 	atlas->SetSpriteRect(1, {540/2, 540/2, 540, 540});
 
-	std::string atlasType = atlas->GetType();
+	std::string atlasType = atlas->GetStaticType();
 
 	ObjectRef<ObjTexture> testTexture(67305985);
 	testTexture.Load();

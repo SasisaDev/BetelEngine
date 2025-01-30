@@ -290,8 +290,8 @@ LoadedObjectDescriptor AssetLoader::LoadObject(uint32_t ObjectID)
                 }
 
                 object->Serialize(fields);
-
-                return {object, container.object.uParent};
+                
+                return {object, std::string(container.object.pClassName, container.object.uClassNameLength - 1), container.object.uParent};
             }
         }
     }

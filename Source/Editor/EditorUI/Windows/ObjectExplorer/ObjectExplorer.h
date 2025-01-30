@@ -98,15 +98,16 @@ public:
             displayedObjects.clear();
             return; 
         }
+
         if (currentSelection->ID == "__ALL__")
         {
             // Display all objects
-            displayedObjects = GEngine->GetObjectLibrary()->GetAllObjects();
+            displayedObjects = GEngine->GetObjectLibrary()->GetAllObjects(true);
         }
         else
         {
             // Display objects of category
-            displayedObjects = GEngine->GetObjectLibrary()->GetObjectsOfTypeID(currentSelection->ID);
+            displayedObjects = GEngine->GetObjectLibrary()->GetObjectsOfTypeID(currentSelection->ID, true);
         }
         
         // TODO: Implement name filtering

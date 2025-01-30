@@ -44,10 +44,12 @@ class Object
     : public IPropertyProvider
 #endif
 {
+    friend class ObjectLibrary;
 protected:
     uint8_t Flags = 0;
     uint32_t ID = 0;
     std::string Name = "";
+    std::string Type = "";
     
     std::vector<Object*> Children;
     Object* Parent = nullptr;
@@ -67,7 +69,8 @@ public:
      * Returns this object's type
      * Must be overriden in every new Object class
     */
-    static std::string GetType() {return "OBJ";}
+    static std::string GetStaticType() {return "OBJ";}
+    const std::string& GetType() {return Type;}
 
     void SetFlag(ObjectFlags flag) {Flags |= (uint8_t)flag;}
     void UnsetFlag(ObjectFlags flag) {Flags &= ~(uint8_t)flag;}

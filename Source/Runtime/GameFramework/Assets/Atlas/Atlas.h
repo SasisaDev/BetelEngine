@@ -12,7 +12,7 @@ class ObjAtlas : public Object
     ObjectRef<ObjTexture> texture;
     std::map<uint16_t, IVec4> sprites;
 public:
-    static std::string GetType() {return "ATLAS";}
+    static std::string GetStaticType() {return "ATLAS";}
 public:
     void SetTexture(const ObjectRef<ObjTexture>& newTex) {texture = newTex;}
 

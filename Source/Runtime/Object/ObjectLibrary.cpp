@@ -112,6 +112,8 @@ Object* ObjectLibrary::LoadObject(uint32_t id)
     
     objects[id].object = loadedObject.object;
 
+    objects[id].object->Type = loadedObject.type;
+
     // Reparent Object
     if(loadedObject.object != nullptr && loadedObject.parent != 0)
     {
@@ -155,9 +157,11 @@ std::vector<Object*> ObjectLibrary::GetObjectsOfTypeID(const std::string& typeID
 
     for(auto it = objects.begin(); it != objects.end(); ++it)
     {
+        const bool SameType = it->second.object->GetType() == typeID;
+        const bool NotTransient = (excludeTransient) ? !it->second.object->HasFlag(ObjectFlags::Transient) : true;
         if( it->second.object 
-            && it->second.object->GetType() == typeID 
-            && (excludeTransient) ? !it->second.object->HasFlag(ObjectFlags::Transient) : true)
+            && SameType 
+            && NotTransient)
         {
             objs.push_back(it->second.object);
         }

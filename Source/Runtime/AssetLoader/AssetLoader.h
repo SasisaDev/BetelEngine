@@ -30,6 +30,7 @@ struct ConvertChar
 struct LoadedObjectDescriptor
 {
     Object* object = nullptr;
+    std::string type;
     uint32_t parent = 0;
 };
 

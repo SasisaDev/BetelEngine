@@ -12,7 +12,7 @@ class EntTilemapChunk;
 struct TilemapLayerData {
     std::unique_ptr<Buffer> UBO;
 
-    virtual std::string GetType() {return "TilemapLayerData";}
+    virtual std::string GetStaticType() {return "TilemapLayerData";}
 };
 
 class TilemapLayer
