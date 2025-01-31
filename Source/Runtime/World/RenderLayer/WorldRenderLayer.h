@@ -90,8 +90,8 @@ class WorldRenderLayer : public IRenderLayer
     VkPipelineLayout upscalePipelineLayout;
     void CreateUpscalePipeline();
 
-    std::shared_ptr<IShader> upscaleShader;
-    std::shared_ptr<IMaterial> upscaleMaterial;
+    std::unique_ptr<IShader> upscaleShader;
+    std::unique_ptr<IMaterial> upscaleMaterial;
 
     void CreateUpscaleMaterial();
 

@@ -251,6 +251,8 @@ public:
             check_vk_result(err);
             err = vkDeviceWaitIdle(IRenderUtility::GetDevice());
             check_vk_result(err);
+            vkFreeCommandBuffers(IRenderUtility::GetDevice(), command_pool, 1, &command_buffer);
+            vkDestroyCommandPool(IRenderUtility::GetDevice(), command_pool, nullptr);
         }
 
         loadedImages.push_back(tex_data);
@@ -274,6 +276,8 @@ public:
         }
 
         VkDevice dev = IRenderUtility::GetDevice();
+
+        vkDeviceWaitIdle(dev);
 
         ImGui_ImplVulkan_RemoveTexture(tex_data.DS);
         vkDestroyImage(dev, tex_data.Image, nullptr);

@@ -500,14 +500,14 @@ void WorldRenderLayer::CreateUpscaleMaterial()
     descriptorsLayout.GenerateBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
     descriptorsLayout.GenerateBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 
-    upscaleShader = std::make_shared<IShader>(upscaleRenderPass, VertShader->GetBuffer(), FragShader->GetBuffer(), descriptorsLayout);
+    upscaleShader = std::make_unique<IShader>(upscaleRenderPass, VertShader->GetBuffer(), FragShader->GetBuffer(), descriptorsLayout);
 
     if(!upscaleShader->IsValid())
     {
         LOG(Fatal, LogWorldRenderLayer, "Upscale shader creation failed");
     }
 
-    upscaleMaterial = std::make_shared<IMaterial>(upscaleShader.get());
+    upscaleMaterial = std::make_unique<IMaterial>(upscaleShader.get());
 
     delete VertShader;
     delete FragShader;
