@@ -12,6 +12,8 @@ class EditorToolkitWindow
 public:
     bool Visible = true;
 
+    virtual ~EditorToolkitWindow(){}
+
     virtual void DrawGUI(Window* window){if(Visible){this->OnGUI(window);}}
     virtual const char* GetName(){return "";}
     // Should not be called by toolkits

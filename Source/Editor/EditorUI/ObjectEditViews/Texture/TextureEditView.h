@@ -21,6 +21,7 @@ class TextureEditView : public ObjectEditView
     ImTextureID icon_browse;
 
     bool bReimport = false;
+    bool bReimportFailed = false;
 
     ObjTexture *texture = nullptr;
     std::optional<EditorTextureData> tex_reimport;
@@ -30,19 +31,27 @@ class TextureEditView : public ObjectEditView
 private:
     // FIXME: This causes memory leak
     void Reimport() {
+        EditorTextureData data;
+        const std::string path = (IPlatform::Get()->GetExecutableFolder() + "/Content/" + tex_path);
+        EditorImageLoader::Get().LoadTextureFromFile(path.c_str(), &data, true);
+        // Check if loading failed
+        if(data.DS == VK_NULL_HANDLE) {
+            bReimportFailed = true;
+            return;
+        }
+        bReimportFailed = false;
+
+        // Cleanup old resources
         if(tex_reimport.has_value())
         {
-            // Cleanup
+            // Cleanup previous reimport
             EditorImageLoader::Get().FreeTexture(tex_reimport.value());
-            //ImGui_ImplVulkan_RemoveTexture(tex_ds);
             tex_reimport.reset();
         } else {
             // We didn't reimport yet, so tex_ds is constructed from Texture file
             ImGui_ImplVulkan_RemoveTexture(tex_ds);
         }
-        EditorTextureData data;
-        const std::string path = (IPlatform::Get()->GetExecutableFolder() + "/Content/" + tex_path);
-        EditorImageLoader::Get().LoadTextureFromFile(path.c_str(), &data, true);
+
         tex_reimport = data;
         tex_ds = tex_reimport.value().DS;
         tex_dimensions = std::to_string(data.Width) + " x " + std::to_string(data.Height);
@@ -66,7 +75,19 @@ public:
 
     ~TextureEditView()
     {
-        ImGui_ImplVulkan_RemoveTexture(tex_ds);
+        // FIXME: As ImGui render happens in render pass and object deletion happens on game pass(before render pass)
+        // At RenderTime DescriptorSet is already deleted, which causes Validation Layer's errors
+        /*
+        if(tex_reimport.has_value())
+        {
+            // Cleanup
+            EditorImageLoader::Get().FreeTexture(tex_reimport.value());
+            tex_reimport.reset();
+        } else {
+            // We didn't reimport yet, so tex_ds is constructed from Texture file
+            vkDeviceWaitIdle(IRenderUtility::GetDevice());
+            ImGui_ImplVulkan_RemoveTexture(tex_ds);
+        }*/
     }
 
     virtual float GetCustomControlButtonsWidth(const ImGuiStyle& style) override
@@ -94,7 +115,13 @@ public:
 
         BImGui::InputString("Name", tex_name);
 
+        if(bReimportFailed) {
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, BImGui::Colors::ErrorRedColor);
+        }
         BImGui::InputString("##Path", tex_path);
+        if(bReimportFailed) {
+            ImGui::PopStyleColor();
+        }
         ImGui::SameLine();
         BImGui::ImageButton("##PickImagePath", icon_browse, ImVec2(13, 13));
         ImGui::SameLine();

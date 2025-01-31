@@ -6,6 +6,8 @@ ISamplerTexture::~ISamplerTexture()
 {
     VkDevice dev = IRenderUtility::GetDevice();
 
+    vkDeviceWaitIdle(dev);
+
     vkDestroyImage(dev, image, nullptr);
     vkFreeMemory(dev, imageMemory, nullptr);
     vkDestroySampler(dev, sampler, nullptr);

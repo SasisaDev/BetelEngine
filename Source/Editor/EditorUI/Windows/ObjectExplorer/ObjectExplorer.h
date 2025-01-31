@@ -165,6 +165,7 @@ public:
             {
                 if(editView.get() == nullptr) {
                     const std::string& type = obj->GetType();
+                    editView.reset();
                     editView = ObjectEditorViewsFactory::CreateEditView(type, obj);
                 }
             }
@@ -246,7 +247,7 @@ public:
         if(editView.get()) {
             editView->DrawGUI(window);
             if(!editView->Visible) {
-                editView.release();
+                editView.reset();
             }
         }
     }
