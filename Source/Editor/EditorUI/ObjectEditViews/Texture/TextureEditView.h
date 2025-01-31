@@ -98,20 +98,23 @@ public:
         ImGui::SameLine();
         BImGui::ImageButton("##PickImagePath", icon_browse, ImVec2(13, 13));
         ImGui::SameLine();
-        ImGui::Text("Path", tex_path);
+        ImGui::Text("Path");
 
         ImGui::Text("Dimensions: ");
         ImGui::SameLine();
-        ImGui::Text(tex_dimensions.c_str());
+        ImGui::Text("%s", tex_dimensions.c_str());
 
         ImGui::Image((ImTextureID)tex_ds, ImVec2(250, tex_aspect * 250));
     }
 
     virtual void SaveObject() override
     {
-        texture->Rename(tex_name);
-        texture->SetPath(tex_path);
-        texture->LoadTexture();
-        texture->Dirty();
+        if(tex_name != texture->GetName() || tex_path != texture->GetPath())
+        {
+            texture->Rename(tex_name);
+            texture->SetPath(tex_path);
+            texture->LoadTexture();
+            texture->Dirty();
+        }
     }
 };
