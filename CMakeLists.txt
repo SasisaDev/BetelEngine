@@ -126,7 +126,7 @@ set(ArgumentEventsSrc "Source/Editor/ArgumentEvents/UseAssetFactoryEvent.cpp")
 
 set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc}
     "Source/Editor/ToolkitRenderLayer/ToolkitRenderLayer.cpp" "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" "Source/Editor/Editor/EditorDelegates.cpp"
-    "Source/Editor/Editor/Editor.cpp" "Source/Editor/Editor/Modes/ObjectMode.cpp") 
+    "Source/Editor/Editor/Editor.cpp" "Source/Editor/Editor/Modes/ObjectMode.cpp" "Source/Editor/EditorUI/ObjectEditViews/ObjectEditViewsFactory.cpp") 
 
 add_executable(Editor ${Sources} ${EditorSources})
 

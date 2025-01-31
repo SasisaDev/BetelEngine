@@ -8,6 +8,7 @@
 
 #include <imgui/imgui_internal.h>
 #include <EditorUI/WindowLibrary/BetelInputs.h>
+#include <EditorUI/ObjectEditViews/ObjectEditViewsFactory.h>
 
 class EditorObjectExplorer : public EditorToolkitWindow
 {
@@ -37,6 +38,8 @@ protected:
     ImGuiTreeNodeFlags baseTreeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
     std::vector<Object*> displayedObjects;
+
+    std::unique_ptr<EditorToolkitWindow> editView;
 
 public:
     EditorObjectExplorer()
@@ -158,10 +161,12 @@ public:
     {
         for(Object* obj : displayedObjects)
         {
-            if(ImGui::Button(obj->GetName().c_str()))
+            if(ImGui::Selectable(obj->GetName().c_str()))
             {
-                // TODO: Create Edit View Factory, that takes Type String and constructs appropriate Edit View
-                const std::string& type = obj->GetType();
+                if(editView.get() == nullptr) {
+                    const std::string& type = obj->GetType();
+                    editView = ObjectEditorViewsFactory::CreateEditView(type, obj);
+                }
             }
         }
     }
@@ -237,5 +242,12 @@ public:
         }
         ImGui::End();
         ImGui::PopStyleVar();
+
+        if(editView.get()) {
+            editView->DrawGUI(window);
+            if(!editView->Visible) {
+                editView.release();
+            }
+        }
     }
 };

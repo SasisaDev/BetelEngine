@@ -4,6 +4,7 @@
 #include <Core/Application/Application.h>
 #include <Editor/Editor.h>
 #include "../../EditorImageLoader.h"
+#include <World/RenderLayer/WorldRenderLayer.h>
 
 class EditorViewport : public EditorToolkitWindow
 {
