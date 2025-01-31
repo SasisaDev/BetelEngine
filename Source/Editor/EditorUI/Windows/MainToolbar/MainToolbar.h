@@ -19,7 +19,7 @@ public:
     virtual void OnGUI(Window* window) {
         static bool first_init = true;
         if(first_init) {
-            EditorImageLoader::Get().LoadTextureFromFile("./Editor/Save32.png", 32, 32, &SaveImage);
+            EditorImageLoader::Get().LoadTextureFromFile("./Editor/Save32.png", &SaveImage);
 
             first_init = false;
         }

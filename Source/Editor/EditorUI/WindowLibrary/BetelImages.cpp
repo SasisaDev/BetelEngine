@@ -4,7 +4,10 @@ std::vector<EditorTextureData> BImGui::Images = std::vector<EditorTextureData>((
 
 void BImGui::LoadEditorImages()
 {
-    Images[static_cast<size_t>(Img::BrowseIcon)] = EditorImageLoader::StaticLoadTextureFromFile("./Editor/Browse32.png", 32, 32);
+    Images[static_cast<size_t>(Img::Browse32Icon)] = EditorImageLoader::StaticLoadTextureFromFile("./Editor/Browse32.png");
+    Images[static_cast<size_t>(Img::Save32Icon)] = EditorImageLoader::StaticLoadTextureFromFile("./Editor/Save32.png");
+    Images[static_cast<size_t>(Img::Visibility32Icon)] = EditorImageLoader::StaticLoadTextureFromFile("./Editor/Visibility32.png");
+    Images[static_cast<size_t>(Img::Reload32Icon)] = EditorImageLoader::StaticLoadTextureFromFile("./Editor/Reload32.png");
 }
 
 ImTextureID BImGui::GetEdImage(BImGui::Img img) {

@@ -55,10 +55,10 @@ public:
         return singleton;
     }
 
-    bool LoadTextureFromFile(const char* filename, int width, int height, EditorTextureData* tex_data) {
+    bool LoadTextureFromFile(const char* filename, EditorTextureData* tex_data, bool nearestFilter = false) {
         // Specifying 4 channels forces stb to load the image in RGBA which is an easy format for Vulkan
-        tex_data->Width = width;
-        tex_data->Height = height;
+        tex_data->Width = 0;
+        tex_data->Height = 0;
         tex_data->Channels = 4;
         unsigned char* image_data = stbi_load(filename, &tex_data->Width, &tex_data->Height, 0, tex_data->Channels);
 
@@ -75,7 +75,7 @@ public:
             VkImageCreateInfo info = {};
             info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
             info.imageType = VK_IMAGE_TYPE_2D;
-            info.format = VK_FORMAT_R8G8B8A8_UNORM;
+            info.format = VK_FORMAT_R8G8B8A8_SRGB;
             info.extent.width = tex_data->Width;
             info.extent.height = tex_data->Height;
             info.extent.depth = 1;
@@ -106,7 +106,7 @@ public:
             info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
             info.image = tex_data->Image;
             info.viewType = VK_IMAGE_VIEW_TYPE_2D;
-            info.format = VK_FORMAT_R8G8B8A8_UNORM;
+            info.format = VK_FORMAT_R8G8B8A8_SRGB;
             info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
             info.subresourceRange.levelCount = 1;
             info.subresourceRange.layerCount = 1;
@@ -118,8 +118,8 @@ public:
         {
             VkSamplerCreateInfo sampler_info{};
             sampler_info.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-            sampler_info.magFilter = VK_FILTER_LINEAR;
-            sampler_info.minFilter = VK_FILTER_LINEAR;
+            sampler_info.magFilter = (nearestFilter) ? VK_FILTER_NEAREST : VK_FILTER_LINEAR;
+            sampler_info.minFilter = (nearestFilter) ? VK_FILTER_NEAREST : VK_FILTER_LINEAR;
             sampler_info.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
             sampler_info.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT; // outside image bounds just use border color
             sampler_info.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
@@ -258,11 +258,31 @@ public:
         return true;
     }
 
-    static EditorTextureData StaticLoadTextureFromFile(const char* filename, int width, int height) {
+    static EditorTextureData StaticLoadTextureFromFile(const char* filename) {
         EditorTextureData texData;
-        EditorImageLoader::Get().LoadTextureFromFile(filename, width, height, &texData);
+        EditorImageLoader::Get().LoadTextureFromFile(filename, &texData);
         return texData;
     } 
+
+    void FreeTexture(const EditorTextureData& tex_data) {
+        for(int i = 0; i < loadedImages.size(); ++i)
+        {
+            if(loadedImages[i]->DS == tex_data.DS)
+            {
+                loadedImages.erase(loadedImages.begin() + i);
+            }
+        }
+
+        VkDevice dev = IRenderUtility::GetDevice();
+
+        ImGui_ImplVulkan_RemoveTexture(tex_data.DS);
+        vkDestroyImage(dev, tex_data.Image, nullptr);
+        vkFreeMemory(dev, tex_data.ImageMemory, nullptr);
+        vkFreeMemory(dev, tex_data.UploadBufferMemory, nullptr);
+        vkDestroyBuffer(dev, tex_data.UploadBuffer, nullptr);
+        vkDestroySampler(dev, tex_data.Sampler, nullptr);
+        vkDestroyImageView(dev, tex_data.ImageView, nullptr);
+    }
 
     void FreeAllResources()
     {

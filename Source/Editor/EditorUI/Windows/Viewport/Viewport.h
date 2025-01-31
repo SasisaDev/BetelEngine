@@ -28,7 +28,7 @@ public:
     virtual void OnGUI(Window* window){
         static bool first_init = true;
         if(first_init) {
-            EditorImageLoader::Get().LoadTextureFromFile("./Editor/ShowOverlayW16.png", 16, 16, &ShowOverlayImageW);
+            EditorImageLoader::Get().LoadTextureFromFile("./Editor/ShowOverlayW16.png", &ShowOverlayImageW);
             ImVec2 availableSize = ImGui::GetContentRegionAvail();
             Width = availableSize.x;
             Height = availableSize.y;
