@@ -1,5 +1,6 @@
 #include "ImGuiLayer.h"
 #include "../BetelImGui.h"
+#include <EditorUI/WindowLibrary/BetelImages.h>
 
 ImGuiRenderLayerRef::ImGuiRenderLayerRef()
 {
@@ -8,9 +9,13 @@ ImGuiRenderLayerRef::ImGuiRenderLayerRef()
 
 bool ImGuiRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList)
 {
+    // Amount of statically defined images used by Editor
+    const size_t BetelEditorImageCount = static_cast<size_t>(BImGui::Img::MAX);
+
     VkDescriptorPoolCreateInfo descPoolInfo{};
     descPoolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    descPoolInfo.maxSets = IRenderUtility::GetFramesInFlight() + MaxSetsCount;
+    descPoolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+    descPoolInfo.maxSets = IRenderUtility::GetFramesInFlight() + MaxSetsCount + BetelEditorImageCount;
 
     VkDescriptorPoolSize descPoolSize;
     descPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -22,6 +27,13 @@ bool ImGuiRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
         LOG(Fatal, LogImGui, "Failed to create descriptor pool for ImGui.");
     }
 
+    return true;
+}
+
+bool ImGuiRenderLayerRef::Deinitialize(VkDevice device)
+{
+    //EditorImageLoader::Get().FreeAllResources();
+    delete ImGuiE;
     return true;
 }
 

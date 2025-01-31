@@ -1,73 +1,70 @@
 #pragma once
 
-#include "../ObjectEditViewsFactory.h"
-
 #include <Toolkit/ToolkitWindow.h>
 #include <GameFramework/Assets/Texture/Texture.h>
 
 #include <imgui/backends/imgui_impl_vulkan.h>
+#include <EditorUI/ObjectEditViews/ObjectEditView.h>
+
+#include <EditorUI/WindowLibrary/BetelImages.h>
 
 namespace BImGui
 {
     extern bool InputString(const char *id, std::string &string, ImGuiInputTextFlags flags = 0);
+    extern bool ImageButton(const char* ID, ImTextureID ImgID, ImVec2 ImgSize, ImVec2 Uv0 = ImVec2(0, 0), ImVec2 Uv1 = ImVec2(1, 1));
 };
 
-class TextureEditView : public EditorToolkitWindow
+class TextureEditView : public ObjectEditView
 {
-    ObjTexture *texture = nullptr;
-    VkDescriptorSet DS;
+    ImTextureID icon_browse;
 
-    std::string tex_name, tex_path;
+    ObjTexture *texture = nullptr;
+    VkDescriptorSet tex_ds;
+    std::string tex_name, tex_path, tex_dimensions;
+    double tex_aspect;
 public:
     TextureEditView(Object *tex)
+        : ObjectEditView("Edit Texture")
     {
+        icon_browse = BImGui::GetEdImage(BImGui::Img::BrowseIcon);
+
         texture = dynamic_cast<ObjTexture *>(tex);
 
         tex_name = texture->GetName();
         tex_path = texture->GetPath();
-        DS = ImGui_ImplVulkan_AddTexture(texture->GetTexture()->GetSampler(), texture->GetTexture()->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        tex_dimensions = std::to_string(texture->GetWidth()) + " x " + std::to_string(texture->GetHeight());
+        tex_aspect = static_cast<double>(texture->GetHeight()) / static_cast<double>(texture->GetWidth());
+        tex_ds = ImGui_ImplVulkan_AddTexture(texture->GetTexture()->GetSampler(), texture->GetTexture()->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
     }
 
     ~TextureEditView()
     {
-        ImGui_ImplVulkan_RemoveTexture(DS);
+        ImGui_ImplVulkan_RemoveTexture(tex_ds);
     }
 
-    virtual void OnGUI(Window *window) override
+    virtual void OnEditViewGUI(Window *window) override
     {
         assert(texture != nullptr && "Texture Edit View must be provided with a Texture Object to modify!");
 
-        ImGuiStyle& style = ImGui::GetStyle();
+        BImGui::InputString("Name", tex_name);
 
-        if (ImGui::Begin("Edit Texture", &Visible, ImGuiWindowFlags_NoCollapse))
-        {
-            BImGui::InputString("Name", tex_name);
-            BImGui::InputString("Path", tex_path);
-            ImGui::Image((ImTextureID)DS, ImVec2(250, 250));
+        BImGui::InputString("##Path", tex_path);
+        ImGui::SameLine();
+        BImGui::ImageButton("##PickImagePath", icon_browse, ImVec2(13, 13));
+        ImGui::SameLine();
+        ImGui::Text("Path", tex_path);
 
-            // Draw Buttons
-            static float buttonWidth1 = ImGui::CalcTextSize("Cancel").x + style.FramePadding.x * 2.f;
-            static float buttonWidth2 = ImGui::CalcTextSize("Save").x + style.FramePadding.x * 2.f;
-            static float widthNeeded = buttonWidth1 + style.ItemSpacing.x + buttonWidth2;
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - widthNeeded);
-            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
+        ImGui::Text("Dimensions: ");
+        ImGui::SameLine();
+        ImGui::Text(tex_dimensions.c_str());
 
-            if(ImGui::Button("Cancel")) {
-                Visible = false;
-            }
-            ImGui::SameLine();
-            if(ImGui::Button("Save")) {
-                SaveObject();
-            }
-        }
-        ImGui::End();
+        ImGui::Image((ImTextureID)tex_ds, ImVec2(250, tex_aspect * 250));
     }
 
-    void SaveObject()
+    virtual void SaveObject() override
     {
         texture->Rename(tex_name);
         texture->SetPath(tex_path);
         texture->Dirty();
-        Visible = false;
     }
 };

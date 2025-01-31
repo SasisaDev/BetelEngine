@@ -258,8 +258,18 @@ public:
         return true;
     }
 
-    ~EditorImageLoader()
-    {
+    static EditorTextureData StaticLoadTextureFromFile(const char* filename, int width, int height) {
+        EditorTextureData texData;
+        EditorImageLoader::Get().LoadTextureFromFile(filename, width, height, &texData);
+        return texData;
+    } 
 
+    void FreeAllResources()
+    {
+        for(auto* img : loadedImages)
+        {
+            // FIXME: Cleanup the GPU texture
+            //ImGui_ImplVulkan_RemoveTexture(img->DS);
+        }
     }
 };

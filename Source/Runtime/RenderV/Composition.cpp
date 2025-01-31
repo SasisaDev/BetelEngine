@@ -191,11 +191,12 @@ IRenderComposition::IRenderComposition()
 
 }
 
-IRenderComposition::~IRenderComposition()
+bool IRenderComposition::Deinitialize()
 {
     VkDevice dev = IRenderUtility::GetDevice();
 
     for(IRenderLayerRef* ref : Layers) {
+        ref->Deinitialize(dev);
         delete ref;
     }
 
@@ -214,6 +215,13 @@ IRenderComposition::~IRenderComposition()
     vkDestroySwapchainKHR(dev, swapchain, nullptr);
 
     vkDestroySurfaceKHR(IRenderUtility::GetInstance(), surface, nullptr);
+
+    return true;
+}
+
+IRenderComposition::~IRenderComposition()
+{
+    
 }
 
 bool IRenderComposition::Initialize(IRenderCompositionInitializer* initializer)

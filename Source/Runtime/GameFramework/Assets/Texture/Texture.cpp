@@ -19,6 +19,9 @@ void ObjTexture::LoadTexture()
     int texWidth, texHeight, texChannels;
     unsigned char* pixels = stbi_load_from_memory(reinterpret_cast<stbi_uc*>(Image->GetBuffer().data()), Image->GetBuffer().size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
+    sizeX = texWidth;
+    sizeY = texHeight;
+
     texture = std::make_unique<ISamplerTexture>(texWidth, texHeight, pixels);
 
     stbi_image_free(pixels);

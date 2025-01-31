@@ -13,6 +13,8 @@
 #include "Windows/AssetExplorer/AssetExplorer.h"
 #include "Windows/ObjectExplorer/ObjectExplorer.h"
 
+#include <EditorUI/WindowLibrary/BetelImages.h>
+
 class EditorToolkitBase : public EditorToolkit {
     bool firstInitialization = true;
 
@@ -29,6 +31,7 @@ class EditorToolkitBase : public EditorToolkit {
     EditorGameSettings gameSettings;
 public:
     virtual void OnGUI(Window* window) override {
+        
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 if (ImGui::MenuItem("Create")) { 
@@ -99,6 +102,9 @@ public:
         if (firstInitialization)
         {
             firstInitialization = false;
+
+            // Initialize BImGui Editor Images
+            BImGui::LoadEditorImages();
 
             ImGui::DockBuilderRemoveNode(dockspace_id);
             ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);

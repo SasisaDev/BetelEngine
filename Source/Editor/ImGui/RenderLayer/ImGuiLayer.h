@@ -27,6 +27,7 @@ public:
     ImGuiRenderLayerRef();
 
     virtual bool Initialize(VkDevice device, RenderDependencyList<IRenderLayerRef>& DependencyList) override;
+    virtual bool Deinitialize(VkDevice device) override;
 
     ImGuiRenderLayerRef* SetHostWindow(Window* window);
     ImGuiRenderLayerRef* SetToolkit(EditorToolkit* toolkit) {CurrentToolkit = toolkit; return this;}

@@ -31,5 +31,5 @@ public:
 
     virtual void Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer){}
 
-    virtual bool Deinitialize(){return false;}
+    virtual bool Deinitialize();
 };

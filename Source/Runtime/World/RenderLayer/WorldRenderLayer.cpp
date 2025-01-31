@@ -800,8 +800,9 @@ bool WorldRenderLayer::Deinitialize()
     vkDestroyPipeline(IRenderUtility::GetDevice(), upscalePipeline, nullptr);
     vkDestroyPipelineLayout(IRenderUtility::GetDevice(), upscalePipelineLayout, nullptr);
 
-    vkDestroyRenderPass(IRenderUtility::GetDevice(), renderPass, nullptr);
     vkDestroyRenderPass(IRenderUtility::GetDevice(), upscaleRenderPass, nullptr);
+
+    IRenderLayer::Deinitialize();
 
     return true;
 }

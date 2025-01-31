@@ -10,10 +10,12 @@ IRenderEngine::~IRenderEngine()
     vkDeviceWaitIdle(device);
 
     for(IRenderComposition* comp : Compositions) {
+        comp->Deinitialize();
         delete comp;
     }
 
     for(IRenderLayer* layer : Layers) {
+        layer->Deinitialize();
         delete layer;
     }
 
