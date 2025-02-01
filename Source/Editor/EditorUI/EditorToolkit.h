@@ -30,6 +30,10 @@ class EditorToolkitBase : public EditorToolkit {
 
     EditorGameSettings gameSettings;
 public:
+    ~EditorToolkitBase() {
+        BImGui::UnloadEditorImages();
+    }
+    
     virtual void OnGUI(Window* window) override {
         
         if (ImGui::BeginMainMenuBar()) {

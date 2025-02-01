@@ -46,7 +46,7 @@ public:
     ~ObjectLibrary();
 
     template <ObjectClass _ObjectT>
-    _ObjectT* CreateObject(std::string Name, bool Transient = true) {
+    _ObjectT* CreateObject(const std::string& Name, bool Transient = true) {
         uint32_t objectID = GenerateObjectID();
         _ObjectT* object = new _ObjectT();
         object->SetID(objectID);
@@ -61,6 +61,8 @@ public:
         objects.emplace(objectID, object);
         return object;
     }
+
+    Object* CreateObjectFromTypeID(const std::string& TypeID, const std::string& Name, bool Transient = true);
 
     Object* LoadObject(uint32_t id);
     bool IsObjectValid(uint32_t id) const;

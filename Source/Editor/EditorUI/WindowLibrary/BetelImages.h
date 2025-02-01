@@ -10,13 +10,17 @@ namespace BImGui
         Save32Icon,
         Visibility32Icon,
         Reload32Icon,
+        None256Icon,
         MAX
     };
 
-    extern std::vector<EditorTextureData> Images;
+    extern bool EditorImagesbInitialized;
+    extern std::vector<EditorTextureData> EditorImages;
 
     // Call to initialize all images
     extern void LoadEditorImages();
     
     extern ImTextureID GetEdImage(BImGui::Img img);
+
+    extern void UnloadEditorImages();
 };

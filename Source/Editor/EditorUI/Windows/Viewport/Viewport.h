@@ -5,10 +5,11 @@
 #include <Editor/Editor.h>
 #include "../../EditorImageLoader.h"
 #include <World/RenderLayer/WorldRenderLayer.h>
+#include <EditorUI/WindowLibrary/BetelImages.h>
 
 class EditorViewport : public EditorToolkitWindow
 {
-    EditorTextureData ShowOverlayImageW{};
+    ImTextureID ShowOverlayImageW;
 
     int Width = 0, Height = 0;
 public:
@@ -28,7 +29,7 @@ public:
     virtual void OnGUI(Window* window){
         static bool first_init = true;
         if(first_init) {
-            EditorImageLoader::Get().LoadTextureFromFile("./Editor/ShowOverlayW16.png", &ShowOverlayImageW);
+            ShowOverlayImageW = BImGui::GetEdImage(BImGui::Img::Visibility32Icon);
             ImVec2 availableSize = ImGui::GetContentRegionAvail();
             Width = availableSize.x;
             Height = availableSize.y;
@@ -99,7 +100,7 @@ public:
             } else {
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.6));
             }
-            if(ImGui::ImageButton("##ShowOverlay", (ImTextureID)ShowOverlayImageW.DS, ImVec2(14,14))) {
+            if(ImGui::ImageButton("##ShowOverlay", ShowOverlayImageW, ImVec2(14,14))) {
                 Editor::Get()->bShowOverlay = !Editor::Get()->bShowOverlay;
             }
             ImGui::PopStyleColor(1);

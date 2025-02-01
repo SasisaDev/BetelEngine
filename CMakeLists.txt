@@ -119,7 +119,7 @@ set(ImguiSrc "Source/ThirdParty/imgui/imgui_demo.cpp" "Source/ThirdParty/imgui/i
              "Source/ThirdParty/imgui/imgui.cpp" "Source/ThirdParty/imgui/backends/imgui_impl_sdl2.cpp"
              "Source/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp")
 set(ImguiBetelSrc "Source/Editor/ImGui/RenderLayer/ImGuiLayer.cpp" "Source/Editor/ImGui/BetelImGui.cpp" "Source/Editor/EditorUI/WindowLibrary/BetelImages.cpp"
-                  "Source/Editor/EditorUI/WindowLibrary/BetelDeferredCleanup.cpp")
+                  "Source/Editor/EditorUI/WindowLibrary/BetelDeferred.cpp")
 
 set(AssetFactoriesSrc "Source/Editor/AssetFactory/Default/ShaderFactory.cpp" )
 

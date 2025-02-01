@@ -7,7 +7,7 @@
 #include <EditorUI/ObjectEditViews/ObjectEditView.h>
 
 #include <EditorUI/WindowLibrary/BetelImages.h>
-#include <EditorUI/WindowLibrary/BetelDeferredCleanup.h>
+#include <EditorUI/WindowLibrary/BetelDeferred.h>
 
 #include <optional>
 
@@ -19,14 +19,14 @@ namespace BImGui
 
 class TextureEditView : public ObjectEditView
 {
-    struct TextureResourcesDeleter : public BImGui::DeferredDeleter
+    struct TextureResourcesDeleter : public BImGui::DeferredTask
     {
         std::optional<EditorTextureData> tex_reimport;
-        VkDescriptorSet tex_ds;
+        VkDescriptorSet tex_ds = VK_NULL_HANDLE;
         bool ShouldCleanup = false;
         bool ShouldSelfDestruct = false;
 
-        bool Cleanup() override {
+        bool Perform() override {
             if(!ShouldCleanup) {
                 return ShouldSelfDestruct;
             }
@@ -36,9 +36,10 @@ class TextureEditView : public ObjectEditView
                 // Cleanup previous reimport
                 EditorImageLoader::Get().FreeTexture(tex_reimport.value());
                 tex_reimport.reset();
-            } else {
+            } else if(tex_ds != VK_NULL_HANDLE){
                 // We didn't reimport yet, so tex_ds is constructed from Texture file
                 ImGui_ImplVulkan_RemoveTexture(tex_ds);
+                tex_ds = VK_NULL_HANDLE;
             }
 
             ShouldCleanup = false;
@@ -47,6 +48,31 @@ class TextureEditView : public ObjectEditView
         }
     };
 
+    struct TextureChangesSaver : public BImGui::DeferredTask
+    {
+        ObjTexture *texture = nullptr;
+        std::string tex_name, tex_path;
+        bool ShouldSave = false;
+        bool ShouldSelfDestruct = false;
+
+        bool Perform() override {
+            if(!ShouldSave) {
+                return ShouldSelfDestruct;
+            }
+
+            if(texture)
+            {
+                texture->Rename(tex_name);
+                texture->SetPath(tex_path);
+                texture->LoadTexture();
+                texture->Dirty();
+            }
+
+            ShouldSave = false;
+
+            return ShouldSelfDestruct;
+        }
+    };
 private:
 
     ImTextureID icon_browse;
@@ -55,10 +81,12 @@ private:
     bool bReimportFailed = false;
 
     TextureResourcesDeleter *deferredDeleter;
+    TextureChangesSaver *deferredSaver;
 
     ObjTexture *texture = nullptr;
+    bool bContainsTexture = false;
     std::optional<EditorTextureData> tex_reimport;
-    VkDescriptorSet tex_ds;
+    VkDescriptorSet tex_ds = VK_NULL_HANDLE;
     std::string tex_name, tex_path, tex_dimensions;
     double tex_aspect;
 private:
@@ -73,6 +101,7 @@ private:
             return;
         }
         bReimportFailed = false;
+        bContainsTexture = true;
 
         // Setup deferred deleter
         deferredDeleter->tex_reimport = tex_reimport;
@@ -95,11 +124,15 @@ public:
 
         tex_name = texture->GetName();
         tex_path = texture->GetPath();
-        tex_dimensions = std::to_string(texture->GetWidth()) + " x " + std::to_string(texture->GetHeight());
-        tex_aspect = static_cast<double>(texture->GetHeight()) / static_cast<double>(texture->GetWidth());
-        tex_ds = ImGui_ImplVulkan_AddTexture(texture->GetTexture()->GetSampler(), texture->GetTexture()->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        bContainsTexture = texture->GetTexture() != nullptr;
+        if(bContainsTexture) {
+            tex_dimensions = std::to_string(texture->GetWidth()) + " x " + std::to_string(texture->GetHeight());
+            tex_aspect = static_cast<double>(texture->GetHeight()) / static_cast<double>(texture->GetWidth());
+            tex_ds = ImGui_ImplVulkan_AddTexture(texture->GetTexture()->GetSampler(), texture->GetTexture()->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+        }
 
-        deferredDeleter = BImGui::CreateDeferredDeleter<TextureResourcesDeleter>();
+        deferredDeleter = BImGui::CreateDeferredTask<TextureResourcesDeleter>();
+        deferredSaver = BImGui::CreateDeferredTask<TextureChangesSaver>();
     }
 
     ~TextureEditView()
@@ -155,17 +188,31 @@ public:
         ImGui::SameLine();
         ImGui::Text("%s", tex_dimensions.c_str());
 
-        ImGui::Image((ImTextureID)tex_ds, ImVec2(250, tex_aspect * 250));
+        if(bContainsTexture) {
+            ImGui::Image((ImTextureID)tex_ds, ImVec2(250, tex_aspect * 250));
+        }
     }
 
-    virtual void SaveObject() override
+    virtual bool SaveObject() override
     {
+        const std::string path = (IPlatform::Get()->GetExecutableFolder() + "/Content/" + tex_path);
+        bool bPathExists = IPlatform::Get()->OpenFile(path, FILE_ACCESS_FLAG_READ)->IsOpen();
+        if(!bPathExists) {
+            return false;
+        }
+
         if(tex_name != texture->GetName() || tex_path != texture->GetPath())
         {
-            texture->Rename(tex_name);
-            texture->SetPath(tex_path);
-            texture->LoadTexture();
-            texture->Dirty();
+            deferredSaver->ShouldSave = true;
+            deferredSaver->texture = texture;
+            deferredSaver->tex_name = tex_name;
+            deferredSaver->tex_path = tex_path;
         }
+
+        return true;
+    }
+
+    virtual void OnSaveError() {
+        bReimportFailed = true;
     }
 };

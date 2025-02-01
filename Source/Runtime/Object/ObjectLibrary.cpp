@@ -2,6 +2,7 @@
 
 #include <AssetLoader/AssetLoader.h>
 #include <Engine/Engine.h>
+#include "ObjectTypeLibrary.h"
 
 ObjectDescriptor::~ObjectDescriptor() 
 {
@@ -68,6 +69,29 @@ void ObjectLibrary::UnregisterObjectUsage(uint32_t id) {
     if(Object* obj = objects[id].object) {
             obj->SetFlag(ObjectFlags::Unload);
     }
+}
+
+Object* ObjectLibrary::CreateObjectFromTypeID(const std::string& TypeID, const std::string& Name, bool Transient)
+{
+    // Find Type Factory in ObjectTypeLibrary
+    ObjectType* type = ObjectTypeLibrary::Get().GetObjectType(TypeID);
+    if(type == nullptr) {
+        return nullptr;
+    }
+
+    uint32_t objectID = GenerateObjectID();
+    Object* object = type->CreateInstance();
+    object->SetID(objectID);
+    object->Rename(Name);
+    object->Type = TypeID;
+
+    // Set Transient flag
+    if(Transient) {
+        object->SetFlag(ObjectFlags::Transient);
+    }
+
+    objects.emplace(objectID, object);
+    return object;
 }
 
 void ObjectLibrary::AddObject(uint32_t id, Object* preloaded)

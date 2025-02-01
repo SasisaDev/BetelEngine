@@ -17,10 +17,13 @@ public:
     void SetTexture(const ObjectRef<ObjTexture>& newTex) {texture = newTex;}
 
     inline const IVec4& GetSpriteRect(uint16_t id) const;
+    inline const std::map<uint16_t, IVec4>& GetSpriteRects() const {return sprites;}
     inline ObjectRef<ObjTexture>& GetTexture() {return texture;}
 
     void SetSpriteRect(uint16_t id, const IVec4& rect);
     void SetSpriteRect(uint16_t id, const IVec4&& rect);
+
+    void SetSpriteRects(const std::map<uint16_t, IVec4> rects) {sprites = rects;}
 
     void RemoveSpriteRect(uint16_t id);
 

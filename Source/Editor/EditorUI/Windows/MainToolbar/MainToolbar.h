@@ -4,10 +4,11 @@
 #include <Core/Application/Application.h>
 #include <EditorUI/EditorImageLoader.h>
 #include <EditorUI/WindowLibrary/BetelImageButton.h>
+#include <EditorUI/WindowLibrary/BetelImages.h>
 
 class EditorMainToolbar : public EditorToolkitWindow
 {
-    EditorTextureData SaveImage;
+    ImTextureID SaveImage;
 public:
     const char* GetName()override{return "Action Toolbar";}
 
@@ -19,7 +20,7 @@ public:
     virtual void OnGUI(Window* window) {
         static bool first_init = true;
         if(first_init) {
-            EditorImageLoader::Get().LoadTextureFromFile("./Editor/Save32.png", &SaveImage);
+           SaveImage = BImGui::GetEdImage(BImGui::Img::Save32Icon);
 
             first_init = false;
         }
@@ -30,7 +31,7 @@ public:
 
         ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.08f, 0.08f, 0.08f, 1));
         if(ImGui::Begin(GetName(), 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoResize)){    
-            ImGui::ImageButton("##SaveLevel", (ImTextureID)SaveImage.DS, ImVec2(SaveImage.Width, SaveImage.Height));
+            ImGui::ImageButton("##SaveLevel", (ImTextureID)SaveImage, ImVec2(32, 32));
         }
         ImGui::End();
         ImGui::PopStyleColor();

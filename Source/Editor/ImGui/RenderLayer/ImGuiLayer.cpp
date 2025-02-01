@@ -1,7 +1,7 @@
 #include "ImGuiLayer.h"
 #include "../BetelImGui.h"
 #include <EditorUI/WindowLibrary/BetelImages.h>
-#include <EditorUI/WindowLibrary/BetelDeferredCleanup.h>
+#include <EditorUI/WindowLibrary/BetelDeferred.h>
 
 
 ImGuiRenderLayerRef::ImGuiRenderLayerRef()
@@ -60,12 +60,12 @@ ImGuiRenderLayerRef* ImGuiRenderLayerRef::SetHostWindow(Window* window) {
     info.Queue = queue;
     
     ImGuiE->Initialize(HostWindow->GetSDLWindowHandle(), info);
+
     return this;
 }
 
 bool ImGuiRenderLayer::Initialize(VkDevice device)
 {
-
     // Create Stretch Render Pass
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format = VK_FORMAT_B8G8R8A8_SRGB;
@@ -103,7 +103,7 @@ bool ImGuiRenderLayer::Initialize(VkDevice device)
 
 void ImGuiRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
-    BImGui::FlushDeferredDeleters();
+    BImGui::FlushDeferredTasks();
 }
 
 void ImGuiRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
@@ -151,6 +151,6 @@ void ImGuiRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
 bool ImGuiRenderLayer::Deinitialize()
 {
-    BImGui::RemoveAllDeferredDeleters();
+    BImGui::RemoveAllDeferredTasks();
     return true;
 }

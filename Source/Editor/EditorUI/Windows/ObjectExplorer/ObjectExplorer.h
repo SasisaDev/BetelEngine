@@ -41,6 +41,8 @@ protected:
 
     std::unique_ptr<EditorToolkitWindow> editView;
 
+    bool bObjectContextMenu = false;
+
 public:
     EditorObjectExplorer()
     {
@@ -157,17 +159,42 @@ public:
         }
     }
 
+    void StartObjectEditing(Object* obj) {
+        if(editView.get() == nullptr) {
+            const std::string& type = obj->GetType();
+            editView.reset();
+            editView = ObjectEditorViewsFactory::CreateEditView(type, obj);
+        }
+    }
+    
+    void CreateNewObject() {
+        GEngine->GetObjectLibrary()->CreateObjectFromTypeID(currentSelection->ID, "Object", false);
+    }
+
     void DrawObjects()
     {
         for(Object* obj : displayedObjects)
         {
-            if(ImGui::Selectable(obj->GetName().c_str()))
+            ImGui::Selectable(obj->GetName().c_str());
+
+            if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
             {
-                if(editView.get() == nullptr) {
-                    const std::string& type = obj->GetType();
-                    editView.reset();
-                    editView = ObjectEditorViewsFactory::CreateEditView(type, obj);
+                StartObjectEditing(obj);
+            }
+
+            bObjectContextMenu = false;
+            if(ImGui::BeginPopupContextItem())
+            {
+                bObjectContextMenu = true;
+
+                ImGui::Selectable("Create");
+                if(ImGui::Selectable("Edit")) {
+                    StartObjectEditing(obj);
                 }
+                ImGui::Selectable("Delete");
+                ImGui::Separator();
+                ImGui::Selectable("Place in level");
+                ImGui::EndPopup();
             }
         }
     }
@@ -240,6 +267,17 @@ public:
                 DrawObjects();
             }
             ImGui::End();
+            
+            if(bObjectContextMenu == false && currentSelection && currentSelection->ID != "__ALL__"){
+                if(ImGui::BeginPopupContextItem())
+                {
+                    if(ImGui::Selectable("Create"))
+                    {
+                        CreateNewObject();
+                    }
+                    ImGui::EndPopup();
+                }
+            }
         }
         ImGui::End();
         ImGui::PopStyleVar();

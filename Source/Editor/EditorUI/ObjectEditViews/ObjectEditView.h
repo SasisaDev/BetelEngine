@@ -31,7 +31,7 @@ public:
     {
         ImGuiStyle& style = ImGui::GetStyle();
 
-        ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_Always);
         if (ImGui::Begin(Title.c_str(), &Visible, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
         {
             OnEditViewGUI(window);
@@ -51,16 +51,22 @@ public:
             ImGui::SameLine();
             ImGui::PushStyleColor(ImGuiCol_Button, BImGui::Colors::ContrastColor);
             if(ImGui::Button("Save")) {
-                SaveObject();
-                Visible = false;
+                if(SaveObject()){
+                    Visible = false;
+                } else {
+                    OnSaveError();
+                }
             }
             ImGui::PopStyleColor();
         }
         ImGui::End();
     }
 
-    virtual void SaveObject()
+    // Returns true when success, otherwise returns false
+    virtual bool SaveObject()
     {
-        
+        return true;
     }
+
+    virtual void OnSaveError() {}
 };
