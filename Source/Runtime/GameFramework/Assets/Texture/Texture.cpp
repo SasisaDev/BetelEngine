@@ -13,9 +13,9 @@ void ObjTexture::LoadTexture()
     // FIXME: Changing it to proper "texture.reset()" or avoiding "release", causes destruction of all Vulkan objects of the texture
     // This in turn causes violent Validation Layer panic, because resources are still in use by ImGui
     // If we use "texture.release", pointer gets freed and won't be destroyed ever, causing memory leak! Critical!
-    if(texture.get() != nullptr) {
+    /*if(texture.get() != nullptr) {
         texture.release();
-    }
+    }*/
 
     if(path.empty()) {
         return;

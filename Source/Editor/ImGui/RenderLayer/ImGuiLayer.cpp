@@ -1,6 +1,8 @@
 #include "ImGuiLayer.h"
 #include "../BetelImGui.h"
 #include <EditorUI/WindowLibrary/BetelImages.h>
+#include <EditorUI/WindowLibrary/BetelDeferredCleanup.h>
+
 
 ImGuiRenderLayerRef::ImGuiRenderLayerRef()
 {
@@ -101,7 +103,7 @@ bool ImGuiRenderLayer::Initialize(VkDevice device)
 
 void ImGuiRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
 {
-
+    BImGui::FlushDeferredDeleters();
 }
 
 void ImGuiRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerRef, IRenderLayerRef* previousLayer)
@@ -149,5 +151,6 @@ void ImGuiRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
 bool ImGuiRenderLayer::Deinitialize()
 {
+    BImGui::RemoveAllDeferredDeleters();
     return true;
 }

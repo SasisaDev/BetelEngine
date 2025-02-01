@@ -7,6 +7,7 @@
 #include <EditorUI/ObjectEditViews/ObjectEditView.h>
 
 #include <EditorUI/WindowLibrary/BetelImages.h>
+#include <EditorUI/WindowLibrary/BetelDeferredCleanup.h>
 
 #include <optional>
 
@@ -18,10 +19,42 @@ namespace BImGui
 
 class TextureEditView : public ObjectEditView
 {
+    struct TextureResourcesDeleter : public BImGui::DeferredDeleter
+    {
+        std::optional<EditorTextureData> tex_reimport;
+        VkDescriptorSet tex_ds;
+        bool ShouldCleanup = false;
+        bool ShouldSelfDestruct = false;
+
+        bool Cleanup() override {
+            if(!ShouldCleanup) {
+                return ShouldSelfDestruct;
+            }
+
+            if(tex_reimport.has_value())
+            {
+                // Cleanup previous reimport
+                EditorImageLoader::Get().FreeTexture(tex_reimport.value());
+                tex_reimport.reset();
+            } else {
+                // We didn't reimport yet, so tex_ds is constructed from Texture file
+                ImGui_ImplVulkan_RemoveTexture(tex_ds);
+            }
+
+            ShouldCleanup = false;
+
+            return ShouldSelfDestruct;
+        }
+    };
+
+private:
+
     ImTextureID icon_browse;
 
     bool bReimport = false;
     bool bReimportFailed = false;
+
+    TextureResourcesDeleter *deferredDeleter;
 
     ObjTexture *texture = nullptr;
     std::optional<EditorTextureData> tex_reimport;
@@ -41,16 +74,10 @@ private:
         }
         bReimportFailed = false;
 
-        // Cleanup old resources
-        if(tex_reimport.has_value())
-        {
-            // Cleanup previous reimport
-            EditorImageLoader::Get().FreeTexture(tex_reimport.value());
-            tex_reimport.reset();
-        } else {
-            // We didn't reimport yet, so tex_ds is constructed from Texture file
-            ImGui_ImplVulkan_RemoveTexture(tex_ds);
-        }
+        // Setup deferred deleter
+        deferredDeleter->tex_reimport = tex_reimport;
+        deferredDeleter->tex_ds = tex_ds;
+        deferredDeleter->ShouldCleanup = true;
 
         tex_reimport = data;
         tex_ds = tex_reimport.value().DS;
@@ -71,23 +98,20 @@ public:
         tex_dimensions = std::to_string(texture->GetWidth()) + " x " + std::to_string(texture->GetHeight());
         tex_aspect = static_cast<double>(texture->GetHeight()) / static_cast<double>(texture->GetWidth());
         tex_ds = ImGui_ImplVulkan_AddTexture(texture->GetTexture()->GetSampler(), texture->GetTexture()->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+        deferredDeleter = BImGui::CreateDeferredDeleter<TextureResourcesDeleter>();
     }
 
     ~TextureEditView()
     {
         // FIXME: As ImGui render happens in render pass and object deletion happens on game pass(before render pass)
         // At RenderTime DescriptorSet is already deleted, which causes Validation Layer's errors
-        /*
-        if(tex_reimport.has_value())
-        {
-            // Cleanup
-            EditorImageLoader::Get().FreeTexture(tex_reimport.value());
-            tex_reimport.reset();
-        } else {
-            // We didn't reimport yet, so tex_ds is constructed from Texture file
-            vkDeviceWaitIdle(IRenderUtility::GetDevice());
-            ImGui_ImplVulkan_RemoveTexture(tex_ds);
-        }*/
+        
+        // Setup deferred deleter
+        deferredDeleter->tex_reimport = tex_reimport;
+        deferredDeleter->tex_ds = tex_ds;
+        deferredDeleter->ShouldCleanup = true;
+        deferredDeleter->ShouldSelfDestruct = true;
     }
 
     virtual float GetCustomControlButtonsWidth(const ImGuiStyle& style) override
