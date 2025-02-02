@@ -9,7 +9,8 @@ class ObjSprite : public Object
     std::shared_ptr<ISamplerTexture> texture;
 public:
 
-    inline char* GetTextureData() const {return static_cast<char*>(texture->GetBuffer()->Read());}
+    // TODO: Rewrite to create dedicated buffer and unmap
+    inline char* GetTextureData() const {return static_cast<char*>(texture->GetBuffer()->Map());}
     inline uint32_t GetWidth() const {return texture->GetWidth();}
     inline uint32_t GetHeight() const {return texture->GetHeight();}
 

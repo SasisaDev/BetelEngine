@@ -12,6 +12,8 @@
 
 class EditorObjectExplorer : public EditorToolkitWindow
 {
+    bool firstInitialization = true;
+
     struct HierarchyNode
     {
         std::string Name;
@@ -25,6 +27,8 @@ class EditorObjectExplorer : public EditorToolkitWindow
 protected:
     Text TabName = Text("EditorUI", "ObjectExplorer", "TabName");
     std::string TranslatedName;
+
+    ImTextureID BlankTypeIcon;
 
     const char *HierarchyName = "##ObjectsHierarchy";
     const char *ContentsName = "##ObjectsContents";
@@ -175,48 +179,114 @@ public:
         GEngine->GetObjectLibrary()->DestroyObject(obj->GetID());
     }
 
+    void DrawObjectPopup(Object* obj)
+    {
+        if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+        {
+            StartObjectEditing(obj);
+        }
+
+        bObjectContextMenu = false;
+            
+        if(editView.get() != nullptr){
+            return;
+        }
+
+        if(ImGui::BeginPopupContextItem())
+        {
+            bObjectContextMenu = true;
+
+            ImGui::Selectable("Create");
+            if(ImGui::Selectable("Edit")) {
+                StartObjectEditing(obj);
+            }
+            if(ImGui::Selectable("Delete")) {
+                DeleteObject(obj);
+                UpdateDisplayedObjects();
+            }
+            ImGui::Separator();
+            ImGui::Selectable("Place in level");
+            ImGui::EndPopup();
+        }
+    }
+
+    void DrawObject(Object* obj, float NameWidth, float TypeWidth) 
+    {
+        const float ImageSize = 16;
+        const float Padding = 8;
+
+        std::string hexID;
+        hexID.resize(2+8);
+        sprintf(hexID.data(), "0x%08X", obj->GetID());
+
+        std::string fullName = obj->GetName() + " (" + hexID + ")"; 
+
+        ImGuiWindow* window = ImGui::GetCurrentWindowRead();
+        ImVec2 WindowPos = window->DC.CursorPos;
+
+        float InitialPosX = ImGui::GetCursorPosX();
+        float InitialPosY = ImGui::GetCursorPosY();
+        ImGui::Selectable((std::string("##") + fullName).c_str());
+
+        DrawObjectPopup(obj);
+
+        float LineEndPosY = ImGui::GetCursorPosY();
+        ImGui::SameLine();
+        float LineEndPosX = ImGui::GetCursorPosX();
+
+        // Draw Image
+        // TODO: Implement real icons for types
+        ImGui::SetCursorPosX(InitialPosX + 4);
+        ImGui::SetCursorPosY(InitialPosY + 2);
+        ImGui::Image(BlankTypeIcon, ImVec2(ImageSize - 4, ImageSize - 4));
+
+        // Draw Name
+        ImGui::SameLine();
+        ImGui::SetCursorPosX(InitialPosX + ImageSize + Padding);
+        ImGui::SetCursorPosY(InitialPosY);
+
+        ImGui::PushClipRect(ImVec2(InitialPosX, InitialPosY), ImVec2(WindowPos.x + LineEndPosX + NameWidth, WindowPos.y + LineEndPosY), true);
+        ImGui::TextUnformatted(fullName.c_str());
+        ImGui::PopClipRect();
+
+        ImGui::SameLine();
+        ImGui::SetCursorPosX(InitialPosX + LineEndPosX + NameWidth + Padding);
+
+        //ImGui::PushClipRect(ImVec2(InitialPosX, InitialPosY), ImVec2(WindowPos.x + LineEndPosX + TypeWidth, WindowPos.y + LineEndPosY), true);
+        ImGui::TextUnformatted(obj->GetType().c_str());
+        //ImGui::PopClipRect();
+    }
+
     void DrawObjects()
     {
-        std::string hexVal;
-        hexVal.resize(2+8);
+        float NameColumnWidth = 0, TypeColumnWidth = 0;
+        if(ImGui::BeginTable("##ObjectsContainer", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_Resizable))
+        {
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted("Name");
+            NameColumnWidth = ImGui::GetColumnWidth(0);
+            ImGui::TableSetColumnIndex(1);
+            ImGui::TextUnformatted("Type");
+            TypeColumnWidth = ImGui::GetColumnWidth(1);
+            ImGui::EndTable();
+        }
         
         for(Object* obj : displayedObjects)
         {
-            sprintf(hexVal.data(), "0x%08X", obj->GetID());
-            ImGui::Selectable((obj->GetName() + "(" + hexVal + ")").c_str());
-
-            if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
-            {
-                StartObjectEditing(obj);
-            }
-
-            bObjectContextMenu = false;
-            
-            if(editView.get() != nullptr){
-                continue;
-            }
-
-            if(ImGui::BeginPopupContextItem())
-            {
-                bObjectContextMenu = true;
-
-                ImGui::Selectable("Create");
-                if(ImGui::Selectable("Edit")) {
-                    StartObjectEditing(obj);
-                }
-                if(ImGui::Selectable("Delete")) {
-                    DeleteObject(obj);
-                    UpdateDisplayedObjects();
-                }
-                ImGui::Separator();
-                ImGui::Selectable("Place in level");
-                ImGui::EndPopup();
-            }
+            DrawObject(obj, NameColumnWidth, TypeColumnWidth);
         }
     }
 
     virtual void OnGUI(Window *window)
     {
+        if(firstInitialization) {
+            firstInitialization = false;
+
+            // TODO: Change to real icon
+            BlankTypeIcon = BImGui::GetEdImage(BImGui::Img::Visibility32Icon);
+        }
+
         ObjectTypeLibrary &lib = ObjectTypeLibrary::Get();
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));

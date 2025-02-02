@@ -10,9 +10,7 @@ class Buffer
 {
     VkBuffer buffer;
     VkDeviceMemory bufferMemory;
-    void* bufferData;
     size_t bufferSize;
-
 public:
     Buffer(size_t BufferDataSize, VkBufferUsageFlags usage = VK_BUFFER_USAGE_FLAG_BITS_MAX_ENUM, void* initialBufferData = nullptr);
     ~Buffer();
@@ -22,5 +20,13 @@ public:
     inline size_t GetSize() const {return bufferSize;}
 
     void Write(void* newData);
-    void* Read();
+
+    /*
+     * Maps GPU memory to CPU Host
+     * 
+     * Important: Every Map() call MUST be eventually followed by Unmap(), 
+     * when the buffer isn't required anymore 
+     */
+    void* Map();
+    void Unmap();
 };

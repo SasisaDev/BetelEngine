@@ -12,6 +12,7 @@ ISamplerTexture::~ISamplerTexture()
     vkFreeMemory(dev, imageMemory, nullptr);
     vkDestroySampler(dev, sampler, nullptr);
     vkDestroyImageView(dev, imageView, nullptr);
+    buffer.reset();
 }
 
 void ISamplerTexture::InitializeTexture(int dimX, int dimY, unsigned char* data, int channels)

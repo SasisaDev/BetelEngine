@@ -63,8 +63,10 @@ class TextureEditView : public ObjectEditView
             if(texture)
             {
                 texture->Rename(tex_name);
-                texture->SetPath(tex_path);
-                texture->LoadTexture();
+                if(texture->GetPath() != tex_path) {
+                    texture->SetPath(tex_path);
+                    texture->LoadTexture();
+                }
                 texture->Dirty();
             }
 
@@ -111,7 +113,7 @@ private:
         tex_reimport = data;
         tex_ds = tex_reimport.value().DS;
         tex_dimensions = std::to_string(data.Width) + " x " + std::to_string(data.Height);
-        tex_aspect = static_cast<double>(data.Width) / static_cast<double>(data.Height);
+        tex_aspect = static_cast<double>(data.Height) / static_cast<double>(data.Width);
     }
 
 public:
@@ -145,7 +147,7 @@ public:
         deferredDeleter->tex_ds = tex_ds;
         deferredDeleter->ShouldCleanup = true;
         deferredDeleter->ShouldSelfDestruct = true;
-        
+
         deferredSaver->ShouldSelfDestruct = true;
     }
 

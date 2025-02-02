@@ -5,8 +5,6 @@
 Buffer::Buffer(size_t BufferDataSize, VkBufferUsageFlags usage, void* initialBufferData)
     : bufferSize(BufferDataSize)
 {
-    bufferData = malloc(BufferDataSize);
-
     VkDevice device = IRenderUtility::GetDevice();
 
     VkBufferCreateInfo buffCreateInfo = {
@@ -36,6 +34,7 @@ Buffer::Buffer(size_t BufferDataSize, VkBufferUsageFlags usage, void* initialBuf
     vkBindBufferMemory(device, buffer, bufferMemory, 0);
 
     if(initialBufferData != nullptr) {
+        void* bufferData;
         vkMapMemory(IRenderUtility::GetDevice(), bufferMemory, 0, bufferSize, 0, &bufferData);
         std::memcpy(bufferData, initialBufferData, bufferSize);
         vkUnmapMemory(IRenderUtility::GetDevice(), bufferMemory);
@@ -52,16 +51,20 @@ Buffer::~Buffer()
 
 void Buffer::Write(void* newData) 
 {
-    vkMapMemory(IRenderUtility::GetDevice(), bufferMemory, 0, bufferSize, 0, &bufferData);
-    std::memcpy(bufferData, newData, bufferSize);
+    void* buffer;
+    vkMapMemory(IRenderUtility::GetDevice(), bufferMemory, 0, bufferSize, 0, &buffer);
+    std::memcpy(buffer, newData, bufferSize);
     vkUnmapMemory(IRenderUtility::GetDevice(), bufferMemory);
 }
 
-void* Buffer::Read()
-{
-    void* data = malloc(bufferSize); 
-    vkMapMemory(IRenderUtility::GetDevice(), bufferMemory, 0, bufferSize, 0, &bufferData);
-    std::memcpy(data, bufferData, bufferSize);
+void* Buffer::Map()
+{   
+    void* buffer; 
+    vkMapMemory(IRenderUtility::GetDevice(), bufferMemory, 0, bufferSize, 0, &buffer);
+    return buffer;
+}
+
+void Buffer::Unmap()
+{   
     vkUnmapMemory(IRenderUtility::GetDevice(), bufferMemory);
-    return data;
 }
