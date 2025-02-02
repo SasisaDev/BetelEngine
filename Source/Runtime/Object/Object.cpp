@@ -1,5 +1,7 @@
 #include "Object.h"
 
+#include <algorithm>
+
 void Object::Reparent(Object* newParent)
 {
     Parent = newParent;
