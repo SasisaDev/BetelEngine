@@ -72,7 +72,7 @@ public:
      * Calling this function will unload object and destroy it completely from the database 
      * It may result in broken pointers, use with caution.
     */
-    Object* DestroyObject(uint32_t id);
+    void DestroyObject(uint32_t id);
 
     /*
      * Goes through all registered objects and returns a vector of pointers to loaded objects 

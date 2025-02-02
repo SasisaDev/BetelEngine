@@ -37,20 +37,47 @@ class AtlasEditView : public ObjectEditView
         }
     };
 
+    struct AtlasSaver : public BImGui::DeferredTask
+    {
+        bool ShouldSave = false;
+        bool ShouldSelfDestruct = false;
+
+        bool Perform() override {
+            if(!ShouldSave) {
+                return ShouldSelfDestruct;
+            }
+
+            //  Procedure
+
+            ShouldSave = false;
+
+            return ShouldSelfDestruct;
+        }
+    };
+
 private:
     ImTextureID iconBrowse;
 
     AtlasResourcesDeleter *deferredDeleter;
+    AtlasSaver *deferredSaver;
     
     ObjAtlas* atlas;
 
     // Local variables copy
     std::string name;
-    uint32_t texID;
-    ObjTexture* tex;
-    VkDescriptorSet texDS;
-    double texAspect;
+
+    bool bHasTex = false;
+    uint32_t texID = 0;
+    ObjTexture* tex = nullptr;
+    VkDescriptorSet texDS = VK_NULL_HANDLE;
+    double texAspect = 1;
+
     std::map<uint16_t, IVec4> sprites;
+private:
+    void OnTextureObjectSelected()
+    {
+
+    }
 public:
     AtlasEditView(Object *obj)
         : ObjectEditView("Edit Atlas")
@@ -58,13 +85,17 @@ public:
         iconBrowse = BImGui::GetEdImage(BImGui::Img::Browse32Icon);
 
         deferredDeleter = BImGui::CreateDeferredTask<AtlasResourcesDeleter>();
+        deferredSaver = BImGui::CreateDeferredTask<AtlasSaver>();
 
         atlas = dynamic_cast<ObjAtlas*>(obj);
         name = atlas->GetName();
         tex = atlas->GetTexture().Load();
-        texID = tex->GetID();
-        texDS = ImGui_ImplVulkan_AddTexture(tex->GetTexture()->GetSampler(), tex->GetTexture()->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-        texAspect = static_cast<double>(tex->GetWidth()) / static_cast<double>(tex->GetHeight());
+        if(tex){
+            bHasTex = true;
+            texID = tex->GetID();
+            texDS = ImGui_ImplVulkan_AddTexture(tex->GetTexture()->GetSampler(), tex->GetTexture()->GetImageView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+            texAspect = static_cast<double>(tex->GetWidth()) / static_cast<double>(tex->GetHeight());
+        }
         sprites = atlas->GetSpriteRects();
     }
 
@@ -72,6 +103,7 @@ public:
     {
         deferredDeleter->ShouldCleanup = true;
         deferredDeleter->ShouldSelfDestruct = true;
+        deferredSaver->ShouldSelfDestruct = true;
     }
 
     virtual float GetCustomControlButtonsWidth(const ImGuiStyle& style) override
@@ -89,7 +121,8 @@ public:
 
         BImGui::InputString("Name", name);
 
-        ImGui::Image((ImTextureID)texDS, ImVec2(250, texAspect * 250));
+        if(bHasTex)
+            ImGui::Image((ImTextureID)texDS, ImVec2(250, texAspect * 250));
     }
 
     virtual bool SaveObject() override

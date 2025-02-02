@@ -145,6 +145,8 @@ public:
         deferredDeleter->tex_ds = tex_ds;
         deferredDeleter->ShouldCleanup = true;
         deferredDeleter->ShouldSelfDestruct = true;
+        
+        deferredSaver->ShouldSelfDestruct = true;
     }
 
     virtual float GetCustomControlButtonsWidth(const ImGuiStyle& style) override

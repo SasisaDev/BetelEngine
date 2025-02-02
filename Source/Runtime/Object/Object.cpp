@@ -5,9 +5,11 @@ void Object::Reparent(Object* newParent)
     Parent = newParent;
 }
 
-void Object::Rename(std::string newName)
+void Object::Rename(const std::string& newName)
 {
     Name = newName;
+    // Remove all null terminators from the string
+    Name.erase(std::find(Name.begin(), Name.end(), '\0'), Name.end());
 }
 
 

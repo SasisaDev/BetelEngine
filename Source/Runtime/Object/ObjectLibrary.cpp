@@ -193,3 +193,13 @@ std::vector<Object*> ObjectLibrary::GetObjectsOfTypeID(const std::string& typeID
 
     return objs;
 }
+
+void ObjectLibrary::DestroyObject(uint32_t id)
+{
+    if(!objects.contains(id)) {
+        return;
+    }
+
+    // TODO: Destroy Object safely
+    objects.erase(id);
+}

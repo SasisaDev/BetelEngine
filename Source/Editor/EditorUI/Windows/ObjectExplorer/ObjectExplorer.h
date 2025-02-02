@@ -167,15 +167,23 @@ public:
         }
     }
     
-    void CreateNewObject() {
-        GEngine->GetObjectLibrary()->CreateObjectFromTypeID(currentSelection->ID, "Object", false);
+    Object* CreateNewObject() {
+        return GEngine->GetObjectLibrary()->CreateObjectFromTypeID(currentSelection->ID, "Object", false);
+    }
+
+    void DeleteObject(Object* obj) {
+        GEngine->GetObjectLibrary()->DestroyObject(obj->GetID());
     }
 
     void DrawObjects()
     {
+        std::string hexVal;
+        hexVal.resize(2+8);
+        
         for(Object* obj : displayedObjects)
         {
-            ImGui::Selectable(obj->GetName().c_str());
+            sprintf(hexVal.data(), "0x%08X", obj->GetID());
+            ImGui::Selectable((obj->GetName() + "(" + hexVal + ")").c_str());
 
             if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
             {
@@ -183,6 +191,11 @@ public:
             }
 
             bObjectContextMenu = false;
+            
+            if(editView.get() != nullptr){
+                continue;
+            }
+
             if(ImGui::BeginPopupContextItem())
             {
                 bObjectContextMenu = true;
@@ -191,7 +204,10 @@ public:
                 if(ImGui::Selectable("Edit")) {
                     StartObjectEditing(obj);
                 }
-                ImGui::Selectable("Delete");
+                if(ImGui::Selectable("Delete")) {
+                    DeleteObject(obj);
+                    UpdateDisplayedObjects();
+                }
                 ImGui::Separator();
                 ImGui::Selectable("Place in level");
                 ImGui::EndPopup();
@@ -273,7 +289,8 @@ public:
                 {
                     if(ImGui::Selectable("Create"))
                     {
-                        CreateNewObject();
+                        StartObjectEditing(CreateNewObject());
+                        UpdateDisplayedObjects();
                     }
                     ImGui::EndPopup();
                 }

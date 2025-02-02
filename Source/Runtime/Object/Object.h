@@ -59,7 +59,7 @@ public:
     virtual ~Object(){}
 
     void Reparent(Object* newParent);
-    void Rename(std::string newName);
+    void Rename(const std::string& newName);
     // TODO: Maybe make this private? It can cause big issues
     void SetID(uint32_t newID) {ID = newID;}
 
