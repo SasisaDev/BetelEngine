@@ -132,8 +132,8 @@ int GuardedMain(int argc, char* argv[])
 
 	std::string atlasType = atlas->GetStaticType();
 
-	ObjectRef<ObjTexture> testTexture(67305985);
-	testTexture.Load();
+	//ObjectRef<ObjTexture> testTexture(67305985);
+	//testTexture.Load();
 
 	/*AssetFile assetFile("Editor/Content/AssetFile");
 	assetFile.ReadFromDevice();*/

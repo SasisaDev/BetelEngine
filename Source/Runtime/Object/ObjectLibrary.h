@@ -14,18 +14,16 @@ class AssetLoader;
 struct ObjectDescriptor
 {
     Object *object;
-    std::string name;
-    std::string typeID;
     std::atomic_uint32_t usages = 0;
 
-    ObjectDescriptor(Object* objPtr, const std::string& nName, const std::string& nType) {object = objPtr; name = nName; typeID = nType;}
+    ObjectDescriptor(Object* objPtr) {object = objPtr;}
     ObjectDescriptor() {}
     ~ObjectDescriptor();
 };
 
 class ObjectLibrary
 {
-    template <ObjectClass _ObjectT>
+    template <ObjectClass _ObjectT>    
     friend class ObjectRef;
 
     void RegisterObjectUsage(uint32_t id);
@@ -36,13 +34,13 @@ class ObjectLibrary
     // Generates unique Object ID, taking holes in a map into an account. It's way slower, but creates denser distribution
     uint32_t GenerateObjectIDSlow();
 
-    void RegisterObjectID(uint32_t ID, const std::string& Name, const std::string& Type);
+    void RegisterObjectID(uint32_t ID);
 
     AssetLoader *loader;
 protected:
     std::unordered_map<uint32_t, ObjectDescriptor> objects;
 
-    void AddObject(uint32_t id, const std::string& Name, const std::string& Type, Object* preloaded = nullptr);
+    void AddObject(uint32_t id, Object* preloaded = nullptr);
 public:
     ObjectLibrary(AssetLoader* assetLoader);
     ~ObjectLibrary();
@@ -60,7 +58,7 @@ public:
             object->SetFlag(ObjectFlags::Transient);
         }
 
-        objects.emplace(objectID, ObjectDescriptor(object, Name, _ObjectT::GetStaticType()));
+        objects.emplace(objectID, object);
         return object;
     }
 
@@ -92,17 +90,10 @@ public:
      */
     std::vector<Object*> GetObjectsOfTypeID(const std::string& typeID, bool excludeTransient = false);
 
-     /*
-     * Goes through all registered objects and returns a vector of pointers to object descriptors 
-     *
-     * WARNING: Very heavy function, use with care!
-     */
-    std::vector<std::pair<uint32_t, ObjectDescriptor*>> GetAllObjectDescriptors(bool excludeTransient = false);
-
     /*
-     * Goes through all registered objects and returns a vector of object descriptors with specified Type ID 
-     * 
-     * WARNING: Very heavy function, use with care!
+     * Loads all objects synchroniously.
+     *
+     * WARNING: Very heavy function, should never be used!
      */
-    std::vector<std::pair<uint32_t, ObjectDescriptor*>> GetObjectDescriptorsOfTypeID(const std::string& typeID, bool excludeTransient = false);
+    void LoadAllObjects();
 };

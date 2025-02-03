@@ -116,33 +116,8 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
 
         BMF->Table[BMF->FileTable.pObjects[i].ID] = BMF->FileTable.pObjects[i].offset;
 
-        // TODO: This code reads first field of object. 
-        // I doubt it should happen at this stage, but we must do it to get Name & Type for the object
-        // Maybe it all should be reworked
-        CHECKREAD(1);
-        uint8_t typeLength = ConvertChar::ToUInt8(buffer);
-        if(typeLength == 0)
-        {
-            LOG(Error, LogAssetLoader, "Attempted reading BMF file object, but it's class name length is 0");
-            return {0};
-        }
-
-        CHECKREAD(typeLength);
-        char* type = new char[typeLength];
-        memmove(type, buffer, typeLength);
-
-        CHECKREAD(2);
-        uint16_t nameLength = ConvertChar::ToUInt16(buffer);
-
-        CHECKREAD(nameLength);
-        char* name = new char[nameLength];
-        memmove(name, buffer, nameLength);
-
         // Notify Object Library, that new Object ID is registered
-        OnNewObjectID.Broadcast(BMF->FileTable.pObjects[i].ID, name, type);
-        
-        delete[] type;
-        delete[] name;
+        OnNewObjectID.Broadcast(BMF->FileTable.pObjects[i].ID);
     }
     
     delete[] buffer;

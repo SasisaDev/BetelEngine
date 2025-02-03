@@ -23,12 +23,12 @@ ObjectLibrary::~ObjectLibrary()
     
 }
 
-void ObjectLibrary::RegisterObjectID(uint32_t ID, const std::string& Name, const std::string& Type)
+void ObjectLibrary::RegisterObjectID(uint32_t ID)
 {
     if(objects.contains(ID)) {
         assert(!"Passed Object ID is already registered in the engine");
     }
-    objects.emplace(ID, ObjectDescriptor(nullptr, Name, Type));
+    objects.emplace(ID, nullptr);
 }
 
 void ObjectLibrary::RegisterObjectUsage(uint32_t id) {
@@ -90,13 +90,13 @@ Object* ObjectLibrary::CreateObjectFromTypeID(const std::string& TypeID, const s
         object->SetFlag(ObjectFlags::Transient);
     }
 
-    objects.emplace(objectID, ObjectDescriptor(object, Name, TypeID));
+    objects.emplace(objectID, object);
     return object;
 }
 
-void ObjectLibrary::AddObject(uint32_t id, const std::string& Name, const std::string& Type, Object* preloaded)
+void ObjectLibrary::AddObject(uint32_t id, Object* preloaded)
 {
-    objects.emplace(id, ObjectDescriptor(preloaded, Name, Type));
+    objects.emplace(id, preloaded);
     if(id > LastObjectID) {
         LastObjectID = id;
     }
@@ -194,52 +194,6 @@ std::vector<Object*> ObjectLibrary::GetObjectsOfTypeID(const std::string& typeID
     return objs;
 }
 
-std::vector<std::pair<uint32_t, ObjectDescriptor*>> ObjectLibrary::GetAllObjectDescriptors(bool excludeTransient)
-{
-    std::vector<std::pair<uint32_t, ObjectDescriptor*>> objs;
-    objs.reserve(16);
-
-    for(auto it = objects.begin(); it != objects.end(); ++it)
-    {
-        // Transient objects can't be unloaded, as it will remove their descriptor
-        bool TransientCheck = (excludeTransient) ? it->second.object != nullptr : true;
-        // But if object is loaded, we should check the Transient flag
-        TransientCheck = (TransientCheck) ? true : !it->second.object->HasFlag(ObjectFlags::Transient);
-
-        if(it->second.object && TransientCheck)
-        {
-            objs.push_back({it->first, &(it->second)});
-        }
-    }
-
-    return objs;
-}
-
-std::vector<std::pair<uint32_t, ObjectDescriptor*>> ObjectLibrary::GetObjectDescriptorsOfTypeID(const std::string& typeID, bool excludeTransient)
-{
-    std::vector<std::pair<uint32_t, ObjectDescriptor*>> objs;
-    objs.reserve(16);
-
-    for(auto it = objects.begin(); it != objects.end(); ++it)
-    {
-        const bool SameType = it->second.typeID == typeID;
-
-        // Transient objects can't be unloaded, as it will remove their descriptor
-        bool TransientCheck = (excludeTransient) ? it->second.object != nullptr : true;
-        // But if object is loaded, we should check the Transient flag
-        TransientCheck = (TransientCheck) ? true : !it->second.object->HasFlag(ObjectFlags::Transient);
-
-        if( it->second.object 
-            && SameType 
-            && TransientCheck)
-        {
-            objs.push_back({it->first, &(it->second)});
-        }
-    }
-
-    return objs;
-}
-
 void ObjectLibrary::DestroyObject(uint32_t id)
 {
     if(!objects.contains(id)) {
@@ -248,4 +202,12 @@ void ObjectLibrary::DestroyObject(uint32_t id)
 
     // TODO: Destroy Object safely
     objects.erase(id);
+}
+
+void ObjectLibrary::LoadAllObjects()
+{
+    for(auto it = objects.begin(); it != objects.end(); ++it)
+    {
+        LoadObject(it->first);
+    }
 }

@@ -44,7 +44,7 @@ protected:
     std::vector<ArchiveFile*> resourceArchives;
 public:
 
-    MulticastDelegate<uint32_t, const std::string&, const std::string&> OnNewObjectID;
+    MulticastDelegate<uint32_t> OnNewObjectID;
 
     void CrawlContent(std::string Path = "./Content");
 

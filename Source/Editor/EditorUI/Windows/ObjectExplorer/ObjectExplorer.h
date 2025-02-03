@@ -41,7 +41,7 @@ protected:
 
     ImGuiTreeNodeFlags baseTreeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-    std::vector<std::pair<uint32_t, ObjectDescriptor*>> displayedObjects;
+    std::vector<Object*> displayedObjects;
 
     std::unique_ptr<EditorToolkitWindow> editView;
 
@@ -111,12 +111,12 @@ public:
         if (currentSelection->ID == "__ALL__")
         {
             // Display all objects
-            displayedObjects = GEngine->GetObjectLibrary()->GetAllObjectDescriptors(true);
+            displayedObjects = GEngine->GetObjectLibrary()->GetAllObjects(true);
         }
         else
         {
             // Display objects of category
-            displayedObjects = GEngine->GetObjectLibrary()->GetObjectDescriptorsOfTypeID(currentSelection->ID, true);
+            displayedObjects = GEngine->GetObjectLibrary()->GetObjectsOfTypeID(currentSelection->ID, true);
         }
         
         // TODO: Implement name filtering
@@ -163,8 +163,7 @@ public:
         }
     }
 
-    void StartObjectEditing(const std::pair<uint32_t, ObjectDescriptor*>& desc) {
-        Object* obj = GEngine->GetObjectLibrary()->LoadObject(desc.first);
+    void StartObjectEditing(Object* obj) {
         if(editView.get() == nullptr) {
             const std::string& type = obj->GetType();
             editView.reset();
@@ -176,15 +175,15 @@ public:
         return GEngine->GetObjectLibrary()->CreateObjectFromTypeID(currentSelection->ID, "Object", false);
     }
 
-    void DeleteObject(uint32_t id) {
-        GEngine->GetObjectLibrary()->DestroyObject(id);
+    void DeleteObject(Object* obj) {
+        GEngine->GetObjectLibrary()->DestroyObject(obj->GetID());
     }
 
-    void DrawObjectPopup(const std::pair<uint32_t, ObjectDescriptor*>& desc)
+    void DrawObjectPopup(Object* obj)
     {
         if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
         {
-            StartObjectEditing(desc);
+            StartObjectEditing(obj);
         }
 
         bObjectContextMenu = false;
@@ -199,10 +198,10 @@ public:
 
             ImGui::Selectable("Create");
             if(ImGui::Selectable("Edit")) {
-                StartObjectEditing(desc);
+                StartObjectEditing(obj);
             }
             if(ImGui::Selectable("Delete")) {
-                DeleteObject(desc.first);
+                DeleteObject(obj);
                 UpdateDisplayedObjects();
             }
             ImGui::Separator();
@@ -211,16 +210,16 @@ public:
         }
     }
 
-    void DrawObject(const std::pair<uint32_t, ObjectDescriptor*>& desc, float NameWidth, float TypeWidth) 
+    void DrawObject(Object* obj, float NameWidth, float TypeWidth) 
     {
         const float ImageSize = 16;
         const float Padding = 8;
 
         std::string hexID;
         hexID.resize(2+8);
-        sprintf(hexID.data(), "0x%08X", desc.first);
+        sprintf(hexID.data(), "0x%08X", obj->GetID());
 
-        std::string fullName = desc.second->name + " (" + hexID + ")"; 
+        std::string fullName = obj->GetName() + " (" + hexID + ")"; 
 
         ImGuiWindow* window = ImGui::GetCurrentWindowRead();
         ImVec2 WindowPos = window->DC.CursorPos;
@@ -229,7 +228,7 @@ public:
         float InitialPosY = ImGui::GetCursorPosY();
         ImGui::Selectable((std::string("##") + fullName).c_str());
 
-        DrawObjectPopup(desc);
+        DrawObjectPopup(obj);
 
         float LineEndPosY = ImGui::GetCursorPosY();
         ImGui::SameLine();
@@ -254,7 +253,7 @@ public:
         ImGui::SetCursorPosX(InitialPosX + LineEndPosX + NameWidth + Padding);
 
         //ImGui::PushClipRect(ImVec2(InitialPosX, InitialPosY), ImVec2(WindowPos.x + LineEndPosX + TypeWidth, WindowPos.y + LineEndPosY), true);
-        ImGui::TextUnformatted(desc.second->typeID.c_str());
+        ImGui::TextUnformatted(obj->GetType().c_str());
         //ImGui::PopClipRect();
     }
 
@@ -273,9 +272,9 @@ public:
             ImGui::EndTable();
         }
         
-        for(const std::pair<uint32_t, ObjectDescriptor*>& desc : displayedObjects)
+        for(Object* obj : displayedObjects)
         {
-            DrawObject(desc, NameColumnWidth, TypeColumnWidth);
+            DrawObject(obj, NameColumnWidth, TypeColumnWidth);
         }
     }
 
@@ -305,6 +304,12 @@ public:
             if (first_time)
             {
                 first_time = false;
+
+                // To make in-editor Object Explorer show all objects, currently we have to do this
+                // TODO: Make normal editor object-metadata scraping routine (CRITICAL)
+#               ifdef EDITOR
+                GEngine->GetObjectLibrary()->LoadAllObjects();
+#               endif
 
                 ImGui::DockBuilderRemoveNode(dockspace_id);
                 ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
@@ -360,8 +365,7 @@ public:
                 {
                     if(ImGui::Selectable("Create"))
                     {
-                        // TODO: Rewrite object creation system so that it registers objects only when initial editing is complete
-                        //StartObjectEditing(CreateNewObject());
+                        StartObjectEditing(CreateNewObject());
                         UpdateDisplayedObjects();
                     }
                     ImGui::EndPopup();
