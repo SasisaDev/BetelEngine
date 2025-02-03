@@ -14,16 +14,18 @@ class AssetLoader;
 struct ObjectDescriptor
 {
     Object *object;
+    std::string name;
+    std::string typeID;
     std::atomic_uint32_t usages = 0;
 
-    ObjectDescriptor(Object* objPtr) {object = objPtr;}
+    ObjectDescriptor(Object* objPtr, const std::string& nName, const std::string& nType) {object = objPtr; name = nName; typeID = nType;}
     ObjectDescriptor() {}
     ~ObjectDescriptor();
 };
 
 class ObjectLibrary
 {
-    template <ObjectClass _ObjectT>    
+    template <ObjectClass _ObjectT>
     friend class ObjectRef;
 
     void RegisterObjectUsage(uint32_t id);
@@ -89,4 +91,18 @@ public:
      * WARNING: Very heavy function, use with care!
      */
     std::vector<Object*> GetObjectsOfTypeID(const std::string& typeID, bool excludeTransient = false);
+
+     /*
+     * Goes through all registered objects and returns a vector of pointers to object descriptors 
+     *
+     * WARNING: Very heavy function, use with care!
+     */
+    std::vector<std::pair<uint32_t, ObjectDescriptor*>> GetAllObjectDescriptors(bool excludeTransient = false);
+
+    /*
+     * Goes through all registered objects and returns a vector of object descriptors with specified Type ID 
+     * 
+     * WARNING: Very heavy function, use with care!
+     */
+    std::vector<std::pair<uint32_t, ObjectDescriptor*>> GetObjectDescriptorsOfTypeID(const std::string& typeID, bool excludeTransient = false);
 };

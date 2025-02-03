@@ -18,7 +18,7 @@ class Entity;
  * Loaded objects may contain these flags, that define their runtime behaviour
  */
 enum class ObjectFlags : uint8_t {
-    // This object is created only for runtime use, do not save to disk. Destroy permamently once parent is unloaded
+    // This object is created only for runtime use, do not save on disk. Destroy permamently once parent is unloaded
     Transient = (1 << 0),
     // Unload on next GC Pass. If set, should not be referenced or used by anything
     Unload = (1<<1),

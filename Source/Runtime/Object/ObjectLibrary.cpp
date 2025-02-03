@@ -194,6 +194,52 @@ std::vector<Object*> ObjectLibrary::GetObjectsOfTypeID(const std::string& typeID
     return objs;
 }
 
+std::vector<std::pair<uint32_t, ObjectDescriptor*>> ObjectLibrary::GetAllObjectDescriptors(bool excludeTransient)
+{
+    std::vector<std::pair<uint32_t, ObjectDescriptor*>> objs;
+    objs.reserve(16);
+
+    for(auto it = objects.begin(); it != objects.end(); ++it)
+    {
+        // Transient objects can't be unloaded, as it will remove their descriptor
+        bool TransientCheck = (excludeTransient) ? it->second.object != nullptr : true;
+        // But if object is loaded, we should check the Transient flag
+        TransientCheck = (TransientCheck) ? true : !it->second.object->HasFlag(ObjectFlags::Transient);
+
+        if(it->second.object && TransientCheck)
+        {
+            objs.push_back({it->first, &(it->second)});
+        }
+    }
+
+    return objs;
+}
+
+std::vector<std::pair<uint32_t, ObjectDescriptor*>> ObjectLibrary::GetObjectDescriptorsOfTypeID(const std::string& typeID, bool excludeTransient)
+{
+    std::vector<std::pair<uint32_t, ObjectDescriptor*>> objs;
+    objs.reserve(16);
+
+    for(auto it = objects.begin(); it != objects.end(); ++it)
+    {
+        const bool SameType = it->second.typeID == typeID;
+
+        // Transient objects can't be unloaded, as it will remove their descriptor
+        bool TransientCheck = (excludeTransient) ? it->second.object != nullptr : true;
+        // But if object is loaded, we should check the Transient flag
+        TransientCheck = (TransientCheck) ? true : !it->second.object->HasFlag(ObjectFlags::Transient);
+
+        if( it->second.object 
+            && SameType 
+            && TransientCheck)
+        {
+            objs.push_back({it->first, &(it->second)});
+        }
+    }
+
+    return objs;
+}
+
 void ObjectLibrary::DestroyObject(uint32_t id)
 {
     if(!objects.contains(id)) {

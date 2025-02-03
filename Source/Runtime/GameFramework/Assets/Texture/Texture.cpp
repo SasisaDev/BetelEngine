@@ -10,8 +10,6 @@ bool ObjTextureType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<O
 
 void ObjTexture::LoadTexture()
 {
-    texture.reset();
-    
     if(path.empty()) {
         return;
     }
