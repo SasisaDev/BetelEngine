@@ -23,12 +23,12 @@ ObjectLibrary::~ObjectLibrary()
     
 }
 
-void ObjectLibrary::RegisterObjectID(uint32_t ID)
+void ObjectLibrary::RegisterObjectID(uint32_t ID, const std::string& Name, const std::string& Type)
 {
     if(objects.contains(ID)) {
         assert(!"Passed Object ID is already registered in the engine");
     }
-    objects.emplace(ID, nullptr);
+    objects.emplace(ID, ObjectDescriptor(nullptr, Name, Type));
 }
 
 void ObjectLibrary::RegisterObjectUsage(uint32_t id) {
@@ -90,13 +90,13 @@ Object* ObjectLibrary::CreateObjectFromTypeID(const std::string& TypeID, const s
         object->SetFlag(ObjectFlags::Transient);
     }
 
-    objects.emplace(objectID, object);
+    objects.emplace(objectID, ObjectDescriptor(object, Name, TypeID));
     return object;
 }
 
-void ObjectLibrary::AddObject(uint32_t id, Object* preloaded)
+void ObjectLibrary::AddObject(uint32_t id, const std::string& Name, const std::string& Type, Object* preloaded)
 {
-    objects.emplace(id, preloaded);
+    objects.emplace(id, ObjectDescriptor(preloaded, Name, Type));
     if(id > LastObjectID) {
         LastObjectID = id;
     }
