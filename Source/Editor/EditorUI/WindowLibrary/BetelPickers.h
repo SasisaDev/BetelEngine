@@ -3,6 +3,7 @@
 #include <concepts>
 #include <type_traits>
 #include <string>
+#include <cstdint>
 
 namespace BImGui
 {
