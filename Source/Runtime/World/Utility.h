@@ -27,7 +27,7 @@ class WorldUtility {
 public:
 
     // TODO: World Raycast Test 
-    static HitResult HitscanWorld(World* world, IVec2 hitpoint) {
+    static HitResult HitscanWorld(World* world, IVec2 hitpoint, const HitscanParams& params = HitscanParams()) {
         HitResult result;
         result.Hitpoint = hitpoint;
 
@@ -36,30 +36,42 @@ public:
             Vec3 bbox = ent.Get()->GetBoundingBox();
             bool isXHit = false;
             bool isYHit = false;
-            // This is terrible, but okay for testing
+            // TODO: This is terrible, but okay for testing
             if(bbox.x > 0 ) {
-                isXHit = hitpoint.x >= loc.x && hitpoint.x <= bbox.x;
+                isXHit = hitpoint.x >= loc.x && hitpoint.x <= loc.x + bbox.x;
             } else {
-                isXHit = hitpoint.x <= loc.x && hitpoint.x >= bbox.x;
+                isXHit = hitpoint.x <= loc.x && hitpoint.x >= loc.x + bbox.x;
             }
             if(bbox.y > 0 ) {
-                isYHit = hitpoint.y >= loc.y && hitpoint.y <= bbox.y;
+                isYHit = hitpoint.y >= loc.y && hitpoint.y <= loc.y + bbox.y;
             } else {
-                isYHit = hitpoint.y <= loc.y && hitpoint.y >= bbox.y;
+                isYHit = hitpoint.y <= loc.y && hitpoint.y >= loc.y + bbox.y;
             }
 
             if(isXHit && isYHit) {
+                for(Entity* ignoredEntity : params.IgnoreEntities) {
+                    if(ignoredEntity == ent.Get()) {
+                        continue;
+                    }
+                }
                 result.HitEntities.push_back(ent.Get());
-                // TODO: Multiscan, etc.
-                break;
+
+                if(!params.MultiScan){
+                    break;
+                }
             }
         }
 
         return result;
     }
     
-    // Creates Hitscan from Screen Position to World Position
-    static HitResult HitscanCamToWorld(World* world, float ViewportX, float ViewportY, float ViewportW, float ViewportH, HitscanParams& params) {
+    /*
+     * Calculates and returns world coordinates from viewport coordinates
+     * 
+     * world must be an active world associated with some WorldRenderLayerRef
+     */
+    static IVec2 GetWorldSpaceFromScreenSpace(World* world, float ViewportX, float ViewportY, float ViewportW, float ViewportH)
+    {
         WorldRenderLayerGPUStorage renderData = world->GetWorldRenderLayerRef()->GetSceneData();
 
         float ScreenPointX = (ViewportX / ViewportW) * 2.f - 1.f;
@@ -74,11 +86,14 @@ public:
         OriginPosition.y *= OriginPosition.w;
         OriginPosition.z *= OriginPosition.w;
 
-        IVec2 WorldHitpoint = {OriginPosition.x - renderData.CameraPosition.x, OriginPosition.y + renderData.CameraPosition.y};
-
         //LOGF(Log, LogHitscan, "sX = %f, sY = %f, X = %f, Y = %f", ScreenPointX, ScreenPointY, OriginPosition.x, OriginPosition.y);
-        
-        return HitscanWorld(world, WorldHitpoint);
+
+        return {OriginPosition.x - renderData.CameraPosition.x, OriginPosition.y + renderData.CameraPosition.y};
+    }
+    
+    // Creates Hitscan from Screen Position to World Position
+    static HitResult HitscanCamToWorld(World* world, float ViewportX, float ViewportY, float ViewportW, float ViewportH, const HitscanParams& params = HitscanParams()) {
+        return HitscanWorld(world, GetWorldSpaceFromScreenSpace(world, ViewportX, ViewportY, ViewportW, ViewportH), params);
     }
 
     // TODO: World to Cam Projection

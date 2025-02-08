@@ -108,6 +108,8 @@ int GuardedMain(int argc, char* argv[])
 	app.GetEngine()->GetWorld()->Spawn<EntSprite>("Sprite 2", sprite2info);
 	EntitySpawnInfo sprite3info {.Location = {16, 8, -15}};
 	app.GetEngine()->GetWorld()->Spawn<EntSprite>("Sprite 3", sprite3info);
+	EntitySpawnInfo sprite4info {.Location = {120, 30, -11}};
+	app.GetEngine()->GetWorld()->Spawn<EntSprite>("Sprite 4", sprite4info);
 	app.GetEngine()->GetWorld()->Spawn<EntTilemap>("Tilemap");
 	CameraEntity* camera = app.GetEngine()->GetWorld()->Spawn<CameraEntity>("Camera");
 	camera->SetCameraActive();
