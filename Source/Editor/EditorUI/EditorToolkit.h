@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Toolkit/Toolkit.h>
-#include <imgui.h>
+#include <imgui/imgui.h>
 #include <Log/Logger.h>
 
 #include "Windows/SceneOutliner/SceneOutliner.h"

@@ -136,7 +136,6 @@ target_link_libraries(Editor Vulkan-Headers SDL2::SDL2-static glm-header-only)
 target_include_directories(Editor PRIVATE "Source/Runtime" "Source/Editor")
 
 target_include_directories(Editor PRIVATE "Source/ThirdParty")
-target_include_directories(Editor PRIVATE "Source/ThirdParty/imgui")
 
 target_compile_definitions(Editor PUBLIC EDITOR)
 
