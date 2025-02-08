@@ -1,6 +1,7 @@
 #include "BetelPickers.h"
 
 #include "BetelColors.h"
+#include "BetelImages.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -27,7 +28,7 @@ std::string BImGui::Internal::_GetObjectNameWithID(uint32_t object, bool *bIsNul
     
     ObjectLibrary *lib = GEngine->GetObjectLibrary();
     
-    Object* obj = lib->LoadObject(object);
+    ObjectDescriptor* obj = lib->GetObjectDescriptor(object);
     if(obj == nullptr) {
         if(bIsNull != nullptr) {
             *bIsNull = true;
@@ -35,7 +36,7 @@ std::string BImGui::Internal::_GetObjectNameWithID(uint32_t object, bool *bIsNul
         return std::string("Null (") + std::to_string(object) + ")";
     }
     *bIsNull = false;
-    return obj->GetName() + " (" + std::to_string(object) + ")"; 
+    return obj->name + " (" + std::to_string(object) + ")"; 
 }
 
 // Return true if value has changed
@@ -44,20 +45,20 @@ bool BImGui::InputObject(const char *name, uint32_t &object, std::string &filter
     ObjectLibrary *lib = GEngine->GetObjectLibrary();
 
     bool bIsCurrentObjectNull = false;
-    std::string CurrentObjectName = Internal::_GetObjectNameWithID(123, &bIsCurrentObjectNull);
+    std::string CurrentObjectName = Internal::_GetObjectNameWithID(object, &bIsCurrentObjectNull);
     if(bIsCurrentObjectNull) {
         ImGui::PushStyleColor(ImGuiCol_FrameBg, Colors::ErrorRedColor);
     }
 
-    if(ImGui::BeginCombo(name, CurrentObjectName.c_str())) {
+    if(ImGui::BeginCombo((std::string("##Combo_") + name).c_str(), CurrentObjectName.c_str())) {
         ImGui::EndCombo();
     }
-    
+
     if(bIsCurrentObjectNull) {
         ImGui::PopStyleColor();
     }
 
-    if (ImGui::BeginPopupContextItem(name, ImGuiPopupFlags_MouseButtonLeft))
+    if (ImGui::BeginPopupContextItem((std::string("##Combo_") + name).c_str(), ImGuiPopupFlags_MouseButtonLeft))
     {
         BImGui::InputString("Search", filterString);
         for (ObjectDescriptor *desc : lib->GetObjectDescriptorsOfTypeID(typeFilter, true))
@@ -65,11 +66,24 @@ bool BImGui::InputObject(const char *name, uint32_t &object, std::string &filter
             if (ImGui::Selectable((desc->name + " (" + std::to_string(desc->id) + ")").c_str(), (desc->id == object)))
             {
                 object = desc->id;
+                ImGui::EndPopup();
                 return true;
             }
         }
         ImGui::EndPopup();
     }
+
+    ImGui::SameLine();
+    
+    if(ImGui::ImageButton((std::string("##Button_") + name).c_str(), BImGui::GetEdImage(BImGui::Img::Visibility32Icon), ImVec2(13, 13)))
+    {
+        object = 0;
+        return true;
+    }
+
+    ImGui::SameLine();
+
+    ImGui::TextUnformatted(name);
 
     return false;
 }

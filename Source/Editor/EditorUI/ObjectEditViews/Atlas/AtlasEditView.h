@@ -49,6 +49,7 @@ class AtlasEditView : public ObjectEditView
 
         // Local variables copy
         std::string name;
+        uint32_t texID = 0;
 
         bool ShouldSave = false;
         bool ShouldSelfDestruct = false;
@@ -64,6 +65,9 @@ class AtlasEditView : public ObjectEditView
             if (atlas)
             {
                 atlas->Rename(name);
+
+                if(texID) atlas->SetTexture(texID);
+
                 atlas->Dirty();
             }
 
@@ -143,7 +147,7 @@ public:
 
         BImGui::InputString("Name", name);
         std::string inpTexObjFilter;
-        BImGui::InputObject("Texture", texID, inpTexObjFilter);
+        BImGui::InputObject("Texture", texID, inpTexObjFilter, "TEX");
 
         ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoDocking;
         ImGuiViewport *viewport = ImGui::GetWindowViewport();
@@ -198,10 +202,11 @@ public:
 
     virtual bool SaveObject() override
     {
-        if (name != atlas->GetName())
+        if (name != atlas->GetName() || texID != atlas->GetTexture().GetID())
         {
             deferredSaver->atlas = atlas;
             deferredSaver->name = name;
+            deferredSaver->texID = texID;
             deferredSaver->ShouldSave = true;
         }
 

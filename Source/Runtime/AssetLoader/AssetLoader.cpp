@@ -327,7 +327,7 @@ LoadedObjectMetadata AssetLoader::LoadObjectMetadata(uint32_t ObjectID)
     }
 
     if(master == nullptr) {
-        LOGF(Error, LogAssetLoader, "Couldn't find object file 0x%08x in any master file");
+        LOGF(Error, LogAssetLoader, "Couldn't find object file 0x%08x in any master file", ObjectID);
         return {};
     }
 
