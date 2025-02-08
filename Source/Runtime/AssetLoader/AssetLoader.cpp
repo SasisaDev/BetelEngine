@@ -58,6 +58,9 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
     BMF->SetPath(BMF->FileHandle->GetPath().GetPath()); 
     BMF->SetMounted(true);
 
+    // Register BMF within loader
+    blameMasters.push_back(BMF);
+
     // Fetch header
     char* buffer = nullptr;
     CHECKREAD(3);
@@ -297,6 +300,62 @@ LoadedObjectDescriptor AssetLoader::LoadObject(uint32_t ObjectID)
     }
 
     return {nullptr, 0};
+}
+
+LoadedObjectMetadata AssetLoader::LoadObjectMetadata(uint32_t ObjectID)
+{
+#   define CHECKREAD(count) \
+    delete[] buffer;\
+    buffer = master->FileHandle->Fetch(count); \
+    if(buffer == nullptr) {\
+        LOG(Error, LogAssetLoader, "Failed reading BMF file. EOF was not expected"); \
+        return {0};\
+    }
+
+    char* buffer = nullptr;
+
+    LoadedObjectMetadata metadata;
+
+    BlameMasterFile* master = nullptr;
+    size_t offset = 0;
+    for(BlameMasterFile* probeMaster : blameMasters) {
+        if(probeMaster->bIsMounted && probeMaster->Table.contains(ObjectID)) {
+            master = probeMaster;
+            offset = master->Table[ObjectID];
+            break;
+        }
+    }
+
+    if(master == nullptr) {
+        LOGF(Error, LogAssetLoader, "Couldn't find object file 0x%08x in any master file");
+        return {};
+    }
+
+    master->FileHandle->Seek(offset, FILE_SEEK_FLAG_BEG);
+
+    // Read Object Size, but we don't need to save it
+    CHECKREAD(4);
+
+    CHECKREAD(1);
+    uint8_t typeLength = ConvertChar::ToUInt8(buffer);
+    if(typeLength == 0)
+    {
+        LOG(Error, LogAssetLoader, "Attempted reading BMF file object, but it's class name length is 0");
+        return {};
+    }
+    
+    CHECKREAD(typeLength);
+    metadata.type.resize(typeLength);
+    memmove(metadata.type.data(), buffer, typeLength);
+
+    CHECKREAD(2);
+    uint16_t nameLength = ConvertChar::ToUInt16(buffer);
+
+    CHECKREAD(nameLength);
+    metadata.name.resize(nameLength);
+    memmove(metadata.name.data(), buffer, nameLength);
+
+    return metadata;
 }
 
 Resource* AssetLoader::LoadResource(std::string path)

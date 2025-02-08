@@ -4,6 +4,8 @@
 #include <Engine/Engine.h>
 #include "ObjectTypeLibrary.h"
 
+std::string ObjectLibrary::ObjectName_None = "None";
+
 ObjectDescriptor::~ObjectDescriptor() 
 {
     delete object;
@@ -29,6 +31,13 @@ void ObjectLibrary::RegisterObjectID(uint32_t ID)
         assert(!"Passed Object ID is already registered in the engine");
     }
     objects.emplace(ID, nullptr);
+
+#   ifdef EDITOR
+    LoadedObjectMetadata metadata = loader->LoadObjectMetadata(ID);
+    objects[ID].id = ID;
+    objects[ID].name = metadata.name;
+    objects[ID].type = metadata.type;
+#   endif
 }
 
 void ObjectLibrary::RegisterObjectUsage(uint32_t id) {
@@ -187,6 +196,8 @@ std::vector<Object*> ObjectLibrary::GetObjectsOfTypeID(const std::string& typeID
             && SameType 
             && NotTransient)
         {
+            // TODO: Check inheritance
+
             objs.push_back(it->second.object);
         }
     }
@@ -204,6 +215,7 @@ void ObjectLibrary::DestroyObject(uint32_t id)
     objects.erase(id);
 }
 
+#ifdef EDITOR
 void ObjectLibrary::LoadAllObjects()
 {
     for(auto it = objects.begin(); it != objects.end(); ++it)
@@ -211,3 +223,53 @@ void ObjectLibrary::LoadAllObjects()
         LoadObject(it->first);
     }
 }
+
+std::vector<ObjectDescriptor*> ObjectLibrary::GetAllObjectDescriptors(bool excludeTransient)
+{
+    std::vector<ObjectDescriptor*> objs;
+    objs.reserve(16);
+
+    for(auto it = objects.begin(); it != objects.end(); ++it)
+    {
+        const bool bIsTransient = (it->second.object != nullptr) ? it->second.object->HasFlag(ObjectFlags::Transient) : false;
+        if(it->second.object && (excludeTransient) ? !bIsTransient : true)
+        {
+            objs.push_back(&(it->second));
+        }
+    }
+
+    return objs;
+}
+
+std::vector<ObjectDescriptor*> ObjectLibrary::GetObjectDescriptorsOfTypeID(const std::string& typeID, bool excludeTransient)
+{
+    std::vector<ObjectDescriptor*> objs;
+    objs.reserve(16);
+
+    for(auto it = objects.begin(); it != objects.end(); ++it)
+    {
+        const bool bSameType = it->second.object->GetType() == typeID;
+        const bool bIsTransient = (it->second.object != nullptr) ? it->second.object->HasFlag(ObjectFlags::Transient) : false;
+        const bool bNotTransient = (excludeTransient) ? !bIsTransient : true;
+        if( it->second.object 
+            && bSameType 
+            && bNotTransient)
+        {
+            // TODO: Check inheritance
+
+            objs.push_back(&(it->second));
+        }
+    }
+
+    return objs;
+}
+
+ObjectDescriptor* ObjectLibrary::GetObjectDescriptor(uint32_t ID)
+{
+    if(!objects.contains(ID)) {
+        return nullptr;
+    }
+
+    return &objects[ID];
+}
+#endif

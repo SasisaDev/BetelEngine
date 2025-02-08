@@ -15,6 +15,11 @@ struct ObjectDescriptor
 {
     Object *object;
     std::atomic_uint32_t usages = 0;
+#   ifdef EDITOR
+    uint32_t id = 0;
+    std::string name;
+    std::string type;
+#   endif
 
     ObjectDescriptor(Object* objPtr) {object = objPtr;}
     ObjectDescriptor() {}
@@ -23,6 +28,8 @@ struct ObjectDescriptor
 
 class ObjectLibrary
 {
+    static std::string ObjectName_None;
+
     template <ObjectClass _ObjectT>    
     friend class ObjectRef;
 
@@ -90,10 +97,32 @@ public:
      */
     std::vector<Object*> GetObjectsOfTypeID(const std::string& typeID, bool excludeTransient = false);
 
+#   ifdef EDITOR
+    /*
+     * Goes through all registered objects and returns a vector of descriptors to objects 
+     *
+     * WARNING: Very heavy function, use with care!
+     */
+    std::vector<ObjectDescriptor*> GetAllObjectDescriptors(bool excludeTransient = false);
+
+    /*
+     * Goes through all registered objects and returns a vector of descriptors with specified Type ID 
+     * 
+     * At Runtime will only go through currently loaded objects
+     * 
+     * WARNING: Very heavy function, use with care!
+     */
+    std::vector<ObjectDescriptor*> GetObjectDescriptorsOfTypeID(const std::string& typeID, bool excludeTransient = false);
+
+    // TODO: Critical, this function must be eventually deleted and never be used in production
     /*
      * Loads all objects synchroniously.
      *
      * WARNING: Very heavy function, should never be used!
+     * DEPRECATED: This function must not be used at runtime and will soon be deleted
      */
     void LoadAllObjects();
+
+    ObjectDescriptor* GetObjectDescriptor(uint32_t ID);
+#   endif
 };

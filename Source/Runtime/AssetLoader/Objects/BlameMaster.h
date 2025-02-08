@@ -10,6 +10,12 @@
 #define BLAME_MASTER_FILE_MAGIC 0xBE7E1115
 #define BLAME_MASTER_FILE_VERSION 0
 
+/*
+ * Blame Master File Conventions
+ *
+ * TODO: All string values must consist of 16bit length and non-null-terminated string preceeding it 
+ */
+
 struct BlameMasterFileHeader {
     char pSignature[3] = {'B','M','F'};
     uint32_t uMagic = BLAME_MASTER_FILE_MAGIC;
@@ -110,5 +116,5 @@ public:
     void SetMounted(bool isMounted) {bIsMounted = isMounted;}
 
     const BlameMasterFileHeader& GetHeader() {return FileHeader;}
-    const BlameMasterFileTable& GetTable() {return FileTable;}
+    const BlameMasterFileTable& GetFileTable() {return FileTable;}
 };

@@ -8,6 +8,7 @@ class ObjectEditView : public EditorToolkitWindow
 {
 protected:
     std::string Title;
+    bool bResizable = false;
 public:
     ObjectEditView(const char* title)
         : Title(title)
@@ -30,9 +31,14 @@ public:
     virtual void OnGUI(Window *window) override
     {
         ImGuiStyle& style = ImGui::GetStyle();
+        ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking;
 
-        ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_Always);
-        if (ImGui::Begin(Title.c_str(), &Visible, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize))
+        if(!bResizable) {
+            ImGui::SetNextWindowSize(ImVec2(0, 0), ImGuiCond_Always);
+            flags |= ImGuiWindowFlags_NoResize;
+        }
+
+        if (ImGui::Begin(Title.c_str(), &Visible, flags))
         {
             OnEditViewGUI(window);
 

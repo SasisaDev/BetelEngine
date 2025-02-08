@@ -46,7 +46,6 @@ protected:
     std::unique_ptr<EditorToolkitWindow> editView;
 
     bool bObjectContextMenu = false;
-
 public:
     EditorObjectExplorer()
     {
@@ -293,7 +292,7 @@ public:
         ImGui::SetNextWindowBgAlpha(1);
         if (ImGui::Begin(GetName(), &Visible, ImGuiWindowFlags_NoCollapse))
         {
-            ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+            ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoDocking;
             ImGuiViewport *viewport = ImGui::GetWindowViewport();
 
             ImGuiID dockspace_id = ImGui::GetID("ObjectExplorerDockSpace");

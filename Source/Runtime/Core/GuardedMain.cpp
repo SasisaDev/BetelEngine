@@ -140,6 +140,8 @@ int GuardedMain(int argc, char* argv[])
 
 	//AssetLibrary::Get().LoadAsset("Editor/Content/Shaders/WidgetBrushDefault");
 
+	LoadedObjectMetadata meta = app.GetEngine()->GetAssetLoader()->LoadObjectMetadata(67305985);
+
 	app.ApplicationLoop();
 
 	return 0;

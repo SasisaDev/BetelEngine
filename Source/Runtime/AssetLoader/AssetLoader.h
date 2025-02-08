@@ -34,6 +34,12 @@ struct LoadedObjectDescriptor
     uint32_t parent = 0;
 };
 
+struct LoadedObjectMetadata
+{
+    std::string type;
+    std::string name;
+};
+
 class AssetLoader
 {
     friend class AssetGarbageCollector;
@@ -44,6 +50,7 @@ protected:
     std::vector<ArchiveFile*> resourceArchives;
 public:
 
+    // Being dispatched, when Asset Crawling finds new objects
     MulticastDelegate<uint32_t> OnNewObjectID;
 
     void CrawlContent(std::string Path = "./Content");
@@ -56,6 +63,13 @@ public:
      * Returns nullptr if object doesn't exist
     */
     LoadedObjectDescriptor LoadObject(uint32_t ObjectID);
+
+    /* 
+     * Loads Object Metadata from Blame File, applying Plugin changes
+     *
+     * Returns zero string if object doesn't exist
+    */
+    LoadedObjectMetadata LoadObjectMetadata(uint32_t ObjectID);
 
     /* 
      * Loads Asset from system's File System or Archive File
