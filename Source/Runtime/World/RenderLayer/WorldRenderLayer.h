@@ -68,6 +68,7 @@ public:
     virtual bool Recreate() override;
 
     inline Buffer* GetSceneDataBuffer() const {return SceneDataSSBOs[GetParentComposition()->GetCurrentImageIndex()];}
+    inline const WorldRenderLayerGPUStorage& GetSceneData() const {return SceneDataStorages[GetParentComposition()->GetCurrentImageIndex()];}
 
     WorldRenderLayerRef* SubscribeWorldLoad(MulticastDelegate<World*>* delegate);
     WorldRenderLayerRef* SubscribeWorldUnload(MulticastDelegate<World*>* delegate);
@@ -78,7 +79,7 @@ public:
     inline World* GetWorld() const {return world;}
 
     void onWorldLoad(World* loadedWorld);
-    void onWorldUnload(World* loadedWorld){}
+    void onWorldUnload(World* loadedWorld);
     void onWorldEntitySpawned(Entity* entity);
 
     void SetRenderPostRenderProxies(bool render) { bRenderPostRenderProxies = render; }

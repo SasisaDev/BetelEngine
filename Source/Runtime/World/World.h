@@ -11,11 +11,16 @@
 #include <Object/ObjectRef.h>
 #include <Engine/Engine.h>
 
+class WorldRenderLayerRef;
+
 class World : public Object
 {
     friend class WorldRenderLayer;
+    friend class WorldRenderLayerRef;
 protected:
     TimerManager timerManager;
+
+    WorldRenderLayerRef *renderLayer = nullptr;
 
     std::vector<ObjectRef<Entity>> entities;
 
@@ -36,6 +41,8 @@ public:
     MulticastDelegate<Entity*> OnEntityDestroyed;
 
     TimerManager& GetTimerManager() { return timerManager; }
+
+    WorldRenderLayerRef* GetWorldRenderLayerRef() const {return renderLayer;}
 
     void SetBackgroundColor(const Vec3& color) {BackgroundColor = color;}
 

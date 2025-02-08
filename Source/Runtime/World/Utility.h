@@ -4,11 +4,12 @@
 #include "Entity.h"
 #include "World.h"
 #include <Core/Application/Application.h>
+#include <World/RenderLayer/WorldRenderLayer.h>
 #include <GameFramework/Settings/GameSettings.h>
 #include <Log/Logger.h>
 
 #ifdef EDITOR
-#   include <Editor/Editor.h>       
+#   include <Editor/Editor.h>
 #endif
 
 struct HitscanParams {
@@ -57,30 +58,25 @@ public:
         return result;
     }
     
-    // TODO: Cam to World Projection
+    // Creates Hitscan from Screen Position to World Position
     static HitResult HitscanCamToWorld(World* world, float ViewportX, float ViewportY, float ViewportW, float ViewportH, HitscanParams& params) {
-        IVec2 &CameraCenter = world->GetWorldCameraPosition();
-#       ifdef EDITOR
-        // TODO: Dynamic Editor Viewport Size
-        Vec2 ViewportSize = {1280, 720};
-        // If Viewport Texture Size >= Viewport Real Size, VPPGP == Zoom
-        float ViewportPixelsPerGamePixels = Editor::Get()->ViewportZoom;
-#       else
-        const GameSettings* gSettings = GApplication->GetSettings()->GetOrDefault<GameSettings>();  
-        Vec2 ViewportSize = {gSettings->PixelPerfectViewportWidth, gSettings->PixelPerfectViewportHeight};
-        // If Viewport Texture Size < Viewport Real Size, VPPGP == RealViewportSize / GameViewportSize
-        // TODO: Game VPPGP Implementation
-        float ViewportPixelsPerGamePixels =  1;
-#       endif
+        WorldRenderLayerGPUStorage renderData = world->GetWorldRenderLayerRef()->GetSceneData();
 
-        // Pixel on a Viewport Texture, disregarding Camera Position
-        IVec2 TargetPixel = {static_cast<int>((ViewportX - ViewportW / 2) / ViewportPixelsPerGamePixels), 
-                             static_cast<int>(-(ViewportY - ViewportH / 2) / ViewportPixelsPerGamePixels)};
+        float ScreenPointX = (ViewportX / ViewportW) * 2.f - 1.f;
+        float ScreenPointY = -(ViewportY / ViewportH) * 2.f + 1.f;
 
-        // Real World Hitpoint
-        IVec2 WorldHitpoint = {TargetPixel.x - CameraCenter.x, TargetPixel.y + CameraCenter.y};
+        glm::mat4 ViewProj = renderData.ProjectionMatrix * renderData.ViewMatrix;
+        glm::mat4 InverseViewProj = glm::inverse(ViewProj);
 
-        LOGF(Log, LogHitscan, "VPPGP == %f, sX = %d, sY = %d, X = %d, Y = %d", ViewportPixelsPerGamePixels, TargetPixel.x, TargetPixel.y, WorldHitpoint.x, WorldHitpoint.y);
+        glm::vec4 OriginPosition = glm::vec4(ScreenPointX, ScreenPointY, -1, 1) * InverseViewProj;
+        OriginPosition.w = 1.0f / OriginPosition.w;
+        OriginPosition.x *= OriginPosition.w;
+        OriginPosition.y *= OriginPosition.w;
+        OriginPosition.z *= OriginPosition.w;
+
+        IVec2 WorldHitpoint = {OriginPosition.x - renderData.CameraPosition.x, OriginPosition.y + renderData.CameraPosition.y};
+
+        //LOGF(Log, LogHitscan, "sX = %f, sY = %f, X = %f, Y = %f", ScreenPointX, ScreenPointY, OriginPosition.x, OriginPosition.y);
         
         return HitscanWorld(world, WorldHitpoint);
     }

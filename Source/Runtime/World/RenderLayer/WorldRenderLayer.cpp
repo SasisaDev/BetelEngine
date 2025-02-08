@@ -19,7 +19,6 @@
 WorldRenderLayerRef::WorldRenderLayerRef()
     : world(nullptr)
 {
-    //EngineDelegates::OnWorldLoad.BindMember(this, &WorldRenderLayerRef::onWorldLoad);
 }
 
 void WorldRenderLayerRef::CalculateAspectRatioCompensationData()
@@ -222,6 +221,8 @@ void WorldRenderLayerRef::onWorldLoad(World* loadedWorld)
         return;
     }
 
+    world->renderLayer = this;
+
     world->OnEntitySpawned.BindMember(this, &WorldRenderLayerRef::onWorldEntitySpawned);
 
     for(const ObjectRef<Entity>& entity : world->GetEntities()) {
@@ -229,6 +230,14 @@ void WorldRenderLayerRef::onWorldLoad(World* loadedWorld)
             renderProxy->CreateResources(this);
             renderProxies.push_back(renderProxy);
         }
+    }
+}
+
+void WorldRenderLayerRef::onWorldUnload(World* loadedWorld)
+{
+    // Ensure that the old world doesn't keep reference to past render layer
+    if(world && world->renderLayer == this) {
+        world->renderLayer = nullptr;
     }
 }
 
@@ -347,6 +356,9 @@ bool WorldRenderLayerRef::Recreate()
 WorldRenderLayerRef* WorldRenderLayerRef::SetWorld(World* newWorld)
 {
     world = newWorld;
+    if(world) {
+        world->renderLayer = this;
+    }
     return this;
 }
 
