@@ -37,24 +37,24 @@ namespace BImGui
     };
 
     // Return true if value has changed
-    bool BImGui::InputObject(const char *name, uint32_t &object, std::string &filterString, const char *typeFilter)
+    bool InputObject(const char *name, uint32_t &object, std::string &filterString, const char *typeFilter)
     {
         ObjectLibrary *lib = GEngine->GetObjectLibrary();
-    
+
         bool bIsCurrentObjectNull = false;
         std::string CurrentObjectName = Internal::_GetObjectNameWithID(object, &bIsCurrentObjectNull);
         if(bIsCurrentObjectNull) {
             ImGui::PushStyleColor(ImGuiCol_FrameBg, Colors::ErrorRedColor);
         }
-    
+
         if(ImGui::BeginCombo((std::string("##Combo_") + name).c_str(), CurrentObjectName.c_str())) {
             ImGui::EndCombo();
         }
-    
+
         if(bIsCurrentObjectNull) {
             ImGui::PopStyleColor();
         }
-    
+
         if (ImGui::BeginPopupContextItem((std::string("##Combo_") + name).c_str(), ImGuiPopupFlags_MouseButtonLeft))
         {
             BImGui::InputString("Search", filterString);
@@ -69,19 +69,19 @@ namespace BImGui
             }
             ImGui::EndPopup();
         }
-    
+
         ImGui::SameLine();
-        
+
         if(ImGui::ImageButton((std::string("##Button_") + name).c_str(), BImGui::GetEdImage(BImGui::Img::Visibility32Icon), ImVec2(13, 13)))
         {
             object = 0;
             return true;
         }
-    
+
         ImGui::SameLine();
-    
+
         ImGui::TextUnformatted(name);
-    
+
         return false;
     }
 };
