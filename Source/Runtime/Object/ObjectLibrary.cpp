@@ -55,7 +55,7 @@ void ObjectLibrary::RegisterObjectUsage(uint32_t id) {
     // If usages were 0, but now 1, yet object is not yet unloaded, remove mark
     if(Object* obj = objects[id].object) {
             if(obj->HasFlag(ObjectFlags::Unload)) {
-                obj->UnsetFlag(ObjectFlags::Unload);
+                obj->ClearFlag(ObjectFlags::Unload);
             }
     }
 }

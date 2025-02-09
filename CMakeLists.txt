@@ -49,6 +49,13 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 # Third Party Sources
 set(SrcStbImage "Source/ThirdParty/stb/stb_image.cpp")
 
+set(ImguiSrc "Source/ThirdParty/imgui/imgui_demo.cpp" "Source/ThirdParty/imgui/imgui_tables.cpp" 
+             "Source/ThirdParty/imgui/imgui_draw.cpp" "Source/ThirdParty/imgui/imgui_widgets.cpp" 
+             "Source/ThirdParty/imgui/imgui.cpp" "Source/ThirdParty/imgui/backends/imgui_impl_sdl2.cpp"
+             "Source/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp")
+set(ImguiBetelSrc "Source/Editor/ImGui/RenderLayer/ImGuiLayer.cpp" "Source/Editor/ImGui/BetelImGui.cpp" "Source/Editor/EditorUI/WindowLibrary/BetelImages.cpp"
+                  "Source/Editor/EditorUI/WindowLibrary/BetelDeferred.cpp" "Source/Editor/EditorUI/WindowLibrary/BetelPickers.cpp")
+
 # LZ4 Source
 set(SrcLZ4 "Source/ThirdParty/lz4/lz4.c" "Source/ThirdParty/lz4/lz4file.c" "Source/ThirdParty/lz4/xxhash.c" "Source/ThirdParty/lz4/lz4hc.c" "Source/ThirdParty/lz4/lz4frame.c")
 
@@ -95,6 +102,9 @@ set(Sources ${SrcRenderV} ${SrcObject} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGa
     "Source/Runtime/Core/GuardedMain.cpp" "Source/Runtime/Log/Logger.cpp" "Source/Runtime/Core/Application/Arguments.cpp" 
     "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Core/Window/WindowManager.cpp")
 
+# Add Imgui in debug build
+set(Sources ${Sources} "$<$<CONFIG:Debug>:${ImguiSrc}>")
+
 if(WIN32)
     set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp" "Source/Runtime/Platform/Windows/Files/WindowsFile.cpp")
 endif()
@@ -114,12 +124,6 @@ target_include_directories(Game PRIVATE "Source/ThirdParty")
 set_property(TARGET Game PROPERTY CXX_STANDARD 20)
 
 # Editor
-set(ImguiSrc "Source/ThirdParty/imgui/imgui_demo.cpp" "Source/ThirdParty/imgui/imgui_tables.cpp" 
-             "Source/ThirdParty/imgui/imgui_draw.cpp" "Source/ThirdParty/imgui/imgui_widgets.cpp" 
-             "Source/ThirdParty/imgui/imgui.cpp" "Source/ThirdParty/imgui/backends/imgui_impl_sdl2.cpp"
-             "Source/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp")
-set(ImguiBetelSrc "Source/Editor/ImGui/RenderLayer/ImGuiLayer.cpp" "Source/Editor/ImGui/BetelImGui.cpp" "Source/Editor/EditorUI/WindowLibrary/BetelImages.cpp"
-                  "Source/Editor/EditorUI/WindowLibrary/BetelDeferred.cpp" "Source/Editor/EditorUI/WindowLibrary/BetelPickers.cpp")
 
 set(AssetFactoriesSrc "Source/Editor/AssetFactory/Default/ShaderFactory.cpp" )
 
@@ -150,7 +154,6 @@ target_link_libraries(EditorASAN Vulkan-Headers SDL2::SDL2-static glm-header-onl
 target_include_directories(EditorASAN PRIVATE "Source/Runtime" "Source/Editor")
 
 target_include_directories(EditorASAN PRIVATE "Source/ThirdParty")
-target_include_directories(EditorASAN PRIVATE "Source/ThirdParty/imgui")
 
 target_compile_definitions(EditorASAN PUBLIC EDITOR)
 

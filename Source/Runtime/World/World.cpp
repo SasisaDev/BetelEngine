@@ -16,7 +16,7 @@ void World::Tick(float DeltaTime)
 
     for(int entID = 0; entID < entities.size(); entID++) {
         // Remove destruction pending entity
-        if(entities[entID].Get()->bBeginDestroy) {
+        if(entities[entID].Get()->HasEntityFlag(EntityFlags::BeginDestroy)) {
             entities.erase(entities.begin() + entID);
             entID++;
         }

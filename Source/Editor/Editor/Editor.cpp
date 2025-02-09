@@ -64,7 +64,9 @@ Editor::Editor() {
 }
 
 void Editor::SetSelectedEntity(Entity* selectedEntity)
- {
+{
+    // FIXME:   This system will cause loss of previously added editor modes
+    //          If Entity gets deleted before it's called
     if(SelectedEntity != nullptr) {
         SelectedEntity->PopEditorModes(this);
     }
@@ -74,7 +76,7 @@ void Editor::SetSelectedEntity(Entity* selectedEntity)
     if(SelectedEntity != nullptr) {
         SelectedEntity->PushEditorModes(this);
     }
- }
+}
 
 void Editor::Tick(float deltaTime)
 {

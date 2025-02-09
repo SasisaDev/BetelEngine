@@ -20,7 +20,7 @@ class Entity;
 enum class ObjectFlags : uint8_t {
     // This object is created only for runtime use, do not save on disk. Destroy permamently once parent is unloaded
     Transient = (1 << 0),
-    // Unload on next GC Pass. If set, should not be referenced or used by anything
+    // Unload on next tick. If set, should not be referenced or used by anything
     Unload = (1<<1),
     // This object was changed and needs changes to be saved (Save System or Asset System) 
     Dirty = (1<<2),
@@ -73,11 +73,12 @@ public:
     const std::string& GetType() {return Type;}
 
     void SetFlag(ObjectFlags flag) {Flags |= (uint8_t)flag;}
-    void UnsetFlag(ObjectFlags flag) {Flags &= ~(uint8_t)flag;}
+    void ClearFlag(ObjectFlags flag) {Flags &= ~(uint8_t)flag;}
     bool HasFlag(ObjectFlags flag) {return (Flags & (uint8_t)flag) == (uint8_t)flag;}
 
     // Marks object Dirty, meaning that the object has changed and should be saved again
     void Dirty() {Flags |= (uint8_t)ObjectFlags::Dirty;}
+    void BeginUnload() {Flags |= (uint8_t)ObjectFlags::Unload;}
 
     template <typename ChildObjectT = Object>
     inline std::vector<ChildObjectT*> GetChildren() const {

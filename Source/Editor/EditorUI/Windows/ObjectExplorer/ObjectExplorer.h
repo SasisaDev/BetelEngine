@@ -8,6 +8,7 @@
 
 #include <imgui/imgui_internal.h>
 #include <EditorUI/WindowLibrary/BetelInputs.h>
+#include <EditorUI/WindowLibrary/BetelDeferred.h>
 #include <EditorUI/ObjectEditViews/ObjectEditViewsFactory.h>
 
 class EditorObjectExplorer : public EditorToolkitWindow
@@ -24,6 +25,30 @@ class EditorObjectExplorer : public EditorToolkitWindow
         std::vector<HierarchyNode> Children;
     };
 
+    struct ObjectDeleterTask : public BImGui::DeferredTask
+    {
+        uint32_t ID = 0;
+        bool ShouldCleanup = false;
+        bool ShouldSelfDestruct = false;
+
+        bool Perform() override {
+            if(!ShouldCleanup) {
+                return ShouldSelfDestruct;
+            }
+
+            if(ID != 0) {
+                GEngine->GetObjectLibrary()->DestroyObject(ID);
+                ID = 0;
+            }
+
+            ShouldCleanup = false;
+
+            return ShouldSelfDestruct;
+        }
+    };
+
+    ObjectDeleterTask* deleterTask;
+    bool bDeletedObject = false;
 protected:
     Text TabName = Text("EditorUI", "ObjectExplorer", "TabName");
     std::string TranslatedName;
@@ -49,8 +74,15 @@ protected:
 public:
     EditorObjectExplorer()
     {
+        deleterTask = BImGui::CreateDeferredTask<ObjectDeleterTask>();
+
         TranslatedName = TabName.Get();
         UpdateHierarchy();
+    }
+
+    ~EditorObjectExplorer() 
+    {
+        deleterTask->ShouldSelfDestruct = true;
     }
 
     virtual const char *GetName() override { return TranslatedName.c_str(); }
@@ -175,7 +207,9 @@ public:
     }
 
     void DeleteObject(Object* obj) {
-        GEngine->GetObjectLibrary()->DestroyObject(obj->GetID());
+        deleterTask->ID = obj->GetID();
+        deleterTask->ShouldCleanup = true;
+        bDeletedObject = true;
     }
 
     void DrawObjectPopup(Object* obj)
@@ -201,7 +235,6 @@ public:
             }
             if(ImGui::Selectable("Delete")) {
                 DeleteObject(obj);
-                UpdateDisplayedObjects();
             }
             ImGui::Separator();
             ImGui::Selectable("Place in level");
@@ -284,6 +317,11 @@ public:
 
             // TODO: Change to real icon
             BlankTypeIcon = BImGui::GetEdImage(BImGui::Img::Visibility32Icon);
+        }
+
+        if(bDeletedObject) {
+            UpdateDisplayedObjects();
+            bDeletedObject = false;
         }
 
         ObjectTypeLibrary &lib = ObjectTypeLibrary::Get();

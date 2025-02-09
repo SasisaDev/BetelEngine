@@ -120,6 +120,8 @@ public:
     TextureEditView(Object *tex)
         : ObjectEditView("Edit Texture")
     {
+        bResizable = false;
+
         icon_browse = BImGui::GetEdImage(BImGui::Img::Browse32Icon);
 
         texture = dynamic_cast<ObjTexture *>(tex);

@@ -21,6 +21,12 @@ struct EntitySpawnInfo
     IVec3 Location = {0, 0, 0};
 };
 
+enum class EntityFlags : uint8_t {
+    // This flag means that Entity will get destroyed next tick
+    // It will also remove entity from Object Library. 
+    BeginDestroy
+};
+
 class Entity : public Object
 {
     friend class World;
@@ -29,15 +35,13 @@ protected:
     // Dynamic entities are testing against dynamic value, like collision
     bool bIsDynamic = false;
 
+    uint8_t entityFlags = 0;
+
     EntityRenderProxy* RenderProxy;
 
     std::string DisplayName = "Entity";
-
-    bool bBeginDestroy = false;
 public:
     bool Visible = true;
-
-    void BeginDestroy() {bBeginDestroy = true;}
 
     inline bool IsDynamic() const {return bIsDynamic;}
 
@@ -58,6 +62,12 @@ public:
     // TODO
     virtual void SetLocation(const IVec3& loc){}
     virtual void SetRelativeLocation(const IVec3 loc) {transform.Location = loc;}
+
+    inline void SetEntityFlag(EntityFlags flag) {entityFlags |= (uint8_t)flag;}
+    inline void ClearEntityFlag(EntityFlags flag) {entityFlags &= ~(uint8_t)flag;}
+    inline bool HasEntityFlag(EntityFlags flag) {return (entityFlags & (uint8_t)flag) == (uint8_t)flag;}
+
+    void BeginDestroy() {SetEntityFlag(EntityFlags::BeginDestroy);}
 
     // Used for testing of collisions and visibility
     virtual Vec3 GetBoundingBox() {return transform.Scale;}
