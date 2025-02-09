@@ -8,6 +8,8 @@
 
 #include <cstring>
 #include <memory>
+#include <algorithm>
+#include <string>
 
 float ConvertChar::ToFloat(char* buffer)
 {
