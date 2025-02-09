@@ -61,12 +61,12 @@ protected:
     std::string Filter;
 
     std::vector<HierarchyNode> hierarchy;
-    HierarchyNode *currentSelection = nullptr;
+    HierarchyNode *currentSelectedType = nullptr;
     HierarchyNode *previousSelection = nullptr;
 
     ImGuiTreeNodeFlags baseTreeFlags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 
-    std::vector<Object*> displayedObjects;
+    std::vector<ObjectDescriptor*> displayedObjects;
 
     std::unique_ptr<EditorToolkitWindow> editView;
 
@@ -134,20 +134,20 @@ public:
 
     void UpdateDisplayedObjects()
     {
-        if(!currentSelection){
+        if(!currentSelectedType){
             displayedObjects.clear();
             return; 
         }
 
-        if (currentSelection->ID == "__ALL__")
+        if (currentSelectedType->ID == "__ALL__")
         {
             // Display all objects
-            displayedObjects = GEngine->GetObjectLibrary()->GetAllObjects(true);
+            displayedObjects = GEngine->GetObjectLibrary()->GetAllObjectDescriptors(true);
         }
         else
         {
             // Display objects of category
-            displayedObjects = GEngine->GetObjectLibrary()->GetObjectsOfTypeID(currentSelection->ID, true);
+            displayedObjects = GEngine->GetObjectLibrary()->GetObjectDescriptorsOfTypeID(currentSelectedType->ID, true);
         }
         
         // TODO: Implement name filtering
@@ -175,7 +175,7 @@ public:
         node.Open = ImGui::TreeNodeEx(node.ID.data(), nodeFlags, node.Name.c_str());
         if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
         {
-            currentSelection = &node;
+            currentSelectedType = &node;
             UnselectAll(hierarchy);
             node.Selected = true;
         }
@@ -194,29 +194,31 @@ public:
         }
     }
 
-    void StartObjectEditing(Object* obj) {
+    void StartObjectEditing(ObjectDescriptor* desc) {
         if(editView.get() == nullptr) {
-            const std::string& type = obj->GetType();
+            const std::string& type = desc->type;
             editView.reset();
-            editView = ObjectEditorViewsFactory::CreateEditView(type, obj);
+            editView = ObjectEditorViewsFactory::CreateEditView(type, GEngine->GetObjectLibrary()->LoadObject(desc->id));
         }
     }
     
-    Object* CreateNewObject() {
-        return GEngine->GetObjectLibrary()->CreateObjectFromTypeID(currentSelection->ID, "Object", false);
+    ObjectDescriptor* CreateNewObject() {
+        Object* object = GEngine->GetObjectLibrary()->CreateObjectFromTypeID(currentSelectedType->ID, "Object", false);
+        assert(object != nullptr && "Object Library returned nullptr on object creation. It may happen due to ObjectType not existing.");
+        return GEngine->GetObjectLibrary()->GetObjectDescriptor(object->GetID());
     }
 
-    void DeleteObject(Object* obj) {
-        deleterTask->ID = obj->GetID();
+    void DeleteObject(ObjectDescriptor* desc) {
+        deleterTask->ID = desc->id;
         deleterTask->ShouldCleanup = true;
         bDeletedObject = true;
     }
 
-    void DrawObjectPopup(Object* obj)
+    void DrawObjectPopup(ObjectDescriptor* desc)
     {
         if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
         {
-            StartObjectEditing(obj);
+            StartObjectEditing(desc);
         }
 
         bObjectContextMenu = false;
@@ -231,10 +233,10 @@ public:
 
             ImGui::Selectable("Create");
             if(ImGui::Selectable("Edit")) {
-                StartObjectEditing(obj);
+                StartObjectEditing(desc);
             }
             if(ImGui::Selectable("Delete")) {
-                DeleteObject(obj);
+                DeleteObject(desc);
             }
             ImGui::Separator();
             ImGui::Selectable("Place in level");
@@ -242,16 +244,16 @@ public:
         }
     }
 
-    void DrawObject(Object* obj, float NameWidth, float TypeWidth) 
+    void DrawObject(ObjectDescriptor* desc, float NameWidth, float TypeWidth) 
     {
         const float ImageSize = 16;
         const float Padding = 8;
 
         std::string hexID;
         hexID.resize(2+8);
-        sprintf(hexID.data(), "0x%08X", obj->GetID());
+        sprintf(hexID.data(), "0x%08X", desc->id);
 
-        std::string fullName = obj->GetName() + " (" + hexID + ")"; 
+        std::string fullName = desc->name + " (" + hexID + ")"; 
 
         ImGuiWindow* window = ImGui::GetCurrentWindowRead();
         ImVec2 WindowPos = window->DC.CursorPos;
@@ -260,7 +262,7 @@ public:
         float InitialPosY = ImGui::GetCursorPosY();
         ImGui::Selectable((std::string("##") + fullName).c_str());
 
-        DrawObjectPopup(obj);
+        DrawObjectPopup(desc);
 
         float LineEndPosY = ImGui::GetCursorPosY();
         ImGui::SameLine();
@@ -285,7 +287,7 @@ public:
         ImGui::SetCursorPosX(InitialPosX + LineEndPosX + NameWidth + Padding);
 
         //ImGui::PushClipRect(ImVec2(InitialPosX, InitialPosY), ImVec2(WindowPos.x + LineEndPosX + TypeWidth, WindowPos.y + LineEndPosY), true);
-        ImGui::TextUnformatted(obj->GetType().c_str());
+        ImGui::TextUnformatted(desc->type.c_str());
         //ImGui::PopClipRect();
     }
 
@@ -304,7 +306,7 @@ public:
             ImGui::EndTable();
         }
         
-        for(Object* obj : displayedObjects)
+        for(ObjectDescriptor* obj : displayedObjects)
         {
             DrawObject(obj, NameColumnWidth, TypeColumnWidth);
         }
@@ -328,6 +330,7 @@ public:
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::SetNextWindowBgAlpha(1);
+        ImGui::SetNextWindowSize(ImVec2(350, 550), ImGuiCond_Once);
         if (ImGui::Begin(GetName(), &Visible, ImGuiWindowFlags_NoCollapse))
         {
             ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_NoDocking;
@@ -341,12 +344,6 @@ public:
             if (first_time)
             {
                 first_time = false;
-
-                // To make in-editor Object Explorer show all objects, currently we have to do this
-                // TODO: Make normal editor object-metadata scraping routine (CRITICAL)
-#               ifdef EDITOR
-                GEngine->GetObjectLibrary()->LoadAllObjects();
-#               endif
 
                 ImGui::DockBuilderRemoveNode(dockspace_id);
                 ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
@@ -382,10 +379,10 @@ public:
                     DrawHierarchyElementRecursive(node, false);
                 }
 
-                if(previousSelection != currentSelection)
+                if(previousSelection != currentSelectedType)
                 {
                     UpdateDisplayedObjects();
-                    previousSelection = currentSelection;
+                    previousSelection = currentSelectedType;
                 }
             }
             ImGui::End();
@@ -397,7 +394,7 @@ public:
             }
             ImGui::End();
             
-            if(bObjectContextMenu == false && currentSelection && currentSelection->ID != "__ALL__"){
+            if(bObjectContextMenu == false && currentSelectedType && currentSelectedType->ID != "__ALL__"){
                 if(ImGui::BeginPopupContextItem())
                 {
                     if(ImGui::Selectable("Create"))

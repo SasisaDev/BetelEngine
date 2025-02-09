@@ -347,6 +347,7 @@ LoadedObjectMetadata AssetLoader::LoadObjectMetadata(uint32_t ObjectID)
     CHECKREAD(typeLength);
     metadata.type.resize(typeLength);
     memmove(metadata.type.data(), buffer, typeLength);
+    metadata.type.erase(std::find(metadata.type.begin(), metadata.type.end(), '\0'), metadata.type.end());
 
     CHECKREAD(2);
     uint16_t nameLength = ConvertChar::ToUInt16(buffer);
@@ -354,6 +355,7 @@ LoadedObjectMetadata AssetLoader::LoadObjectMetadata(uint32_t ObjectID)
     CHECKREAD(nameLength);
     metadata.name.resize(nameLength);
     memmove(metadata.name.data(), buffer, nameLength);
+    metadata.name.erase(std::find(metadata.name.begin(), metadata.name.end(), '\0'), metadata.name.end());
 
     return metadata;
 }

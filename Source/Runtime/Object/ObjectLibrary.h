@@ -65,7 +65,7 @@ public:
             object->SetFlag(ObjectFlags::Transient);
         }
 
-        objects.emplace(objectID, object);
+        AddObject(objectID, object);
         return object;
     }
 
@@ -108,9 +108,8 @@ public:
     /*
      * Goes through all registered objects and returns a vector of descriptors with specified Type ID 
      * 
-     * At Runtime will only go through currently loaded objects
-     * 
      * WARNING: Very heavy function, use with care!
+     * EDITOR ONLY
      */
     std::vector<ObjectDescriptor*> GetObjectDescriptorsOfTypeID(const std::string& typeID, bool excludeTransient = false);
 
@@ -119,10 +118,15 @@ public:
      * Loads all objects synchroniously.
      *
      * WARNING: Very heavy function, should never be used!
+     * EDITOR ONLY
      * DEPRECATED: This function must not be used at runtime and will soon be deleted
      */
     void LoadAllObjects();
 
+    // EDITOR ONLY
     ObjectDescriptor* GetObjectDescriptor(uint32_t ID);
+
+    // EDITOR ONLY
+    void UpdateObjectDescriptorMetadata(uint32_t ID);
 #   endif
 };

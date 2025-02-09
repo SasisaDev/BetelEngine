@@ -24,7 +24,7 @@ struct EntitySpawnInfo
 enum class EntityFlags : uint8_t {
     // This flag means that Entity will get destroyed next tick
     // It will also remove entity from Object Library. 
-    BeginDestroy
+    BeginDestroy = (1 << 0),
 };
 
 class Entity : public Object

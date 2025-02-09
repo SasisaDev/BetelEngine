@@ -30,7 +30,7 @@ void ObjectLibrary::RegisterObjectID(uint32_t ID)
     if(objects.contains(ID)) {
         assert(!"Passed Object ID is already registered in the engine");
     }
-    objects.emplace(ID, nullptr);
+    AddObject(ID, nullptr);
 
 #   ifdef EDITOR
     LoadedObjectMetadata metadata = loader->LoadObjectMetadata(ID);
@@ -99,16 +99,21 @@ Object* ObjectLibrary::CreateObjectFromTypeID(const std::string& TypeID, const s
         object->SetFlag(ObjectFlags::Transient);
     }
 
-    objects.emplace(objectID, object);
+    AddObject(objectID, object);
     return object;
 }
 
 void ObjectLibrary::AddObject(uint32_t id, Object* preloaded)
 {
     objects.emplace(id, preloaded);
+
     if(id > LastObjectID) {
         LastObjectID = id;
     }
+
+#   ifdef EDITOR
+    UpdateObjectDescriptorMetadata(id);
+#   endif
 }
 
 uint32_t ObjectLibrary::GenerateObjectID() 
@@ -232,7 +237,7 @@ std::vector<ObjectDescriptor*> ObjectLibrary::GetAllObjectDescriptors(bool exclu
     for(auto it = objects.begin(); it != objects.end(); ++it)
     {
         const bool bIsTransient = (it->second.object != nullptr) ? it->second.object->HasFlag(ObjectFlags::Transient) : false;
-        if(it->second.object && (excludeTransient) ? !bIsTransient : true)
+        if((excludeTransient) ? !bIsTransient : true)
         {
             objs.push_back(&(it->second));
         }
@@ -248,12 +253,10 @@ std::vector<ObjectDescriptor*> ObjectLibrary::GetObjectDescriptorsOfTypeID(const
 
     for(auto it = objects.begin(); it != objects.end(); ++it)
     {
-        const bool bSameType = it->second.object->GetType() == typeID;
+        const bool bSameType = it->second.type == typeID;
         const bool bIsTransient = (it->second.object != nullptr) ? it->second.object->HasFlag(ObjectFlags::Transient) : false;
         const bool bNotTransient = (excludeTransient) ? !bIsTransient : true;
-        if( it->second.object 
-            && bSameType 
-            && bNotTransient)
+        if( bSameType && bNotTransient)
         {
             // TODO: Check inheritance
 
@@ -271,5 +274,15 @@ ObjectDescriptor* ObjectLibrary::GetObjectDescriptor(uint32_t ID)
     }
 
     return &objects[ID];
+}
+
+void ObjectLibrary::UpdateObjectDescriptorMetadata(uint32_t id)
+{
+    objects[id].id = id;
+    if(objects[id].object)
+    {
+        objects[id].name = objects[id].object->GetName();
+        objects[id].type = objects[id].object->GetType();
+    }
 }
 #endif

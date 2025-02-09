@@ -77,7 +77,7 @@ public:
     bool HasFlag(ObjectFlags flag) {return (Flags & (uint8_t)flag) == (uint8_t)flag;}
 
     // Marks object Dirty, meaning that the object has changed and should be saved again
-    void Dirty() {Flags |= (uint8_t)ObjectFlags::Dirty;}
+    void Dirty();
     void BeginUnload() {Flags |= (uint8_t)ObjectFlags::Unload;}
 
     template <typename ChildObjectT = Object>

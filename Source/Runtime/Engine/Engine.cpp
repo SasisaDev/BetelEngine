@@ -122,6 +122,7 @@ void Engine::LoadWorld(uint32_t worldID)
 
 void Engine::Tick(float DeltaTime)
 {
+    // Tick world
     tickManager->Tick(DeltaTime);
     timerManager->Tick(DeltaTime);
 
