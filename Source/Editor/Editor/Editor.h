@@ -48,6 +48,7 @@ public:
 
     std::queue<size_t> ModesRemoveQueue;
     std::vector<EditorMode*> Modes;
+    std::vector<size_t> SelectedObjectModes;
     int CurrentActiveMode = 0, PreviousCurrentActiveMode = 0;
 
     /*

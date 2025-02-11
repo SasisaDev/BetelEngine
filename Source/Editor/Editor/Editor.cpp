@@ -70,21 +70,25 @@ Editor::Editor() {
 
 void Editor::SetSelectedEntity(Entity* selectedEntity)
 {
-    // FIXME:   This system will cause loss of previously added editor modes
-    //          If Entity gets deleted before it's called
-    if(SelectedEntity != nullptr) {
-        SelectedEntity->PopEditorModes(this);
+    for(size_t mode : SelectedObjectModes) {
+        ModesRemoveQueue.push(mode);
     }
+
+    SelectedObjectModes.clear();
 
     SelectedEntity = selectedEntity;
     
     if(SelectedEntity != nullptr) {
-        SelectedEntity->PushEditorModes(this);
+        for(EditorMode* mode : SelectedEntity->GetEditorModes()) {
+            SelectedObjectModes.push_back(Modes.size());
+            Modes.push_back(mode);
+        }
     }
 }
 
 void Editor::Tick(float deltaTime)
 {
+    // Override world cameras with Editor camera
     if(World* world = GApplication->GetEngine()->GetWorld())
     {
         world->SetWorldCameraPosition(EditorCameraPosition);

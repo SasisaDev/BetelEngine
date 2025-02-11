@@ -14,16 +14,10 @@ namespace Drag{
         }
     };
 
-    void Begin(uint32_t object) {
-        Context::Get().Object = object;
-    }
+    extern void Begin(uint32_t object);
 
-    void End(uint32_t object) {
-        Context::Get().Object = 0;
-    }
+    extern void End(uint32_t object);
 
-    uint32_t GetObject() {
-        return Context::Get().Object;
-    }
+    extern uint32_t GetObject();
 };
 };

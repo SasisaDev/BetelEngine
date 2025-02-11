@@ -11,6 +11,10 @@
 
 #include <Math/Transform.h>
 
+#ifdef EDITOR
+class EditorMode;
+#endif
+
 class EntityRenderProxy;
 class World;
 class Editor;
@@ -76,8 +80,7 @@ public:
 
     // Editor API
 #   ifdef EDITOR
-    void PushEditorModes(Editor* editor) {}
-    void PopEditorModes(Editor* editor) {}
+    std::vector<EditorMode*> GetEditorModes() {return {};}
 #   endif
 };
 

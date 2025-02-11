@@ -9,6 +9,7 @@
 #include <imgui/imgui_internal.h>
 #include <EditorUI/WindowLibrary/BetelInputs.h>
 #include <EditorUI/WindowLibrary/BetelDeferred.h>
+#include <EditorUI/WindowLibrary/BetelDrag.h>
 #include <EditorUI/ObjectEditViews/ObjectEditViewsFactory.h>
 
 class EditorObjectExplorer : public EditorToolkitWindow
@@ -261,6 +262,12 @@ public:
         float InitialPosX = ImGui::GetCursorPosX();
         float InitialPosY = ImGui::GetCursorPosY();
         ImGui::Selectable((std::string("##") + fullName).c_str());
+        if(ImGui::BeginDragDropSource())
+        {
+            //ImGui::SetDragDropPayload("ObjectID", &desc->id, ImGuiCond_Once);
+            BImGui::Drag::Begin(desc->id);
+            ImGui::EndDragDropSource();
+        }
 
         DrawObjectPopup(desc);
 

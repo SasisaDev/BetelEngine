@@ -6,6 +6,7 @@
 #include "../../EditorImageLoader.h"
 #include <World/RenderLayer/WorldRenderLayer.h>
 #include <EditorUI/WindowLibrary/BetelImages.h>
+#include <EditorUI/WindowLibrary/BetelDrag.h>
 
 class EditorViewport : public EditorToolkitWindow
 {
@@ -105,6 +106,16 @@ public:
             }
             ImGui::PopStyleColor(1);
 
+            // TODO: Drag functionality
+            // Get an ID of an object currently being dragged
+            uint32_t dragObjectID = BImGui::Drag::GetObject();
+            if(ImGui::IsWindowHovered() && dragObjectID != 0)
+            {
+                if(World* world = GEngine->GetWorld()) {
+                    world->Spawn<Entity>("Spawned From Drag");
+                }
+                BImGui::Drag::End(dragObjectID);
+            }
         }
         ImGui::PopStyleColor(2);
         ImGui::PopStyleVar(1);
