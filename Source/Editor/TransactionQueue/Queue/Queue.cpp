@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <memory>
+#include <cstring>
 
 void TransactionQueue::EraseFrame(uint64_t offset)
 {
@@ -82,6 +83,8 @@ void TransactionQueue::StartFrame(uint64_t size)
 
 void TransactionQueue::EndFrame()
 {
+    assert(stackPointer == frameEnd && "Ended Frame before reaching it's allocated end!");
+
     frames[frameBase] = frameEnd;
     stackPointer = frameEnd;
 }

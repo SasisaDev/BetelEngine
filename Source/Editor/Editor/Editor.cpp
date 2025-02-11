@@ -65,6 +65,7 @@ Editor::Editor() {
     // Create transcation context
     // TODO: transcations memory settings
     transactions = std::make_unique<TransactionContext>(16*1024);
+    transactions->Record<Transaction>(Transaction());
 }
 
 void Editor::SetSelectedEntity(Entity* selectedEntity)
