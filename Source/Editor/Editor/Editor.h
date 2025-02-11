@@ -2,9 +2,12 @@
 
 #include <vector>
 #include <queue>
+#include <memory>
+
 #include <Math/Vector.h>
 #include <Input/InputEvent.h>
 #include <Toolkit/Toolkit.h>
+#include <TransactionQueue/Context.h>
 #include "Mode.h"
 
 class World;
@@ -25,6 +28,8 @@ class Editor {
     Editor();
 
     EditorToolkit *edToolkit;
+
+    std::unique_ptr<TransactionContext> transactions;
 
     EditorInputContext edInputCtx;
     virtual void HandleIncomingInputEvent(InputEvent &event);

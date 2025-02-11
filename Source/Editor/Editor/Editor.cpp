@@ -61,6 +61,10 @@ Editor::Editor() {
 
     // Add default mode
     AddToolkitMode<ObjectMode>();
+
+    // Create transcation context
+    // TODO: transcations memory settings
+    transactions = std::make_unique<TransactionContext>(16*1024);
 }
 
 void Editor::SetSelectedEntity(Entity* selectedEntity)

@@ -129,7 +129,9 @@ set(AssetFactoriesSrc "Source/Editor/AssetFactory/Default/ShaderFactory.cpp" )
 
 set(ArgumentEventsSrc "Source/Editor/ArgumentEvents/UseAssetFactoryEvent.cpp")
 
-set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc}
+set(TransactionQueueSrc "Source/Editor/TransactionQueue/Context.cpp" "Source/Editor/TransactionQueue/Queue/Queue.cpp")
+
+set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc} ${TransactionQueueSrc}
     "Source/Editor/ToolkitRenderLayer/ToolkitRenderLayer.cpp" "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" "Source/Editor/Editor/EditorDelegates.cpp"
     "Source/Editor/Editor/Editor.cpp" "Source/Editor/Editor/Modes/ObjectMode.cpp" "Source/Editor/EditorUI/ObjectEditViews/ObjectEditViewsFactory.cpp") 
 
