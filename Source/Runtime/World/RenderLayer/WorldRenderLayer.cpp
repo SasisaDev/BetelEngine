@@ -224,6 +224,7 @@ void WorldRenderLayerRef::onWorldLoad(World* loadedWorld)
     world->renderLayer = this;
 
     world->OnEntitySpawned.BindMember(this, &WorldRenderLayerRef::onWorldEntitySpawned);
+    world->OnEntityDestroyed.BindMember(this, &WorldRenderLayerRef::onWorldEntityDespawned);
 
     for(const ObjectRef<Entity>& entity : world->GetEntities()) {
         if(EntityRenderProxy* renderProxy = entity.Get()->CreateRenderProxy()) {
@@ -247,6 +248,19 @@ void WorldRenderLayerRef::onWorldEntitySpawned(Entity* entity)
         if(EntityRenderProxy* renderProxy = entity->CreateRenderProxy()) {
             renderProxy->CreateResources(this);
             renderProxies.push_back(renderProxy);
+        }
+    }
+}
+
+void WorldRenderLayerRef::onWorldEntityDespawned(Entity *entity)
+{
+    if(entity){
+        for(auto it = renderProxies.begin(); it != renderProxies.end(); ++it) {
+            if((*it)->Parent->GetID() == entity->GetID()) {
+                delete (*it);
+                renderProxies.erase(it);
+                break;
+            }
         }
     }
 }

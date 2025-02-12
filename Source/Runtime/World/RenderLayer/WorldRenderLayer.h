@@ -81,6 +81,7 @@ public:
     void onWorldLoad(World* loadedWorld);
     void onWorldUnload(World* loadedWorld);
     void onWorldEntitySpawned(Entity* entity);
+    void onWorldEntityDespawned(Entity* entity);
 
     void SetRenderPostRenderProxies(bool render) { bRenderPostRenderProxies = render; }
 };

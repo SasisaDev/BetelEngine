@@ -21,6 +21,17 @@ bool ObjectMode::HandleInputEvent(InputEvent &event)
         {
             LOGF(Log, LogObjectMode, "Selected Entity: 0x%08X", result.HitEntities[0]);
             Editor::Get()->SetSelectedEntity(result.HitEntities[0]);
+        } else {
+            Editor::Get()->SetSelectedEntity(nullptr);
+        }
+    }
+
+    // Delete selected object
+    if(event.KeyName == "Delete" && event.IsUp) {
+        assert(GEngine->GetWorld() != nullptr);
+
+        if(Entity* entity = Editor::Get()->GetSelectedEntity()) {
+            GEngine->GetWorld()->DestroyEntity(entity);
         }
     }
 

@@ -118,8 +118,8 @@ class ObjectType
 public:
     virtual Object* CreateInstance() { return new Object; }
     virtual bool ShowInEditor() { return true; }
-    virtual bool CanDragIntoWorld() {return false;}
-    virtual Entity* GetWorldEntity() {return nullptr;}
+    virtual bool CanSpawnIntoWorld() {return false;}
+    virtual Entity* CreateWorldEntity() {return nullptr;}
     virtual std::string_view DisplayName() {return "Object";}
     virtual std::string_view GetParent() {return "";}
 };

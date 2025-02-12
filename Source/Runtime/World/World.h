@@ -2,6 +2,7 @@
 #include "Entity.h"
 
 #include <vector>
+#include <unordered_set>
 #include <string>
 #include <Math/Transform.h>
 #include <Delegate/Delegate.h>
@@ -46,12 +47,12 @@ public:
 
     void SetBackgroundColor(const Vec3& color) {BackgroundColor = color;}
 
-    void SetWorldName(std::string name) {Name = name;}
+    void SetWorldName(const std::string& name) {Name = name;}
     std::string GetWorldName() const {return Name;}
 
     // TODO: All objects, including entities, must be registered in ObjectLibrary and passed around in ObjectRef<>
     template<EntityClass EntityType>
-    EntityType* Spawn(std::string name, const EntitySpawnInfo& spawnInfo = EntitySpawnInfo::Empty)
+    EntityType* Spawn(const std::string& name, const EntitySpawnInfo& spawnInfo = EntitySpawnInfo::Empty)
     {
         EntityType* spawnedEntity = GEngine->GetObjectLibrary()->CreateObject<EntityType>(name);
         spawnedEntity->DisplayName = name;
@@ -63,6 +64,49 @@ public:
 
         return spawnedEntity;
     }
+
+    Entity* SpawnFromTypeID(const std::string& typeID, const std::string& name, const EntitySpawnInfo& spawnInfo = EntitySpawnInfo::Empty)
+    {
+        Entity* spawnedEntity = dynamic_cast<Entity*>(GEngine->GetObjectLibrary()->CreateObjectFromTypeID(typeID, name));
+        spawnedEntity->DisplayName = name;
+        spawnedEntity->Reparent(this);
+        spawnedEntity->transform.Location = spawnInfo.Location;
+        entities.emplace_back(spawnedEntity);
+
+        OnEntitySpawned.Broadcast(spawnedEntity);
+
+        return spawnedEntity;
+    }
+
+    // Adds a pre-initialized Entity to the world
+    void AddEntity(Entity* entity, const EntitySpawnInfo& spawnInfo = EntitySpawnInfo::Empty)
+    {
+        assert(entity != nullptr);
+
+        // Entity must not be nullptr
+        if(entity == nullptr) {
+            return;
+        }
+
+        // Don't add entity if it's already added
+        for(const ObjectRef<Entity>& existingEntity : entities)
+        {
+            if(existingEntity.GetID() == entity->GetID()) {
+                return;
+            }
+        }
+
+        entity->Reparent(this);
+        entity->transform.Location = spawnInfo.Location;
+        entities.emplace_back(entity);
+
+        OnEntitySpawned.Broadcast(entity);
+    }
+
+    // Destroys entity on this tick
+    // It can have negative effect
+    // You should never use this function
+    void DestroyEntity(Entity* entity);
 
     inline const std::vector<ObjectRef<Entity>>& GetEntities() const {return entities;}
 

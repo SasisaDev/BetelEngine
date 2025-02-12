@@ -6,7 +6,7 @@
 
 bool ObjSpriteType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjSpriteType>("SPRITE");
 
-Entity* ObjSpriteType::GetWorldEntity()
+Entity* ObjSpriteType::CreateWorldEntity()
 {
     return GEngine->GetObjectLibrary()->CreateObject<EntSprite>("Sprite");
 }
