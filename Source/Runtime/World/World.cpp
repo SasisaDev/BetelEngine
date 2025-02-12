@@ -11,11 +11,12 @@ void World::DestroyEntity(Entity *entity)
 
     for(int entID = 0; entID < entities.size(); ++entID) {
         // Remove destruction pending entity
-        if(entity->GetID() == entities[entID].GetID()) {
-            OnEntityDestroyed.Broadcast(entities[entID].Get());
+        uint32_t destroyEntityId = entity->GetID();
+        uint32_t thisEntityId = entities[entID].GetID();
+        if(destroyEntityId == thisEntityId) {
+            OnEntityDestroyed.Broadcast(entity);
             entities.erase(entities.begin() + entID);
-            --entID;
-            continue;
+            break;
         }
     }
 }

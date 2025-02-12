@@ -32,6 +32,7 @@ bool ObjectMode::HandleInputEvent(InputEvent &event)
 
         if(Entity* entity = Editor::Get()->GetSelectedEntity()) {
             GEngine->GetWorld()->DestroyEntity(entity);
+            Editor::Get()->SetSelectedEntity(nullptr);
         }
     }
 
