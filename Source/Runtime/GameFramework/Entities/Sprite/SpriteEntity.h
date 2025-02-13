@@ -48,7 +48,7 @@ class EntSprite : public Entity
 {
     ObjectRef<ObjSprite> sprite;
     ObjectRef<ObjAtlas> atlas;
-    uint16_t spriteID;
+    uint16_t spriteID = 0;
 public:
     AssetPtr<MaterialAsset> material;
     //AssetPtr<Texture2D> texture;

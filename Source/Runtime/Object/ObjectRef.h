@@ -16,26 +16,18 @@ protected:
     uint32_t objectID = 0;
 
 public:
-    ObjectRef() {
-        if(objectID) {
-            InternalRegisterUsage();
-        }
-    }
+    ObjectRef() { /*InternalRegisterUsage();*/ }
     // Copy constructor
     ObjectRef(const ObjectRef<_ObjectT> &otherObjectRef) {
         ref = otherObjectRef.ref;
         objectID = otherObjectRef.objectID;
-        if(objectID) {
-            InternalRegisterUsage();
-        }
+        InternalRegisterUsage();
     }
     // Move Constructor
     ObjectRef(ObjectRef<_ObjectT> &&otherObjectRef)
         : ref(std::move(otherObjectRef.ref)), objectID(std::move(otherObjectRef.objectID))
     {
-        if(objectID) {
-            InternalRegisterUsage();
-        }
+        InternalRegisterUsage();
     }
     ObjectRef(uint32_t id) : objectID(id) {InternalRegisterUsage();}
     ObjectRef(_ObjectT* object) : ref(object) 
@@ -46,9 +38,7 @@ public:
         }
     }
     ~ObjectRef() { 
-        if(objectID) {
-            InternalUnregisterUsage();
-        }
+        InternalUnregisterUsage();
     }
 
     inline bool IsValid() const;
@@ -64,33 +54,25 @@ public:
     // Move operator
     constexpr ObjectRef<_ObjectT>& operator=(ObjectRef<_ObjectT>&& other)
     {
-        if(objectID) {
-            InternalUnregisterUsage();
-        }
+        InternalUnregisterUsage();
 
         ref = std::move(other.ref);
         objectID = std::move(other.objectID);
 
-        if(objectID) {
-            InternalRegisterUsage();
-        }
-        
+        InternalRegisterUsage();
+
         return *this;
     }
 
     // Copy operator
     constexpr ObjectRef<_ObjectT>& operator=(const ObjectRef<_ObjectT>& other)
     {
-        if(objectID) {
-            InternalUnregisterUsage();
-        }
+        InternalUnregisterUsage();
 
         ref = other.ref;
         objectID = other.objectID;
 
-        if(objectID) {
-            InternalRegisterUsage();
-        }
+        InternalRegisterUsage();
 
         return *this;
     }
@@ -102,14 +84,14 @@ template <ObjectClass _ObjectT>
 inline void ObjectRef<_ObjectT>::InternalRegisterUsage() 
 {
     // FIXME: These checks aren't required if we destroy ObjectLibrary last and avoid singletons
-    if(GEngine != nullptr)
+    if(GEngine != nullptr && objectID)
         GEngine->GetObjectLibrary()->RegisterObjectUsage(objectID);
 }
 
 template <ObjectClass _ObjectT>
 inline void ObjectRef<_ObjectT>::InternalUnregisterUsage() 
 {
-    if(GEngine != nullptr)
+    if(GEngine != nullptr && objectID)
         GEngine->GetObjectLibrary()->UnregisterObjectUsage(objectID);
 }
 

@@ -91,8 +91,6 @@ class EntityRenderProxy
 public:
     Entity* Parent;
 
-    // Specifies whether entity gets automatically loaded/unloaded from memory
-    bool bPersistent = false;
 public:
     EntityRenderProxy(Entity* DefaultParent){Parent = DefaultParent;}
     virtual ~EntityRenderProxy(){}
