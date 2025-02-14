@@ -10,6 +10,8 @@
 #include <EditorUI/WindowLibrary/BetelDeferred.h>
 #include <EditorUI/WindowLibrary/BetelInputs.h>
 
+#include <Utility/StrSan.h>
+
 #include <optional>
 
 namespace BImGui
@@ -176,7 +178,14 @@ public:
             bReimport = false;
         }
 
+        bool IsNameValid = StringSanitizer::IsCompliant(tex_name);
+        if(!IsNameValid) {
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, BImGui::Colors::ErrorRedColor);
+        }
         BImGui::InputString("Name", tex_name);
+        if(!IsNameValid) {
+            ImGui::PopStyleColor();
+        }
 
         if(bReimportFailed) {
             ImGui::PushStyleColor(ImGuiCol_FrameBg, BImGui::Colors::ErrorRedColor);
@@ -204,6 +213,12 @@ public:
         const std::string path = (IPlatform::Get()->GetExecutableFolder() + "/Content/" + tex_path);
         bool bPathExists = IPlatform::Get()->OpenFile(path, FILE_ACCESS_FLAG_READ)->IsOpen();
         if(!bPathExists) {
+            bReimportFailed = true;
+            return false;
+        }
+
+        if(!StringSanitizer::IsCompliant(tex_name))
+        {
             return false;
         }
 
@@ -219,6 +234,6 @@ public:
     }
 
     virtual void OnSaveError() {
-        bReimportFailed = true;
+        
     }
 };
