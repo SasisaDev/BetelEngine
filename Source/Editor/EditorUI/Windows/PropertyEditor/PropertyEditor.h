@@ -22,6 +22,21 @@ public:
         BImGui::InputString(name.c_str(), string);
     }
 
+    void DrawObject(Property& prop)
+    {
+        PropertyData_Object callbacks = *static_cast<PropertyData_Object*>(prop.value);
+
+        uint32_t objectID = callbacks.GetID.Execute();
+        std::string filterString;
+
+        std::string name = "##";
+        name += prop.name;
+        if(BImGui::InputObject(name.c_str(), objectID, filterString, callbacks.TypeFilter.c_str()))
+        {
+            callbacks.Reset.Execute(objectID);
+        }
+    }
+
     virtual void OnGUI(Window *window)
     {
         ImGui::SetNextWindowSize(ImVec2(350, 200), ImGuiCond_Once);
@@ -61,6 +76,11 @@ public:
                         case PropertyType::String: 
                         {
                             DrawString(properties.properties[row]);
+                            break;
+                        }
+                        case PropertyType::Object: 
+                        {
+                            DrawObject(properties.properties[row]);
                             break;
                         }
                         default:

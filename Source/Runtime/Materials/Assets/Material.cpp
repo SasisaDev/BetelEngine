@@ -2,4 +2,4 @@
 
 #include <Object/ObjectTypeLibrary.h>
 
-bool ObjMaterialType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjMaterialType>("MAT");
+bool ObjMaterialType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjMaterialType>(ObjMaterial::GetStaticType());

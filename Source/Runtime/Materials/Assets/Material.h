@@ -14,6 +14,8 @@ protected:
     ObjectRef<ObjShader> Shader;
     std::shared_ptr<IMaterial> pMaterial;
 public:
+
+    static std::string GetStaticType() {return "MAT";}
 };
 
 class ObjMaterialType : public ObjectType

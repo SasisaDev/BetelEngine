@@ -25,6 +25,21 @@ public:
         return Result;
     }
 
+    // TODO: Auto const deduction
+    template <typename UserClass>
+    inline static Delegate<RetValType, ArgTypes...>
+    CreateMemberConst(
+        UserClass* InUserObject,
+        typename MemFuncPtr<true,
+            UserClass,
+            RetValType(ArgTypes...)
+        >::Type InFunc)
+    {
+        Delegate<RetValType, ArgTypes...> Result;
+        Result.instance.reset(new MemDelegateInstance<true, UserClass, RetValType, ArgTypes...>(InUserObject, InFunc));
+        return Result;
+    }
+
     inline static Delegate<RetValType, ArgTypes...>
     CreateRaw(typename RawFuncPtr<RetValType(ArgTypes...)>::Type InFunc)
     {
