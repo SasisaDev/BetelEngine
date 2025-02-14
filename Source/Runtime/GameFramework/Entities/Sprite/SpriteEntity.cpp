@@ -117,7 +117,9 @@ void EntSprite::Tick(float deltaTime)
     SetRelativeLocation({static_cast<int>(sin) , static_cast<int>(cos) , transform.Location.z});
 }
 
+#ifdef EDITOR
 PropertyContainer EntSprite::GetEditorReflectedProperties()
 {
     return Entity::GetEditorReflectedProperties().PushPropertyObject("Material", material);
 }
+#endif

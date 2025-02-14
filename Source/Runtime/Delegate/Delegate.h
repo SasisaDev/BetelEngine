@@ -25,10 +25,10 @@ public:
         return Result;
     }
 
-    // TODO: Auto const deduction
+    // Create Const Member function
     template <typename UserClass>
     inline static Delegate<RetValType, ArgTypes...>
-    CreateMemberConst(
+    CreateMember(
         UserClass* InUserObject,
         typename MemFuncPtr<true,
             UserClass,

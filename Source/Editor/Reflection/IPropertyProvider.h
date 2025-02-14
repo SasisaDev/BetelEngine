@@ -64,7 +64,7 @@ struct PropertyContainer
     PropertyContainer &PushPropertyObject(const std::string_view &name, ObjectRef<_ObjectT> &ref)
     {
         properties.emplace_back(PropertyType::Object, name, 
-                                new PropertyData_Object(Delegate<uint32_t>::CreateMemberConst(&ref, &ObjectRef<_ObjectT>::GetID), 
+                                new PropertyData_Object(Delegate<uint32_t>::CreateMember(&ref, &ObjectRef<_ObjectT>::GetID), 
                                                         Delegate<void, uint32_t>::CreateMember(&ref, &ObjectRef<_ObjectT>::Reset),
                                                         _ObjectT::GetStaticType()));
         return *this;

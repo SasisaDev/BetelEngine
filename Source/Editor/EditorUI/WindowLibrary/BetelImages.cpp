@@ -13,6 +13,7 @@ void BImGui::LoadEditorImages()
     EditorImages[static_cast<size_t>(Img::Save32Icon)] = EditorImageLoader::StaticLoadTextureFromFile("./Editor/Save32.png");
     EditorImages[static_cast<size_t>(Img::Visibility32Icon)] = EditorImageLoader::StaticLoadTextureFromFile("./Editor/Visibility32.png");
     EditorImages[static_cast<size_t>(Img::Reload32Icon)] = EditorImageLoader::StaticLoadTextureFromFile("./Editor/Reload32.png");
+    EditorImages[static_cast<size_t>(Img::Cross32Icon)] = EditorImageLoader::StaticLoadTextureFromFile("./Editor/Cross32.png");
     EditorImages[static_cast<size_t>(Img::None256Icon)] = EditorImageLoader::StaticLoadTextureFromFile("./Editor/None256.png");
 
     EditorImagesbInitialized = true;

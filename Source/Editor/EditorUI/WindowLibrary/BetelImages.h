@@ -11,6 +11,7 @@ namespace BImGui
         Visibility32Icon,
         Reload32Icon,
         None256Icon,
+        Cross32Icon,
         MAX
     };
 

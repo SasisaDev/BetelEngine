@@ -5,6 +5,8 @@
 #include <unordered_map>
 #include <string>
 
+#include <Log/Logger.h>
+
 class EditorToolkitWindow;
 class Object;
 
@@ -28,6 +30,7 @@ public:
         } 
         else
         {
+            LOGF(Warning, LogObjectEditViewsFactory, "Couldn't create Edit View for object type \"%s\". Not found!", ObjectTypeID.c_str());
             return nullptr;
         }
     }

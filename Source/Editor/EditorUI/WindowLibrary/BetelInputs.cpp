@@ -61,6 +61,8 @@ namespace BImGui
     // Return true if value has changed
     bool InputObject(const char *name, uint32_t &object, std::string &filterString, const char *typeFilter)
     {
+        assert(strlen(name) > 0 && "Input name is too short");
+
         ObjectLibrary *lib = GEngine->GetObjectLibrary();
 
         bool bIsCurrentObjectNull = false;
@@ -94,15 +96,16 @@ namespace BImGui
 
         ImGui::SameLine();
 
-        if(ImGui::ImageButton((std::string("##Button_") + name).c_str(), BImGui::GetEdImage(BImGui::Img::Visibility32Icon), ImVec2(13, 13)))
+        if(ImGui::ImageButton((std::string("##Button_") + name).c_str(), BImGui::GetEdImage(BImGui::Img::Cross32Icon), ImVec2(13, 13)))
         {
             object = 0;
             return true;
         }
 
-        ImGui::SameLine();
-
-        ImGui::TextUnformatted(name);
+        if(strlen(name) >= 2 && !(name[0] == '#' || name[1] == '#')){
+            ImGui::SameLine();
+            ImGui::TextUnformatted(name);
+        }
 
         return false;
     }
