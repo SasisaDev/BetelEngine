@@ -116,3 +116,8 @@ void EntSprite::Tick(float deltaTime)
     double cos = glm::cos(param / 1.5) * 100.0;
     SetRelativeLocation({static_cast<int>(sin) , static_cast<int>(cos) , transform.Location.z});
 }
+
+PropertyContainer EntSprite::GetEditorReflectedProperties()
+{
+    return Entity::GetEditorReflectedProperties().PushPropertyObject("Material", material);
+}

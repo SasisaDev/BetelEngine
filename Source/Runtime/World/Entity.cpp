@@ -31,3 +31,11 @@ IVec3 Entity::GetLocation()
         return transform.Location;
     }
 }
+
+#ifdef EDITOR 
+PropertyContainer Entity::GetEditorReflectedProperties()
+{
+    return  Object::GetEditorReflectedProperties().
+            PushPropertyString("Name", &DisplayName);
+}
+#endif

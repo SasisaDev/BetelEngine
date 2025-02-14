@@ -7,20 +7,9 @@
 
 namespace BImGui {
 
-    int StringResizeCallback(ImGuiInputTextCallbackData* data)
-    {
-        if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
-        {
-            std::string* str = (std::string*)data->UserData;
-            IM_ASSERT(str->data() == data->Buf);
-            str->resize(data->BufSize); 
-            data->Buf = str->data();
-        }
-        return 0;
-    }
+    extern bool InputString(const char* id, std::string& string, ImGuiInputTextFlags flags = 0);
 
-    bool InputString(const char* id, std::string& string, ImGuiInputTextFlags flags = 0) {
-        return ImGui::InputText(id, string.data(), (size_t)string.size(), flags | ImGuiInputTextFlags_CallbackResize, BImGui::StringResizeCallback, (void*)(&string));
-    }
+    // Return true if value has changed
+    extern bool InputObject(const char *name, uint32_t &object, std::string &filterString,  const char *typeFilter = "Object");
 
 };

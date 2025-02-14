@@ -8,13 +8,12 @@
 
 #include <EditorUI/WindowLibrary/BetelImages.h>
 #include <EditorUI/WindowLibrary/BetelDeferred.h>
-#include <EditorUI/WindowLibrary/BetelPickers.h>
+#include <EditorUI/WindowLibrary/BetelInputs.h>
 
 #include <optional>
 
 namespace BImGui
 {
-    extern bool InputString(const char *id, std::string &string, ImGuiInputTextFlags flags);
     extern bool ImageButton(const char *ID, ImTextureID ImgID, ImVec2 ImgSize, ImVec2 Uv0, ImVec2 Uv1);
 };
 

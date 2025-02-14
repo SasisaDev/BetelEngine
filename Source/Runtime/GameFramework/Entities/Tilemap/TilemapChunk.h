@@ -18,7 +18,7 @@ class EntTilemapChunk : public Entity
     friend class EntTilemap;
     std::vector<TilemapLayerData*> layersData;
 public:
-    virtual EntityRenderProxy* CreateRenderProxy() override {return RenderProxy = new TilemapChunkRenderProxy(this);}
+    virtual EntityRenderProxy* SetupRenderProxy(WorldRenderLayerRef* ref) override {return RenderProxy = new TilemapChunkRenderProxy(this);}
 };
 
 class EntTilemapChunkType : public ObjectType

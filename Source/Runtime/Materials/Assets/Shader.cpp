@@ -1,11 +1,13 @@
-#include "ShaderAsset.h"
+#include "Shader.h"
 #include <Platform/Platform.h>
 #include <Core/Application/Application.h>
+#include <Object/ObjectTypeLibrary.h>
 #include <UI/RenderLayer/WidgetRenderLayer.h>
 
-bool ShaderAssetType::bIsRegistered = AssetLibrary::RegisterAssetType<ShaderAssetType>();
 
-void ShaderAsset::Deserialize(Artifact& data)
+bool ObjShaderType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjShaderType>("SHADER");
+
+/*void ObjShader::Deserialize(Artifact& data)
 {
     VertexShaderPath = data.GetStringOrDefault("VertexShaderPath");
     FragmentShaderPath = data.GetStringOrDefault("FragmentShaderPath");
@@ -32,4 +34,4 @@ void ShaderAsset::Deserialize(Artifact& data)
             LOGF(Error, LogWidget, "\tFragment Shader: \"%s\"", FragmentShaderPath.c_str());
         }
     }
-}
+}*/

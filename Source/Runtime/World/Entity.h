@@ -16,6 +16,7 @@ class EditorMode;
 #endif
 
 class EntityRenderProxy;
+class WorldRenderLayerRef;
 class World;
 class Editor;
 
@@ -44,12 +45,22 @@ protected:
     EntityRenderProxy* RenderProxy;
 
     std::string DisplayName = "Entity";
+protected:
+#   ifdef EDITOR
+    EntityRenderProxy* EdRenderProxy;
+#   endif
 public:
     bool Visible = true;
 
     inline bool IsDynamic() const {return bIsDynamic;}
 
-    virtual EntityRenderProxy* CreateRenderProxy(){return RenderProxy = nullptr;}
+    /*
+     * This functions is getting called by WorldRenderLayerRef on entity spawn.
+     * It creates or finds an existing RenderProxy, potentially registers itself in batch
+     * 
+     * Return pointer to new created EntityRenderProxy if it was created, nullptr otherwise 
+     */
+    virtual EntityRenderProxy* SetupRenderProxy(WorldRenderLayerRef* ref){return RenderProxy = nullptr;}
     virtual EntityRenderProxy* GetRenderProxy() {return RenderProxy;}
 
     virtual World* GetWorld();
@@ -78,9 +89,17 @@ public:
 
     virtual std::string GetDisplayName() {return DisplayName;} 
 
+    //~Reflection API start
+#   ifdef EDITOR 
+       virtual PropertyContainer GetEditorReflectedProperties() override;
+#   endif
+    //~Reflection API stop
+
     // Editor API
 #   ifdef EDITOR
     std::vector<EditorMode*> GetEditorModes() {return {};}
+    virtual EntityRenderProxy* SetupEditorRenderProxy(WorldRenderLayerRef* ref){return EdRenderProxy = nullptr;}
+    virtual EntityRenderProxy* GetEditorRenderProxy() {return EdRenderProxy;}
 #   endif
 };
 
@@ -90,10 +109,12 @@ class EntityRenderProxy
 {
 public:
     Entity* Parent;
-
+    bool bIsBatch = false;
 public:
     EntityRenderProxy(Entity* DefaultParent){Parent = DefaultParent;}
     virtual ~EntityRenderProxy(){}
+
+    constexpr inline bool IsBatch() const {return bIsBatch;}
     
     virtual void CreateResources(WorldRenderLayerRef* layerRef){}
     virtual void Update(WorldRenderLayerRef* layerRef) {}

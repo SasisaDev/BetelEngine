@@ -24,6 +24,6 @@ class ObjSpriteType : public ObjectType
 public:
     virtual Object* CreateInstance() override { return new ObjSprite; }
     virtual bool CanSpawnIntoWorld() override {return true;}
-    virtual Entity* CreateWorldEntity() override;
+    virtual Entity* CreateWorldEntity(Object* Object) override;
     virtual std::string_view DisplayName() override {return "Sprite";}
 };

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Materials/Assets/MaterialAsset.h>
 #include <GameFramework/Assets/Texture/Texture.h>
 #include <Assets/AssetSmartPointers.h>
 #include <Math/Color.h>
@@ -8,6 +7,7 @@
 /*
  * Set of data for graphical elements
  */
+/* TODO
 struct WidgetBrush 
 {
     AssetPtr<ShaderAsset> shader;
@@ -24,4 +24,4 @@ struct WidgetBrush
       texture = DefaultBrushTexture;
       color = DefaultBrushColor;
     }
-};
+};*/

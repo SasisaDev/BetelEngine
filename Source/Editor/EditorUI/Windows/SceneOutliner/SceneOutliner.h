@@ -28,7 +28,14 @@ protected:
 
         ImGui::SameLine();
         ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, {0, 0.5});
-        ImGui::Button(entity->GetDisplayName().c_str(), {ImGui::GetContentRegionAvail().x, 0});
+
+        std::string displayName = entity->GetDisplayName().c_str();
+        std::string hexID;
+        hexID.resize(2+8);
+        sprintf(hexID.data(), "0x%08X", entity->GetID());
+        displayName += "(" + hexID + ")";
+        ImGui::Button(displayName.c_str(), {ImGui::GetContentRegionAvail().x, 0});
+        
         ImGui::PopStyleVar();
         
         if(indent) 

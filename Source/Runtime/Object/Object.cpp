@@ -32,9 +32,6 @@ void Object::Dirty()
 PropertyContainer Object::GetEditorReflectedProperties()
 {
     PropertyContainer container;
-
-    container.PushProperty("Test", new int);
-
     return container;
 }
 #endif

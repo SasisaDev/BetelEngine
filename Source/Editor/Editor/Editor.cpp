@@ -13,8 +13,15 @@
 
 void Editor::HandleIncomingInputEvent(InputEvent &event)
 {
+    // Perform active dragging if it's already enabled
+    if(edInputCtx.IsDragging && event.IsMouse && !event.IsKey && !event.MouseWheel) {
+        EditorCameraPosition.x = edInputCtx.OriginalEditorCameraPosition.x + (event.MouseX - edInputCtx.MouseDragStartX) / ViewportZoom;
+        EditorCameraPosition.y = edInputCtx.OriginalEditorCameraPosition.y + (event.MouseY - edInputCtx.MouseDragStartY) / ViewportZoom;
+    }    
+
+    // Next blocks require cursor hovering over focused viewport
     // Do nothing if Game Viewport is not focused
-    if(!GApplication->GetEngine()->GetGameFocused()) {
+    if(!GApplication->GetEngine()->GetGameFocused() || !GetViewportHovered()) {
         return;
     }
 
@@ -32,11 +39,6 @@ void Editor::HandleIncomingInputEvent(InputEvent &event)
         edInputCtx.MouseDragStartY = event.MouseY;
         edInputCtx.OriginalEditorCameraPosition = EditorCameraPosition;
     }
-
-    if(edInputCtx.IsDragging && event.IsMouse && !event.IsKey && !event.MouseWheel) {
-        EditorCameraPosition.x = edInputCtx.OriginalEditorCameraPosition.x + (event.MouseX - edInputCtx.MouseDragStartX) / ViewportZoom;
-        EditorCameraPosition.y = edInputCtx.OriginalEditorCameraPosition.y + (event.MouseY - edInputCtx.MouseDragStartY) / ViewportZoom;
-    }    
 
     // Zoom In/Out
     if(event.IsMouse && event.MouseWheel != 0)

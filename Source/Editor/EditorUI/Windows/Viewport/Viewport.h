@@ -40,9 +40,9 @@ public:
     {
         if (World *world = GEngine->GetWorld())
         {
-            ObjectDescriptor *objectDescriptor = GEngine->GetObjectLibrary()->GetObjectDescriptor(dragObjectID);
-            assert(objectDescriptor != nullptr);
-            ObjectType *objectType = ObjectTypeLibrary::Get().GetObjectType(objectDescriptor->type);
+            Object *object = GEngine->GetObjectLibrary()->LoadObject(dragObjectID);
+            assert(object != nullptr);
+            ObjectType *objectType = ObjectTypeLibrary::Get().GetObjectType(object->GetType());
             assert(objectType != nullptr);
 
             if (!objectType->CanSpawnIntoWorld())
@@ -51,7 +51,7 @@ public:
                 return;
             }
 
-            Entity* objectEntity = objectType->CreateWorldEntity();
+            Entity* objectEntity = objectType->CreateWorldEntity(object);
             assert(objectEntity != nullptr);
 
             EntitySpawnInfo spawnInfo;
@@ -145,6 +145,9 @@ public:
                 Editor::Get()->bShowOverlay = !Editor::Get()->bShowOverlay;
             }
             ImGui::PopStyleColor(1);
+
+            // Viewport Hovered setup
+            Editor::Get()->SetViewportHovered(ImGui::IsWindowHovered());
 
             // TODO: Drag functionality
             // Get an ID of an object currently being dragged

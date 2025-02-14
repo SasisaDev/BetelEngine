@@ -1,4 +1,4 @@
-#include "BetelPickers.h"
+#include "BetelInputs.h"
 
 #include "BetelColors.h"
 #include "BetelImages.h"
@@ -7,10 +7,32 @@
 #include <imgui/imgui_internal.h>
 
 #include <Engine/Engine.h>
+#include <Object/ObjectLibrary.h>
 
 namespace BImGui
 {
-    extern bool InputString(const char *id, std::string &string, ImGuiInputTextFlags flags = 0);
+    int StringResizeCallback(ImGuiInputTextCallbackData* data)
+    {
+        std::string* str = (std::string*)data->UserData;
+        if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
+        {
+            IM_ASSERT(str->data() == data->Buf);
+            // Resulting string should be one byte smaller,
+            // Since ImGui provides null-terminated string in buffer
+            // And we don't accept it in string
+            str->resize(data->BufTextLen); 
+        }
+        if(data->EventFlag = ImGuiInputTextFlags_CallbackCompletion)
+        {
+            memcpy(str->data(), data->Buf, data->BufTextLen);
+        }
+        return 0;
+    }
+
+    bool InputString(const char* id, std::string& string, ImGuiInputTextFlags flags)
+    {
+        return ImGui::InputText(id, string.data(), (size_t)string.size(), flags | ImGuiInputTextFlags_CallbackResize, BImGui::StringResizeCallback, (void*)(&string));
+    }
 
     namespace Internal {
         std::string _GetObjectNameWithID(uint32_t object, bool *bIsNull = nullptr)
@@ -84,4 +106,5 @@ namespace BImGui
 
         return false;
     }
+
 };

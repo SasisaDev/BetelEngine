@@ -49,6 +49,7 @@ BlameMasterFile* AssetLoader::ParseBlameMasterFile(std::unique_ptr<IFile> file)
     delete[] buffer;\
     buffer = BMF->FileHandle->Fetch(count); \
     if(buffer == nullptr) {\
+        assert(!"Failed reading BMF file. Unexpected EOF.");\
         LOG(Error, LogAssetLoader, "Failed reading BMF file. EOF was not expected"); \
         delete BMF; \
         return nullptr;\
@@ -165,6 +166,7 @@ BlameMasterFileObjectContainer AssetLoader::ReadObject(BlameMasterFile* master, 
     delete[] buffer;\
     buffer = master->FileHandle->Fetch(count); \
     if(buffer == nullptr) {\
+        assert(!"Failed reading BMF file. Unexpected EOF.");\
         LOG(Error, LogAssetLoader, "Failed reading BMF file. EOF was not expected"); \
         return {0};\
     }
@@ -310,6 +312,7 @@ LoadedObjectMetadata AssetLoader::LoadObjectMetadata(uint32_t ObjectID)
     delete[] buffer;\
     buffer = master->FileHandle->Fetch(count); \
     if(buffer == nullptr) {\
+        assert(!"Failed reading BMF file. Unexpected EOF.");\
         LOG(Error, LogAssetLoader, "Failed reading BMF file. EOF was not expected"); \
         return {0};\
     }

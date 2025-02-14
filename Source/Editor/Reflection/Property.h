@@ -10,15 +10,17 @@ enum class PropertyType : uint8_t {
     Text,
     Boolean,
     Float,
-
+    Object,
+    // Used to call a function by pressing a button in Property Editor
+    Method,
 };
 
 struct Property 
 {
     PropertyType type;
-    std::string name;
+    std::string_view name;
     void* value;
 
     Property(){}
-    Property(PropertyType t, std::string n, void* v){type = t; name = n; value = v;}
+    Property(PropertyType t, const std::string_view& n, void* v){type = t; name = n; value = v;}
 };

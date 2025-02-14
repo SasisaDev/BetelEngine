@@ -40,6 +40,8 @@ protected:
     World* CurrentWorld = nullptr;
     Entity* SelectedEntity = nullptr;
 
+    bool bViewportHovered = false;
+
     IVec2 EditorCameraPosition = {};
     IVec2 EditorCameraRotation = {};
 public:
@@ -68,6 +70,9 @@ public:
 
     Entity* GetSelectedEntity() const {return SelectedEntity;}
     void SetSelectedEntity(Entity* selectedEntity);
+
+    void SetViewportHovered(bool isHovered) {bViewportHovered = isHovered;}
+    bool GetViewportHovered() {return bViewportHovered;}
 
     // Can be used for Defered Registration
     template <typename ToolkitModeT>

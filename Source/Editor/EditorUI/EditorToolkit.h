@@ -12,6 +12,7 @@
 #include "Windows/Settings/GameSettings.h"
 #include "Windows/AssetExplorer/AssetExplorer.h"
 #include "Windows/ObjectExplorer/ObjectExplorer.h"
+#include "Windows/PropertyEditor/PropertyEditor.h"
 
 #include <EditorUI/WindowLibrary/BetelImages.h>
 
@@ -23,6 +24,7 @@ class EditorToolkitBase : public EditorToolkit {
     EditorLogViewer logViewer;
     EditorAssetExplorer assetExplorer;
     EditorObjectExplorer objectExplorer;
+    EditorPropertyEditor propertyEditor;
 
     EditorTranslator translator;
 
@@ -71,6 +73,7 @@ public:
                     sceneOutliner.Visible = !sceneOutliner.Visible;
                 }
                 if (ImGui::MenuItem("Details")) { 
+                    propertyEditor.Visible = !propertyEditor.Visible;
                 }
                 if (ImGui::MenuItem("Log Viewer")) { 
                     logViewer.Visible = !logViewer.Visible;
@@ -123,7 +126,7 @@ public:
             ImGui::DockBuilderDockWindow(gameViewport.GetName(), dockspace_id);
             ImGui::DockBuilderDockWindow(mainToolbar.GetName(), dock_id_top);
             ImGui::DockBuilderDockWindow(sceneOutliner.GetName(), dock_id_right);
-            ImGui::DockBuilderDockWindow("Details", dock_id_right_bottom);
+            ImGui::DockBuilderDockWindow(propertyEditor.GetName(), dock_id_right_bottom);
             ImGui::DockBuilderDockWindow(logViewer.GetName(), dock_id_bottom);
             ImGui::DockBuilderDockWindow(assetExplorer.GetName(), dock_id_bottom);
 
@@ -139,11 +142,12 @@ public:
         logViewer.DrawGUI(window);
         assetExplorer.DrawGUI(window);
         objectExplorer.DrawGUI(window);
+        propertyEditor.DrawGUI(window);
 
         // Windows
         translator.DrawGUI(window);
         gameSettings.DrawGUI(window);
 
-        ImGui::Begin("Details", 0, ImGuiWindowFlags_NoCollapse);ImGui::End();
+        //ImGui::ShowDemoWindow();
     }
 };

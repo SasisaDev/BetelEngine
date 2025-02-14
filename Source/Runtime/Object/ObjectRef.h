@@ -44,6 +44,8 @@ public:
     inline bool IsValid() const;
     inline bool IsLoaded() const {return ref;}
 
+    void Reset(uint32_t newID);
+
     inline _ObjectT* Get() const {return ref;} 
     inline uint32_t GetID() const {return objectID;} 
     _ObjectT* Load();
@@ -99,6 +101,17 @@ template <ObjectClass _ObjectT>
 inline bool ObjectRef<_ObjectT>::IsValid() const 
 {
     return GEngine->GetObjectLibrary()->IsObjectValid(objectID);
+}
+
+template <ObjectClass _ObjectT>
+inline void ObjectRef<_ObjectT>::Reset(uint32_t newID)
+{
+    InternalUnregisterUsage();
+
+    ref = nullptr;
+    objectID = newID;
+
+    InternalRegisterUsage();
 }
 
 template <ObjectClass _ObjectT>

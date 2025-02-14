@@ -54,7 +54,7 @@ set(ImguiSrc "Source/ThirdParty/imgui/imgui_demo.cpp" "Source/ThirdParty/imgui/i
              "Source/ThirdParty/imgui/imgui.cpp" "Source/ThirdParty/imgui/backends/imgui_impl_sdl2.cpp"
              "Source/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp")
 set(ImguiBetelSrc "Source/Editor/ImGui/RenderLayer/ImGuiLayer.cpp" "Source/Editor/ImGui/BetelImGui.cpp" "Source/Editor/EditorUI/WindowLibrary/BetelImages.cpp"
-                  "Source/Editor/EditorUI/WindowLibrary/BetelDeferred.cpp" "Source/Editor/EditorUI/WindowLibrary/BetelPickers.cpp"
+                  "Source/Editor/EditorUI/WindowLibrary/BetelDeferred.cpp" "Source/Editor/EditorUI/WindowLibrary/BetelInputs.cpp"
                   "Source/Editor/EditorUI/WindowLibrary/BetelDrag.cpp")
 
 # LZ4 Source
@@ -63,7 +63,7 @@ set(SrcLZ4 "Source/ThirdParty/lz4/lz4.c" "Source/ThirdParty/lz4/lz4file.c" "Sour
 # Modules Sources
 set(SrcGameFramework "Source/Runtime/GameFramework/Entities/Test/TestEntity.cpp" "Source/Runtime/GameFramework/Entities/Sprite/SpriteEntity.cpp"
      "Source/Runtime/GameFramework/Assets/Sprite/Sprite.cpp"
-    "Source/Runtime/Materials/Assets/MaterialAsset.cpp" "Source/Runtime/Materials/Assets/ShaderAsset.cpp"
+    "Source/Runtime/Materials/Assets/Material.cpp" "Source/Runtime/Materials/Assets/Shader.cpp"
     "Source/Runtime/GameFramework/Assets/Atlas/Atlas.cpp" "Source/Runtime/GameFramework/Assets/Texture/Texture.cpp"
     "Source/Runtime/GameFramework/Assets/Animation/Animation.cpp"
 

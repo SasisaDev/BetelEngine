@@ -119,7 +119,7 @@ public:
     virtual Object* CreateInstance() { return new Object; }
     virtual bool ShowInEditor() { return true; }
     virtual bool CanSpawnIntoWorld() {return false;}
-    virtual Entity* CreateWorldEntity() {return nullptr;}
+    virtual Entity* CreateWorldEntity(Object* Object) {return nullptr;}
     virtual std::string_view DisplayName() {return "Object";}
     virtual std::string_view GetParent() {return "";}
 };

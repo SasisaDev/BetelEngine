@@ -5,7 +5,7 @@
 class PanelWidget : public Widget
 {
 protected:
-    WidgetBrush brush;
+    //WidgetBrush brush;
 public:
 
     virtual void Render(VkCommandBuffer cmdBuffer) override;

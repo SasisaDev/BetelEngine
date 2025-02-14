@@ -21,5 +21,5 @@ class EntityTest : public Entity
 {
 public:
 
-    virtual EntityRenderProxy* CreateRenderProxy() override {return RenderProxy = new EntityRenderProxyTest(this);}
+    virtual EntityRenderProxy* SetupRenderProxy(WorldRenderLayerRef* ref) override {return RenderProxy = new EntityRenderProxyTest(this);}
 };

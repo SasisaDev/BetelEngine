@@ -2,8 +2,8 @@
 
 #include <World/Entity.h>
 #include <RenderV/Objects/Material.h>
-#include <Materials/Assets/ShaderAsset.h>
-#include <Materials/Assets/MaterialAsset.h>
+#include <Materials/Assets/Shader.h>
+#include <Materials/Assets/Material.h>
 #include <Assets/AssetSmartPointers.h>
 #include <GameFramework/Assets/Texture/Texture.h>
 
@@ -50,7 +50,7 @@ class EntSprite : public Entity
     ObjectRef<ObjAtlas> atlas;
     uint16_t spriteID = 0;
 public:
-    AssetPtr<MaterialAsset> material;
+    ObjectRef<ObjMaterial> material;
     //AssetPtr<Texture2D> texture;
 
     EntSprite() {
@@ -76,7 +76,7 @@ public:
 
     virtual void Tick(float deltaTime) override;
 
-    virtual EntityRenderProxy* CreateRenderProxy() override {return RenderProxy = new SpriteRenderProxy(this);}
+    virtual EntityRenderProxy* SetupRenderProxy(WorldRenderLayerRef* ref) override {return RenderProxy = new SpriteRenderProxy(this);}
 
     // TODO: Make it real, Make it Faster, maybe memoize
     virtual Vec3 GetBoundingBox() override {return transform.Scale * Vec3(32, -32, 1);}
@@ -85,5 +85,7 @@ public:
 #   ifdef EDITOR
     void PushEditorModes(Editor* editor) {}
     void PopEditorModes(Editor* editor) {}
+
+    virtual PropertyContainer GetEditorReflectedProperties() override;
 #   endif
 };
