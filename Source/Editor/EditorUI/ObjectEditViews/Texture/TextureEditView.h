@@ -187,6 +187,7 @@ public:
             ImGui::PopStyleColor();
         }
 
+        // TODO: Make it into independant BetelInputs input
         if(bReimportFailed) {
             ImGui::PushStyleColor(ImGuiCol_FrameBg, BImGui::Colors::ErrorRedColor);
         }
@@ -195,7 +196,12 @@ public:
             ImGui::PopStyleColor();
         }
         ImGui::SameLine();
-        BImGui::ImageButton("##PickImagePath", icon_browse, ImVec2(13, 13));
+        if(BImGui::ImageButton("##PickImagePath", icon_browse, ImVec2(13, 13)))
+        {
+            tex_path = IPath(IPlatform::Get()->OpenOpenFileDialog())
+                       .MakeRelative(IPlatform::Get()->GetExecutableFolder())
+                       .GetPath();
+        }
         ImGui::SameLine();
         ImGui::Text("Path");
 

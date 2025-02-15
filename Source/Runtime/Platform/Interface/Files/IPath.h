@@ -12,9 +12,9 @@ struct IPath
 
     bool isRelative;
 
-    void MakeAbsolute();
-    void MakeRelative(std::string relTo);
-    void MakeRelative(const IPath& relTo);
+    IPath& MakeAbsolute();
+    IPath& MakeRelative(std::string relTo);
+    IPath& MakeRelative(const IPath& relTo);
 
     std::string GetPath() const;
     inline char GetDisc() const {return disc;}

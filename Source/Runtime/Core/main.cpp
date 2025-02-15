@@ -1,6 +1,7 @@
 extern int GuardedMain(int argc, char* argv[]);
 
 #include <Platform/platformdefs.h>
+#include <Platform/Platform.h>
 
 #ifdef PLATFORM_WINDOWS
 
@@ -47,6 +48,13 @@ int WinMain(
   	}
 
   	argv[argc] = NULL;
+
+	// Get Executable Path
+	char execFolderBuf[1024];
+	size_t execFolderBufLen = sizeof(execFolderBuf); 
+
+	int execFolderBytes = GetModuleFileName(NULL, execFolderBuf, execFolderBufLen);
+	IPlatform::Get()->SetExecutableLocalPath(IPath(execFolderBuf).StepBack());
 
 	return GuardedMain(argc, argv);
 }

@@ -21,8 +21,10 @@ namespace BImGui
             // Since ImGui provides null-terminated string in buffer
             // And we don't accept it in string
             str->resize(data->BufTextLen); 
+            data->Buf = str->data();
+        } else if(data->EventFlag == ImGuiInputTextFlags_CallbackEdit){
+            memcpy(str->data(), data->Buf, data->BufTextLen);
         }
-        memcpy(str->data(), data->Buf, data->BufTextLen);
         return 0;
     }
 

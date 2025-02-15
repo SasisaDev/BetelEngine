@@ -1,6 +1,7 @@
 #include "Object.h"
 
 #include <algorithm>
+#include <Utility/StrSan.h>
 
 #ifdef EDITOR
 #   include <Engine/Engine.h>
@@ -14,9 +15,7 @@ void Object::Reparent(Object* newParent)
 
 void Object::Rename(const std::string& newName)
 {
-    Name = newName;
-    // Remove all null terminators from the string
-    Name.erase(std::find(Name.begin(), Name.end(), '\0'), Name.end());
+    Name = StringSanitizer::Sanitize(newName);
 }
 
 void Object::Dirty() 

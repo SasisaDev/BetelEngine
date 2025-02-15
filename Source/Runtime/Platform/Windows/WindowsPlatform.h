@@ -16,4 +16,6 @@ public:
 	virtual void DebugPrint(const char* string) const override;
 
 	virtual void ShowMessageWindow(const std::string_view& name, const char* content) const override;
+
+	virtual std::string OpenOpenFileDialog(const FileDialogInfo& info = FileDialogInfo::Default) override;
 };

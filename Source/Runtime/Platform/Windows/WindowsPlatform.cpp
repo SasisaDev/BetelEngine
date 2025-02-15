@@ -2,6 +2,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <commdlg.h>
 
 #pragma comment(lib, "Kernel32.lib")
 
@@ -88,4 +89,41 @@ void WindowsPlatform::DebugPrint(const char* string) const
 void WindowsPlatform::ShowMessageWindow(const std::string_view& name, const char* content) const
 {
 	MessageBox(NULL, content, name.data(), MB_OK);
+}
+
+std::string WindowsPlatform::OpenOpenFileDialog(const FileDialogInfo &info)
+{
+	OPENFILENAME ofn;
+	TCHAR szFile[260] = { };
+
+	std::string filter;
+	if(info.extensions.size() == 0) {
+		filter = "All\0*.*\0";
+	} else {
+		for(auto ext : info.extensions){
+			filter += ext.first;
+			filter.push_back('\0');
+			filter += ext.second;
+			filter.push_back('\0');
+		}
+	}
+
+	// Initialize OPENFILENAME
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = GetWindow(NULL, 0);
+	ofn.lpstrFile = szFile;
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = filter.data();
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = GetExecutableFolder().c_str();
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+	if (GetOpenFileName(&ofn) == TRUE)
+	{
+	    return ofn.lpstrFile;
+	}
+	return ofn.lpstrFile;
 }

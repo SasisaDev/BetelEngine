@@ -8,6 +8,13 @@
 #include <map>
 #include <memory>
 
+struct FileDialogInfo
+{
+    std::map<std::string_view, std::string_view> extensions;
+
+    static FileDialogInfo Default;
+};
+
 class IPlatform
 {
 protected:
@@ -21,11 +28,11 @@ public:
 	static IPlatform* Get();
 
     static inline constexpr bool IsEditor() {
-        #ifdef EDITOR
-        return true;
-        #else
-        return false;
-        #endif
+#       ifdef EDITOR
+            return true;
+#       else
+            return false;
+#       endif
     }
 
 	virtual void SetExecVariables(std::vector<std::string> newVars){ExecVariables = newVars;}
@@ -34,12 +41,16 @@ public:
 	// TODO: Rewrite it more neatly
     // This variant is unreliable and may fail on some systems
 	virtual std::string GetExecutablePath() { return (ExecVariables.size() > 0) ? ExecVariables[0] : ""; }
-	virtual std::string GetExecutableFolder() { return (ExecVariables.size() > 0) ? IPath(ExecVariables[0]).StepBack() : ""; }
+	virtual std::string GetExecutableFolder() { return ExecutableLocalPath; }
 
 	virtual constexpr std::string_view PlatformName() const { return "Unknown"; }
 	virtual void DebugPrint(const char* string) const {}
 
+    virtual void SetExecutableLocalPath(std::string path) {ExecutableLocalPath = path;}
+
     virtual void ShowMessageWindow(const std::string_view&, const char* content) const {}
+
+    virtual std::string OpenOpenFileDialog(const FileDialogInfo& info = FileDialogInfo::Default) {return {};}
 
 	virtual std::unique_ptr<IFile> OpenFile(IPath path, uint8_t accessFlags) { return std::make_unique<IFile>(path, accessFlags); }
 	virtual std::unique_ptr<IDirectory> OpenDirectory(IPath path, uint8_t flags = 0) { return std::make_unique<IDirectory>(IPath(path), flags); }

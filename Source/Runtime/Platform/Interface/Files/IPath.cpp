@@ -37,6 +37,21 @@ IPath::IPath(const char* path)
 
 }
 
+IPath &IPath::MakeAbsolute()
+{
+    return *this;
+}
+
+IPath &IPath::MakeRelative(std::string relTo)
+{
+    return *this;
+}
+
+IPath &IPath::MakeRelative(const IPath &relTo)
+{
+    return *this;
+}
+
 // FIXME: This will return substring before the first dot, which may be incorrect for files with multiple level extensions
 // For example "Filename.sub.ext"
 std::string IPath::GetName() const {

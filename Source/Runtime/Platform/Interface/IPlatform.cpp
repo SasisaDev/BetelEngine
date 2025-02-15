@@ -1,5 +1,7 @@
 #include "IPlatform.h"
 
+FileDialogInfo FileDialogInfo::Default = FileDialogInfo();
+
 std::string IPlatform::Internal_SeparateLocalPathDomain(std::string in, std::string* purePath)
 {
     if(in.size() <= 0) {
