@@ -18,6 +18,16 @@ public:
         return DataMap[domain];
     }
 
+    std::string GetValueOrDefault(std::string domain, std::string key, std::string def = "")
+    {
+        INIMap& iniMap = DataMap[domain];
+        if(iniMap.contains(key)) {
+            return iniMap[key];
+        } else {
+            return def;
+        }
+    }
+
     void SetDomain(std::string domain, INIMap data) {
         DataMap[domain] = data;
     }

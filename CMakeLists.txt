@@ -105,7 +105,7 @@ set(Sources ${SrcRenderV} ${SrcObject} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGa
     "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Core/Window/WindowManager.cpp")
 
 # Add Imgui in debug build
-set(Sources ${Sources} "$<$<CONFIG:Debug>:${ImguiSrc}>" "$<$<CONFIG:Debug>:${ImguiBetelSrc}>")
+set(Sources ${Sources} "$<$<CONFIG:Debug>:${ImguiSrc}>" "$<$<CONFIG:Debug>:${ImguiBetelSrc}>" "$<$<CONFIG:Debug>:Source/Runtime/Debug/DebugImGui/DebugImGui.cpp>")
 
 if(WIN32)
     set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp" "Source/Runtime/Platform/Windows/Files/WindowsFile.cpp")

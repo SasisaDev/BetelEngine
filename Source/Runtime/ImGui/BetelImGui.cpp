@@ -38,6 +38,9 @@ void BetelImGuiEngine::Initialize(SDL_Window* window, ImGui_ImplVulkan_InitInfo&
     ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable; 
     ImGui::GetIO().ConfigDockingTransparentPayload = true;
     ImGui::GetIO().IniFilename = "./Config/ImGui.ini";
+#   ifndef EDITOR
+    ImGui::GetIO().IniFilename = "";
+#   endif
 
     ApplyTheme();
 

@@ -49,6 +49,9 @@ public:
 
     void SetBackgroundColor(const Vec3& color) {BackgroundColor = color;}
 
+    void SetTimeSpeed(float timeSpeed) { TimeSpeed = timeSpeed; }
+    float GetTimeSpeed() const { return TimeSpeed; }
+
     void SetWorldName(const std::string& name) {Name = name;}
     std::string GetWorldName() const {return Name;}
 

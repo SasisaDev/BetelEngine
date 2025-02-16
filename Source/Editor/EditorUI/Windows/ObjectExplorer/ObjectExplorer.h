@@ -204,7 +204,7 @@ public:
     }
     
     ObjectDescriptor* CreateNewObject() {
-        Object* object = GEngine->GetObjectLibrary()->CreateObjectFromTypeID(currentSelectedType->ID, "Object", false);
+        Object* object = GEngine->GetObjectLibrary()->CreateObjectFromTypeID(currentSelectedType->ID, ObjectTypeLibrary::Get().GetObjectType(currentSelectedType->ID)->DisplayName().data(), false);
         assert(object != nullptr && "Object Library returned nullptr on object creation. It may happen due to ObjectType not existing.");
         return GEngine->GetObjectLibrary()->GetObjectDescriptor(object->GetID());
     }

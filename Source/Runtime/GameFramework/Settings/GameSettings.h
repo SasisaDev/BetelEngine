@@ -14,16 +14,16 @@ public:
     uint32_t MaxFPS = 120;
 
     virtual void Deserialize(INIFile& file) override {
-        std::string value = file.GetDomain("General")["MaxFPS"];
+        std::string value = file.GetValueOrDefault("General", "MaxFPS", "120");
         MaxFPS = std::stoi(value);
-        GameTitle = file.GetDomain("General")["GameTitle"];
+        GameTitle = file.GetValueOrDefault("General", "GameTitle", "Betel Game");
 
         // Pixel Perfect
-        value = file.GetDomain("Pixel Perfect")["PixelPerfectViewportWidth"];
+        value = file.GetValueOrDefault("Pixel Perfect", "PixelPerfectViewportWidth", "320");
         PixelPerfectViewportWidth = std::stoi(value);
-        value = file.GetDomain("Pixel Perfect")["PixelPerfectViewportHeight"];
+        value = file.GetValueOrDefault("Pixel Perfect", "PixelPerfectViewportHeight", "180");
         PixelPerfectViewportHeight = std::stoi(value);
-        value = file.GetDomain("Pixel Perfect")["CompensateAspectRatio"];
+        value = file.GetValueOrDefault("Pixel Perfect", "CompensateAspectRatio", "true");
         CompensateAspectRatio = (value == "true") ? true : false;
     }
 

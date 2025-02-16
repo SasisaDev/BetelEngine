@@ -11,6 +11,7 @@
 #include <ImGui/Betel/BetelInputs.h>
 
 #include <optional>
+#include <algorithm>
 
 namespace BImGui
 {
@@ -94,6 +95,14 @@ private:
     double texAspect = 1;
 
     std::map<uint16_t, IVec4> sprites;
+    std::map<uint16_t, ImU32> spriteRectsColors;
+
+    // Texture Editor variables
+    float TexEd_Zoom = 1;
+    ImVec2 TexEd_Offset = {};
+    bool TexEd_Drag = false;
+    ImVec2 TexEd_DragStartPosition = {};
+    ImVec2 TexEd_DragOffset = {};
 
 private:
     void OnTextureObjectSelected()
@@ -140,6 +149,72 @@ public:
     {
     }
 
+    void DrawTextureEditor()
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(6, 6));
+        if (ImGui::Begin(textureName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove))
+        {
+            ImRect WindowSpace = ImGui::GetCurrentWindow()->WorkRect;
+
+            if (!bHasTex)
+            {
+                ImGui::PopStyleVar();
+                ImGui::End();
+                return;
+            }
+
+            // Handle input
+
+            if(ImGui::IsMouseClicked(ImGuiMouseButton_Middle)) 
+            {
+                TexEd_Drag = true;
+                TexEd_DragStartPosition = ImGui::GetIO().MousePos;
+            } 
+            else if(ImGui::IsMouseReleased(ImGuiMouseButton_Middle))
+            {
+                TexEd_Drag = false;
+                TexEd_Offset = ImVec2(TexEd_Offset.x - TexEd_DragOffset.x, TexEd_Offset.y - TexEd_DragOffset.y);
+                TexEd_DragOffset = ImVec2(0, 0);
+            }
+
+            if(TexEd_Drag)
+            {
+                TexEd_DragOffset = ImVec2(TexEd_DragStartPosition.x - ImGui::GetIO().MousePos.x, TexEd_DragStartPosition.y - ImGui::GetIO().MousePos.y);
+            }
+
+            TexEd_Zoom = std::clamp(TexEd_Zoom + ImGui::GetIO().MouseWheel / (15.f / TexEd_Zoom), 0.05f, 20.f);
+
+            ImColor GridCol(1.f, 1.f, 1.f, 0.25f);
+            for(int gRow = 0; gRow < std::ceil<int>(WindowSpace.GetHeight() * TexEd_Zoom); ++gRow)
+            {
+                ImGui::GetWindowDrawList()->AddLine(ImVec2( WindowSpace.Min.x, 
+                                                            WindowSpace.Min.y + TexEd_Offset.y - TexEd_DragOffset.y + (gRow * TexEd_Zoom)),
+                                                    ImVec2( WindowSpace.Max.x, 
+                                                            WindowSpace.Min.y + TexEd_Offset.y - TexEd_DragOffset.y + (gRow * TexEd_Zoom)),
+                                                    GridCol);
+            }
+            for(int gCol = 0; gCol < std::ceil<int>(WindowSpace.GetWidth() * TexEd_Zoom); ++gCol)
+            {
+                ImGui::GetWindowDrawList()->AddLine(ImVec2( WindowSpace.Min.x + TexEd_Offset.x - TexEd_DragOffset.x + (gCol * TexEd_Zoom), 
+                                                            WindowSpace.Min.y),
+                                                    ImVec2( WindowSpace.Min.x + TexEd_Offset.x - TexEd_DragOffset.x + (gCol * TexEd_Zoom), 
+                                                            WindowSpace.Max.y),
+                                                    GridCol);
+            }
+
+            ImGui::GetWindowDrawList()->AddImage((ImTextureID)texDS, 
+                                                 ImVec2(WindowSpace.Min.x + TexEd_Offset.x - TexEd_DragOffset.x, WindowSpace.Min.y + TexEd_Offset.y - TexEd_DragOffset.y), 
+                                                 ImVec2(WindowSpace.Min.x + TexEd_Offset.x - TexEd_DragOffset.x + (tex->GetWidth() * TexEd_Zoom), WindowSpace.Min.y + TexEd_Offset.y - TexEd_DragOffset.y + (tex->GetHeight() * TexEd_Zoom)));
+
+            // Draw image boundaries
+            ImGui::GetWindowDrawList()->AddRect(ImVec2(WindowSpace.Min.x + TexEd_Offset.x - TexEd_DragOffset.x, WindowSpace.Min.y + TexEd_Offset.y - TexEd_DragOffset.y), 
+                                                ImVec2(WindowSpace.Min.x + TexEd_Offset.x - TexEd_DragOffset.x + (tex->GetWidth() * TexEd_Zoom), WindowSpace.Min.y + TexEd_Offset.y - TexEd_DragOffset.y + (tex->GetHeight() * TexEd_Zoom)),
+                                                -1);
+        }
+        ImGui::PopStyleVar();
+        ImGui::End();
+    }
+
     virtual void OnEditViewGUI(Window *window) override
     {
         assert(atlas != nullptr && "Atlas Edit View must be provided with an Atlas Object to modify!");
@@ -176,22 +251,8 @@ public:
             ImGui::DockBuilderFinish(dockspace_id);
         }
 
-        ImGuiWindowClass noTab_class;
-        //noTab_class.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar;
+        DrawTextureEditor();
 
-        ImGui::SetNextWindowClass(&noTab_class);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(6, 6));
-        if (ImGui::Begin(textureName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove))
-        {
-            if (bHasTex)
-            {
-                ImGui::Image((ImTextureID)texDS, ImVec2(250, texAspect * 250));
-            }
-        }
-        ImGui::PopStyleVar();
-        ImGui::End();
-
-        ImGui::SetNextWindowClass(&noTab_class);
         if (ImGui::Begin(rectName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove))
         {
             

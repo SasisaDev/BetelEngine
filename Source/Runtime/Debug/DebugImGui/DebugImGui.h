@@ -12,8 +12,5 @@ public:
         return debugImGui;
     }
     void Toggle() {bRender = !bRender;}
-    virtual void OnGUI(Window* window) override 
-    {
-
-    }
+    virtual void OnGUI(Window* window) override;
 };
