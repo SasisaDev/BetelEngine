@@ -15,6 +15,11 @@ struct PropertyData_Object
     Delegate<uint32_t> GetID;
     Delegate<void, uint32_t> Reset;
     std::string TypeFilter;
+
+    PropertyData_Object() {}
+    PropertyData_Object(const Delegate<uint32_t> &_GetID, const Delegate<void, uint32_t> &_Reset, const std::string &_TypeFilter)
+    : GetID(_GetID), Reset(_Reset), TypeFilter(_TypeFilter)
+    {}
 };
 
 // Contains a vector of properties of current frame
