@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include <World/World.h>
 
-void CameraEntity::Tick(float deltaTime)
+void EntCamera::Tick(float deltaTime)
 {
     if(bCameraActive) 
     {

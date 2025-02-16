@@ -14,7 +14,7 @@ public:
 
 #endif
 
-class CameraEntity : public Entity
+class EntCamera : public Entity
 {
 protected:
     bool bCameraActive = false;
@@ -23,6 +23,8 @@ public:
     float CameraFarPlane = 100;
 
     virtual void Tick(float deltaTime) override;
+
+    static std::string GetStaticType() {return "CAM";}
 
     // TODO: Make uniqueness check
     void SetCameraActive() {

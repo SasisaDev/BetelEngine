@@ -30,7 +30,8 @@ protected:
 
     std::shared_ptr<Widget> canvasWidget;
 
-    bool IsGameFocused = true;
+    bool bIsGameFocused = true;
+    bool bGamePaused = false;
 public:
     Engine();
     ~Engine();
@@ -43,8 +44,8 @@ public:
     ObjectLibrary* GetObjectLibrary() {return objectLibrary;}
     AssetLoader* GetAssetLoader() {return assetLoader;}
 
-    void SetGameFocused(bool bIsFocused) {IsGameFocused = bIsFocused;} 
-    bool GetGameFocused() {return IsGameFocused;}
+    void SetGameFocused(bool bIsFocused) {bIsGameFocused = bIsFocused;} 
+    bool GetGameFocused() {return bIsGameFocused;}
 
 #pragma region "World API"
     // Shouldn't be used, instead use Engine::LoadWorld

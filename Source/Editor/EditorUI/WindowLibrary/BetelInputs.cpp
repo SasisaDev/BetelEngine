@@ -22,7 +22,7 @@ namespace BImGui
             // And we don't accept it in string
             str->resize(data->BufTextLen); 
             data->Buf = str->data();
-        } else if(data->EventFlag == ImGuiInputTextFlags_CallbackEdit){
+        } else if(data->EventFlag == ImGuiInputTextFlags_CallbackEdit) {
             memcpy(str->data(), data->Buf, data->BufTextLen);
         }
         return 0;

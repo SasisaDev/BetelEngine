@@ -15,7 +15,8 @@ BetelImGuiEngine::~BetelImGuiEngine()
 void BetelImGuiEngine::ApplyTheme()
 {
     ImGuiStyle& style = ImGui::GetStyle();
-    style.Colors[ImGuiCol_FrameBg]              = ImVec4(0.125, 0.125, 0.125, 1);
+    style.Colors[ImGuiCol_FrameBg]              = ImVec4(0.15, 0.15, 0.15, 1);
+    style.Colors[ImGuiCol_WindowBg]              = ImVec4(0.075, 0.075, 0.075, 1);
     style.Colors[ImGuiCol_Button]               = ImVec4(0.1, 0.1, 0.1, 1);
     style.Colors[ImGuiCol_MenuBarBg]            = ImVec4(0.1, 0.1, 0.1, 1);
     style.Colors[ImGuiCol_Border]               = ImVec4(0.125, 0.125, 0.125, 1);
@@ -36,6 +37,7 @@ void BetelImGuiEngine::Initialize(SDL_Window* window, ImGui_ImplVulkan_InitInfo&
     ImGui::CreateContext();
     ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable; 
     ImGui::GetIO().ConfigDockingTransparentPayload = true;
+    ImGui::GetIO().IniFilename = "./Config/ImGui.ini";
 
     ApplyTheme();
 

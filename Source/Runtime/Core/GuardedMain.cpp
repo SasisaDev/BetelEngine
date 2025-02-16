@@ -26,6 +26,7 @@
 #include <GameFramework/Entities/Tilemap/Tilemap.h>
 #include <World/World.h>
 #include <GameFramework/Assets/Texture/Texture.h>
+#include <GameFramework/Entities/Character/Character.h>
 
 int GuardedMain(int argc, char* argv[])
 {
@@ -111,7 +112,8 @@ int GuardedMain(int argc, char* argv[])
 	EntitySpawnInfo sprite4info {.Location = {120, 30, -11}};
 	app.GetEngine()->GetWorld()->Spawn<EntSprite>("Sprite 4", sprite4info);
 	app.GetEngine()->GetWorld()->Spawn<EntTilemap>("Tilemap");
-	CameraEntity* camera = app.GetEngine()->GetWorld()->Spawn<CameraEntity>("Camera");
+	app.GetEngine()->GetWorld()->Spawn<EntCharacter>("Character");
+	EntCamera* camera = app.GetEngine()->GetWorld()->Spawn<EntCamera>("Camera");
 	camera->SetCameraActive();
 
 	app.GetEngine()->GetCanvasWidget()->AddChild(std::make_shared<PanelWidget>());

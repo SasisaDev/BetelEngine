@@ -4,6 +4,10 @@
 #include <UI/Widgets/Canvas/Canvas.h>
 #include <World/World.h>
 
+#if !defined(NDEBUG) && !defined(EDITOR)
+#   include <Debug/Debug.h>
+#endif
+
 Engine* GEngine = nullptr;
 
 void Engine::HandleIncomingInputEvent(InputEvent &event)
@@ -12,6 +16,15 @@ void Engine::HandleIncomingInputEvent(InputEvent &event)
     if(!GetGameFocused()) {
         return;
     }
+
+    // Debug
+#   if !defined(NDEBUG) && !defined(EDITOR)
+    if(event.KeyName == "`" && !event.IsUp)
+    {
+        LOG(Log, LogDebug, "Toggle debug menu");
+        DebugImGui::Toggle();
+    }
+#   endif
 
     // TODO: Remove this
     /*if(event.KeyName.size() > 0)
@@ -95,6 +108,8 @@ Engine::~Engine()
 void Engine::SetWorld(World* nWorld)
 {
     world = nWorld;
+    world->Preinitialize();
+
 #   ifndef EDITOR
     world->BeginPlay();
 #   endif

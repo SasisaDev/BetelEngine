@@ -19,6 +19,10 @@ class EntityRenderProxy;
 class WorldRenderLayerRef;
 class World;
 class Editor;
+class Entity;
+
+template<typename T>
+concept EntityClass = std::is_base_of_v<Entity, T>;
 
 struct EntitySpawnInfo
 {
@@ -65,6 +69,7 @@ public:
 
     virtual World* GetWorld();
     
+    virtual void Preinitialize(){}
     virtual void BeginPlay() {}
     virtual void Tick(float deltaTime);
 
@@ -120,6 +125,3 @@ public:
     virtual void Update(WorldRenderLayerRef* layerRef) {}
     virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef) {}
 };
-
-template<typename T>
-concept EntityClass = std::is_base_of_v<Entity, T>;

@@ -66,6 +66,7 @@ set(SrcGameFramework "Source/Runtime/GameFramework/Entities/Test/TestEntity.cpp"
     "Source/Runtime/Materials/Assets/Material.cpp" "Source/Runtime/Materials/Assets/Shader.cpp"
     "Source/Runtime/GameFramework/Assets/Atlas/Atlas.cpp" "Source/Runtime/GameFramework/Assets/Texture/Texture.cpp"
     "Source/Runtime/GameFramework/Assets/Animation/Animation.cpp"
+    "Source/Runtime/GameFramework/Entities/Character/Character.cpp" "Source/Runtime/GameFramework/Entities/Controller/Controller.cpp"
 
     "Source/Runtime/GameFramework/Entities/Tilemap/Tilemap.cpp" "Source/Runtime/GameFramework/Entities/Tilemap/TilemapLayerAtlas.cpp") 
 

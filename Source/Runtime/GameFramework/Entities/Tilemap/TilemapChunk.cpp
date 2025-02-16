@@ -1,4 +1,4 @@
 #include "TilemapChunk.h"
-#include <Object/ObjectLibrary.h>
+#include <Object/ObjectTypeLibrary.h>
 
-bool EntTilemapChunkType::bRegistered = ObjectLibrary::Get().RegisterObjectType<EntTilemapChunkType>("TLMPCHNK");
+bool EntTilemapChunkType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<EntTilemapChunkType>("TLMPCHNK");

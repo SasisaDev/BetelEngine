@@ -21,6 +21,19 @@ void World::DestroyEntity(Entity *entity)
     }
 }
 
+void World::SpawnDefaultEntities()
+{
+    // TODO: Spawn Default Entities
+}
+
+void World::Preinitialize()
+{
+    for(ObjectRef<Entity> ent : entities)
+    {
+        ent->Preinitialize();
+    }
+}
+
 void World::BeginPlay()
 {
 
@@ -28,7 +41,7 @@ void World::BeginPlay()
 
 void World::Tick(float DeltaTime)
 {
-    timerManager.Tick(DeltaTime);
+    timerManager.Tick(DeltaTime * TimeSpeed);
 
     for(int entID = 0; entID < entities.size(); ++entID) {
         // Remove destruction pending entity
@@ -39,6 +52,6 @@ void World::Tick(float DeltaTime)
             continue;
         }
 
-        entities[entID].Get()->Tick(DeltaTime);
+        entities[entID].Get()->Tick(DeltaTime * TimeSpeed);
     }
 }

@@ -35,6 +35,8 @@ protected:
     float CameraFarPlane = 100;
 
     std::string Name = "Persistent World";
+
+    float TimeSpeed = 1.0;
 public:
     World();
 
@@ -60,6 +62,7 @@ public:
         spawnedEntity->transform.Location = spawnInfo.Location;
         entities.emplace_back(spawnedEntity);
 
+        spawnedEntity->Preinitialize();
         OnEntitySpawned.Broadcast(spawnedEntity);
 
         return spawnedEntity;
@@ -114,6 +117,14 @@ public:
     void SetWorldCameraRotation(IVec2 rot) {CameraRotation = rot;}
     IVec2& GetWorldCameraPosition() {return CameraPosition;}
     IVec2& GetWorldCameraRotation() {return CameraRotation;}
+
+    // Gets called first when world's loaded.
+    // Creates Player Controller and other default entities
+    virtual void SpawnDefaultEntities();
+
+    // Gets called right after SpawnDefaultEntities()
+    // Allows entities to initialize their children entities
+    virtual void Preinitialize();
 
     virtual void BeginPlay();
 
