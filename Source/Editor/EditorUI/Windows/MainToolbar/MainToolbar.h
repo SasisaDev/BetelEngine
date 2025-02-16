@@ -2,9 +2,9 @@
 
 #include <Toolkit/ToolkitWindow.h>
 #include <Core/Application/Application.h>
-#include <EditorUI/EditorImageLoader.h>
-#include <EditorUI/WindowLibrary/BetelImageButton.h>
-#include <EditorUI/WindowLibrary/BetelImages.h>
+#include <Debug/DebugImageLoader.h>
+#include <ImGui/Betel/BetelImageButton.h>
+#include <ImGui/Betel/BetelImages.h>
 
 class EditorMainToolbar : public EditorToolkitWindow
 {

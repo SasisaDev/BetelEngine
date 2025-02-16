@@ -6,9 +6,9 @@
 #include <imgui/backends/imgui_impl_vulkan.h>
 #include <EditorUI/ObjectEditViews/ObjectEditView.h>
 
-#include <EditorUI/WindowLibrary/BetelImages.h>
-#include <EditorUI/WindowLibrary/BetelDeferred.h>
-#include <EditorUI/WindowLibrary/BetelInputs.h>
+#include <ImGui/Betel/BetelImages.h>
+#include <ImGui/Betel/BetelDeferred.h>
+#include <ImGui/Betel/BetelInputs.h>
 
 #include <Utility/StrSan.h>
 
@@ -23,7 +23,7 @@ class TextureEditView : public ObjectEditView
 {
     struct TextureResourcesDeleter : public BImGui::DeferredTask
     {
-        std::optional<EditorTextureData> tex_reimport;
+        std::optional<DebugTextureData> tex_reimport;
         VkDescriptorSet tex_ds = VK_NULL_HANDLE;
         bool ShouldCleanup = false;
         bool ShouldSelfDestruct = false;
@@ -36,7 +36,7 @@ class TextureEditView : public ObjectEditView
             if(tex_reimport.has_value())
             {
                 // Cleanup previous reimport
-                EditorImageLoader::Get().FreeTexture(tex_reimport.value());
+                DebugImageLoader::Get().FreeTexture(tex_reimport.value());
                 tex_reimport.reset();
             } else if(tex_ds != VK_NULL_HANDLE){
                 // We didn't reimport yet, so tex_ds is constructed from Texture file
@@ -89,16 +89,16 @@ private:
 
     ObjTexture *texture = nullptr;
     bool bContainsTexture = false;
-    std::optional<EditorTextureData> tex_reimport;
+    std::optional<DebugTextureData> tex_reimport;
     VkDescriptorSet tex_ds = VK_NULL_HANDLE;
     std::string tex_name, tex_path, tex_dimensions;
     double tex_aspect;
 private:
     // FIXME: This causes memory leak
     void Reimport() {
-        EditorTextureData data;
+        DebugTextureData data;
         const std::string path = (IPlatform::Get()->GetExecutableFolder() + "/Content/" + tex_path);
-        EditorImageLoader::Get().LoadTextureFromFile(path.c_str(), &data, true);
+        DebugImageLoader::Get().LoadTextureFromFile(path.c_str(), &data, true);
         // Check if loading failed
         if(data.DS == VK_NULL_HANDLE) {
             bReimportFailed = true;

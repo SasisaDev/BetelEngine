@@ -7,7 +7,7 @@
 
 #include <imgui/imgui_internal.h>
 
-#include <EditorUI/WindowLibrary/BetelInputs.h>
+#include <ImGui/Betel/BetelInputs.h>
 
 #include <optional>
 

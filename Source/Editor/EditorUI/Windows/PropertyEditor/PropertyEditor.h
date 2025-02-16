@@ -5,7 +5,7 @@
 #include <Editor/Editor.h>
 #include <Reflection/IPropertyProvider.h>
 
-#include <EditorUI/WindowLibrary/BetelInputs.h>
+#include <ImGui/Betel/BetelInputs.h>
 
 class EditorPropertyEditor : public EditorToolkitWindow
 {

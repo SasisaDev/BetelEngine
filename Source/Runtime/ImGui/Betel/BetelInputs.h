@@ -4,6 +4,7 @@
 #include "BetelColors.h"
 
 #include <string>
+#include <cstdint>
 
 namespace BImGui {
 

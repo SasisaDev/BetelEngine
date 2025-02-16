@@ -5,10 +5,10 @@
 #include <World/Utility.h>
 #include <Core/Application/Application.h>
 #include <Editor/Editor.h>
-#include "../../EditorImageLoader.h"
+#include <Debug/DebugImageLoader.h>
 #include <World/RenderLayer/WorldRenderLayer.h>
-#include <EditorUI/WindowLibrary/BetelImages.h>
-#include <EditorUI/WindowLibrary/BetelDrag.h>
+#include <ImGui/Betel/BetelImages.h>
+#include <ImGui/Betel/BetelDrag.h>
 
 #include <cassert>
 

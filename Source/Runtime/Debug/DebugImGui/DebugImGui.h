@@ -1,15 +1,19 @@
 #pragma once
 
 #include <imgui/imgui.h>
+#include "../../../Editor/Toolkit/Toolkit.h"
 
-class DebugImGui
+class DebugImGui : public EditorToolkit 
 {
-    static bool bRender;
+    bool bRender = false;
 public:
+    static DebugImGui* Get() {
+        static DebugImGui* debugImGui = new DebugImGui;
+        return debugImGui;
+    }
     void Toggle() {bRender = !bRender;}
-    void Draw() {
-        
+    virtual void OnGUI(Window* window) override 
+    {
+
     }
 };
-
-inline bool DebugImGui::bRender = false;

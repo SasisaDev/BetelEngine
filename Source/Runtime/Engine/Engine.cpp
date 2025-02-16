@@ -22,7 +22,7 @@ void Engine::HandleIncomingInputEvent(InputEvent &event)
     if(event.KeyName == "`" && !event.IsUp)
     {
         LOG(Log, LogDebug, "Toggle debug menu");
-        DebugImGui::Toggle();
+        DebugImGui::Get()->Toggle();
     }
 #   endif
 

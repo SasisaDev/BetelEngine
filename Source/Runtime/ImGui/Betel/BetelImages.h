@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <EditorUI/EditorImageLoader.h>
+#include <Debug/DebugImageLoader.h>
 
 namespace BImGui
 {
@@ -16,7 +16,7 @@ namespace BImGui
     };
 
     extern bool EditorImagesbInitialized;
-    extern std::vector<EditorTextureData> EditorImages;
+    extern std::vector<DebugTextureData> EditorImages;
 
     // Call to initialize all images
     extern void LoadEditorImages();

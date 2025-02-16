@@ -1,10 +1,11 @@
 #pragma once
 
 #include "ToolkitWindow.h"
+#include <ImGui/ImGuiRenderable.h>
 
-class EditorToolkit
+class EditorToolkit : public ImGuiRenderable
 {
 public:
 
-    virtual void OnGUI(Window* window){}
+    virtual void OnGUI(Window* window) override {}
 };

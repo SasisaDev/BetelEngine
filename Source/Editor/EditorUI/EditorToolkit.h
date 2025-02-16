@@ -14,7 +14,7 @@
 #include "Windows/ObjectExplorer/ObjectExplorer.h"
 #include "Windows/PropertyEditor/PropertyEditor.h"
 
-#include <EditorUI/WindowLibrary/BetelImages.h>
+#include <ImGui/Betel/BetelImages.h>
 
 class EditorToolkitBase : public EditorToolkit {
     bool firstInitialization = true;

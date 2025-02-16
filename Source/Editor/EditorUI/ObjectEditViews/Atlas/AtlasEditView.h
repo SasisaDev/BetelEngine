@@ -6,9 +6,9 @@
 #include <imgui/backends/imgui_impl_vulkan.h>
 #include <EditorUI/ObjectEditViews/ObjectEditView.h>
 
-#include <EditorUI/WindowLibrary/BetelImages.h>
-#include <EditorUI/WindowLibrary/BetelDeferred.h>
-#include <EditorUI/WindowLibrary/BetelInputs.h>
+#include <ImGui/Betel/BetelImages.h>
+#include <ImGui/Betel/BetelDeferred.h>
+#include <ImGui/Betel/BetelInputs.h>
 
 #include <optional>
 

@@ -13,6 +13,9 @@
 #	include <ImGui/RenderLayer/ImGuiLayer.h>
 #	include <Editor/Editor.h>
 #	include <ToolkitRenderLayer/ToolkitRenderLayer.h>
+# elif !defined(NDEBUG) 
+#	include <ImGui/RenderLayer/ImGuiLayer.h>
+#	include <Debug/Debug.h>
 #endif
 
 // TODO: Remove test boilerplate
@@ -42,8 +45,7 @@ int GuardedMain(int argc, char* argv[])
 
 	render->CreateLayer<WorldRenderLayer>();
 	render->CreateLayer<UIRenderLayer>();
-#ifdef EDITOR
-	render->CreateLayer<ToolkitRenderLayer>();
+#if defined EDITOR || !defined (NDEBUG) 
 	render->CreateLayer<ImGuiRenderLayer>();
 #endif
 	// Fetch settings
@@ -61,9 +63,8 @@ int GuardedMain(int argc, char* argv[])
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldLoad)
 			->SubscribeWorldUnload(&EngineDelegates::OnWorldUnload),
 		//IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
-		IRenderFactory::CreateLayerRef<ToolkitRenderLayer, ToolkitRenderLayerRef>(render),
 		IRenderFactory::CreateLayerRef<ImGuiRenderLayer, ImGuiRenderLayerRef>(render)
-			->SetToolkit(Editor::Get()->GetToolkitUI())
+			->SetRenderable(Editor::Get()->GetToolkitUI())
 			->SetMaxSets(16)
 			->PushInto(&imGuiLayer)
 	};
@@ -78,6 +79,10 @@ int GuardedMain(int argc, char* argv[])
 	window_t edWinId = app.CreateWindow(editorWininfo);
 	imGuiLayer->SetHostWindow(app.GetWindow(edWinId));
 #else
+#	ifndef NDEBUG
+	ImGuiRenderLayerRef* imGuiLayer = nullptr;
+#	endif
+
 	std::vector<IRenderLayerRef*> gameCompositionLayerRefs = {
 		IRenderFactory::CreateLayerRef<WorldRenderLayer, WorldRenderLayerRef>(render)
 			->SetViewportSize({settings->PixelPerfectViewportWidth, settings->PixelPerfectViewportHeight})
@@ -85,6 +90,12 @@ int GuardedMain(int argc, char* argv[])
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldLoad)
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldUnload),
 		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
+#	ifndef NDEBUG
+			IRenderFactory::CreateLayerRef<ImGuiRenderLayer, ImGuiRenderLayerRef>(render)
+			->SetRenderable(DebugImGui::Get())
+			->SetMaxSets(16)
+			->PushInto(&imGuiLayer),
+#	endif
 	};
 
 	WindowCreateInfo gameWininfo = {
@@ -94,7 +105,10 @@ int GuardedMain(int argc, char* argv[])
 		.layerRefs=gameCompositionLayerRefs
 	};
 	
-	app.CreateWindow(gameWininfo);
+	window_t winId = app.CreateWindow(gameWininfo);
+#	ifndef NDEBUG
+	imGuiLayer->SetHostWindow(app.GetWindow(winId));
+#	endif
 #endif
 
 	// TODO: Delete these synthetic calls

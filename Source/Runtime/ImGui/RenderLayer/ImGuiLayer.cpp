@@ -1,7 +1,7 @@
 #include "ImGuiLayer.h"
 #include "../BetelImGui.h"
-#include <EditorUI/WindowLibrary/BetelImages.h>
-#include <EditorUI/WindowLibrary/BetelDeferred.h>
+#include <ImGui/Betel/BetelImages.h>
+#include <ImGui/Betel/BetelDeferred.h>
 
 
 ImGuiRenderLayerRef::ImGuiRenderLayerRef()
@@ -34,7 +34,7 @@ bool ImGuiRenderLayerRef::Initialize(VkDevice device, RenderDependencyList<IRend
 
 bool ImGuiRenderLayerRef::Deinitialize(VkDevice device)
 {
-    //EditorImageLoader::Get().FreeAllResources();
+    //DebugImageLoader::Get().FreeAllResources();
     delete ImGuiE;
     return true;
 }
@@ -129,8 +129,8 @@ void ImGuiRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
     ImGui::NewFrame();
 
     //ImGui::ShowDemoWindow();
-    if(((ImGuiRenderLayerRef*)layerRef)->CurrentToolkit) {
-        ((ImGuiRenderLayerRef*)layerRef)->CurrentToolkit->OnGUI(((ImGuiRenderLayerRef*)layerRef)->HostWindow);
+    if(((ImGuiRenderLayerRef*)layerRef)->CurrentRenderable) {
+        ((ImGuiRenderLayerRef*)layerRef)->CurrentRenderable->OnGUI(((ImGuiRenderLayerRef*)layerRef)->HostWindow);
     }
 
     ImGui::Render();

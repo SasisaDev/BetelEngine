@@ -34,6 +34,7 @@ namespace BImGui
     }
 
     namespace Internal {
+#       ifdef EDITOR
         std::string _GetObjectNameWithID(uint32_t object, bool *bIsNull = nullptr)
         {
             if(object == 0) {
@@ -55,8 +56,10 @@ namespace BImGui
             *bIsNull = false;
             return obj->name + " (" + std::to_string(object) + ")"; 
         }
+#       endif
     };
 
+#   ifdef EDITOR
     // Return true if value has changed
     bool InputObject(const char *name, uint32_t &object, std::string &filterString, const char *typeFilter)
     {
@@ -108,5 +111,5 @@ namespace BImGui
 
         return false;
     }
-
+#   endif
 };

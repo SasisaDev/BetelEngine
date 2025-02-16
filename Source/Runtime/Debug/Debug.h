@@ -1,5 +1,5 @@
 #pragma once
 #ifndef NDEBUG
 
-#include "DebugImGui/"
+#include "DebugImGui/DebugImGui.h"
 #endif

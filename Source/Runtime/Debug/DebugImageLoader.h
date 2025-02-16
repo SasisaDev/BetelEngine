@@ -11,7 +11,7 @@
 #include <imgui/backends/imgui_impl_vulkan.h>
 
 
-struct EditorTextureData
+struct DebugTextureData
 {
     VkDescriptorSet DS;
     int             Width;
@@ -25,10 +25,10 @@ struct EditorTextureData
     VkBuffer        UploadBuffer;
     VkDeviceMemory  UploadBufferMemory;
 
-    EditorTextureData() { memset(this, 0, sizeof(*this)); }
+    DebugTextureData() { memset(this, 0, sizeof(*this)); }
 };
 
-class EditorImageLoader 
+class DebugImageLoader 
 {
     static uint32_t findMemoryType(uint32_t type_filter, VkMemoryPropertyFlags properties)
     {
@@ -44,18 +44,18 @@ class EditorImageLoader
 
     void check_vk_result(VkResult err) {
         if(err != VK_SUCCESS) {
-            LOG(Warning, LogEditorImageLoader, "Error loading image for editor");
+            LOG(Warning, LogDebugImageLoader, "Error loading image for debug");
         }
     }
 protected:
-    std::vector<EditorTextureData*> loadedImages;
+    std::vector<DebugTextureData*> loadedImages;
 public:
-    static EditorImageLoader& Get() {
-        static EditorImageLoader singleton; 
+    static DebugImageLoader& Get() {
+        static DebugImageLoader singleton; 
         return singleton;
     }
 
-    bool LoadTextureFromFile(const char* filename, EditorTextureData* tex_data, bool nearestFilter = false) {
+    bool LoadTextureFromFile(const char* filename, DebugTextureData* tex_data, bool nearestFilter = false) {
         // Specifying 4 channels forces stb to load the image in RGBA which is an easy format for Vulkan
         tex_data->Width = 0;
         tex_data->Height = 0;
@@ -260,13 +260,13 @@ public:
         return true;
     }
 
-    static EditorTextureData StaticLoadTextureFromFile(const char* filename) {
-        EditorTextureData texData;
-        EditorImageLoader::Get().LoadTextureFromFile(filename, &texData);
+    static DebugTextureData StaticLoadTextureFromFile(const char* filename) {
+        DebugTextureData texData;
+        DebugImageLoader::Get().LoadTextureFromFile(filename, &texData);
         return texData;
     } 
 
-    void FreeTexture(const EditorTextureData& tex_data) {
+    void FreeTexture(const DebugTextureData& tex_data) {
         for(int i = 0; i < loadedImages.size(); ++i)
         {
             if(loadedImages[i]->DS == tex_data.DS)

@@ -7,9 +7,9 @@
 #include <Object/ObjectTypeLibrary.h>
 
 #include <imgui/imgui_internal.h>
-#include <EditorUI/WindowLibrary/BetelInputs.h>
-#include <EditorUI/WindowLibrary/BetelDeferred.h>
-#include <EditorUI/WindowLibrary/BetelDrag.h>
+#include <ImGui/Betel/BetelInputs.h>
+#include <ImGui/Betel/BetelDeferred.h>
+#include <ImGui/Betel/BetelDrag.h>
 #include <EditorUI/ObjectEditViews/ObjectEditViewsFactory.h>
 
 class EditorObjectExplorer : public EditorToolkitWindow

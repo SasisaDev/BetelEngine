@@ -2,7 +2,7 @@
 
 #include <Toolkit/ToolkitWindow.h>
 
-#include <EditorUI/WindowLibrary/BetelColors.h>
+#include <ImGui/Betel/BetelColors.h>
 
 class ObjectEditView : public EditorToolkitWindow
 {

@@ -8,7 +8,7 @@
 
 #include <Core/Window/Window.h>
 
-#include <Toolkit/Toolkit.h>
+#include <ImGui/ImGuiRenderable.h>
 
 class BetelImGuiEngine;
 
@@ -22,7 +22,7 @@ protected:
     BetelImGuiEngine* ImGuiE;
 public:
     Window* HostWindow;
-    EditorToolkit* CurrentToolkit;
+    ImGuiRenderable* CurrentRenderable;
 
     ImGuiRenderLayerRef();
 
@@ -30,7 +30,7 @@ public:
     virtual bool Deinitialize(VkDevice device) override;
 
     ImGuiRenderLayerRef* SetHostWindow(Window* window);
-    ImGuiRenderLayerRef* SetToolkit(EditorToolkit* toolkit) {CurrentToolkit = toolkit; return this;}
+    ImGuiRenderLayerRef* SetRenderable(ImGuiRenderable* renderable) {CurrentRenderable = renderable; return this;}
     ImGuiRenderLayerRef* SetMaxSets(uint32_t maxSets) {MaxSetsCount = maxSets; return this;}
 
     void onCanvasWidgetBind(){}

@@ -53,9 +53,9 @@ set(ImguiSrc "Source/ThirdParty/imgui/imgui_demo.cpp" "Source/ThirdParty/imgui/i
              "Source/ThirdParty/imgui/imgui_draw.cpp" "Source/ThirdParty/imgui/imgui_widgets.cpp" 
              "Source/ThirdParty/imgui/imgui.cpp" "Source/ThirdParty/imgui/backends/imgui_impl_sdl2.cpp"
              "Source/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp")
-set(ImguiBetelSrc "Source/Editor/ImGui/RenderLayer/ImGuiLayer.cpp" "Source/Editor/ImGui/BetelImGui.cpp" "Source/Editor/EditorUI/WindowLibrary/BetelImages.cpp"
-                  "Source/Editor/EditorUI/WindowLibrary/BetelDeferred.cpp" "Source/Editor/EditorUI/WindowLibrary/BetelInputs.cpp"
-                  "Source/Editor/EditorUI/WindowLibrary/BetelDrag.cpp")
+set(ImguiBetelSrc "Source/Runtime/ImGui/RenderLayer/ImGuiLayer.cpp" "Source/Runtime/ImGui/BetelImGui.cpp" "Source/Runtime/ImGui/Betel/BetelImages.cpp"
+                  "Source/Runtime/ImGui/Betel/BetelDeferred.cpp" "Source/Runtime/ImGui/Betel/BetelInputs.cpp"
+                  "Source/Runtime/ImGui/Betel/BetelDrag.cpp")
 
 # LZ4 Source
 set(SrcLZ4 "Source/ThirdParty/lz4/lz4.c" "Source/ThirdParty/lz4/lz4file.c" "Source/ThirdParty/lz4/xxhash.c" "Source/ThirdParty/lz4/lz4hc.c" "Source/ThirdParty/lz4/lz4frame.c")
@@ -105,7 +105,7 @@ set(Sources ${SrcRenderV} ${SrcObject} ${SrcEngine} ${SrcWorld} ${SrcUI} ${SrcGa
     "Source/Runtime/Core/Window/Window.cpp" "Source/Runtime/Core/Window/WindowManager.cpp")
 
 # Add Imgui in debug build
-set(Sources ${Sources} "$<$<CONFIG:Debug>:${ImguiSrc}>")
+set(Sources ${Sources} "$<$<CONFIG:Debug>:${ImguiSrc}>" "$<$<CONFIG:Debug>:${ImguiBetelSrc}>")
 
 if(WIN32)
     set(Sources WIN32 ${Sources} "Source/Runtime/Platform/Windows/WindowsPlatform.cpp" "Source/Runtime/Platform/Windows/Files/WindowsFile.cpp")
