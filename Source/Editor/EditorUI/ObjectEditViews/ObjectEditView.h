@@ -43,9 +43,9 @@ public:
             OnEditViewGUI(window);
 
             // Draw Buttons
-            static float buttonWidth1 = ImGui::CalcTextSize("Cancel").x + style.FramePadding.x * 2.f;
-            static float buttonWidth2 = ImGui::CalcTextSize("Save").x + style.FramePadding.x * 2.f;
-            static float widthNeeded = buttonWidth1 + style.ItemSpacing.x + buttonWidth2 + GetCustomControlButtonsWidth(style);
+            float buttonWidth1 = ImGui::CalcTextSize("Cancel").x + style.FramePadding.x * 2.f;
+            float buttonWidth2 = ImGui::CalcTextSize("Save").x + style.FramePadding.x * 2.f;
+            float widthNeeded = buttonWidth1 + style.ItemSpacing.x + buttonWidth2 + GetCustomControlButtonsWidth(style);
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - widthNeeded);
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
 

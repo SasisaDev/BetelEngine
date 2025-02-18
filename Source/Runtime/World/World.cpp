@@ -1,4 +1,7 @@
 #include "World.h"
+#include <Object/ObjectTypeLibrary.h>
+
+bool ObjWorldType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjWorldType>(World::GetStaticType());
 
 World::World()
 {
@@ -28,9 +31,12 @@ void World::SpawnDefaultEntities()
 
 void World::Preinitialize()
 {
-    for(ObjectRef<Entity> ent : entities)
+    for(int i = 0; i < entities.size(); ++i)
     {
-        ent->Preinitialize();
+        if(entities[i].Get())
+        {
+            entities[i]->Preinitialize();
+        }
     }
 }
 

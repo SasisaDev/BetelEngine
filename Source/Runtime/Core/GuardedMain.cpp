@@ -112,23 +112,26 @@ int GuardedMain(int argc, char* argv[])
 #endif
 
 	// TODO: Delete these synthetic calls
-	app.GetEngine()->SetWorld(app.GetEngine()->GetObjectLibrary()->CreateObject<World>("Transient World"));
+	World* persistantWorld = app.GetEngine()->GetObjectLibrary()->CreateObject<World>("Persistant World", false);
+	app.GetEngine()->TravelTo(persistantWorld);
 	app.GetEngine()->LoadWorld(0xABCD0123);
 
-	app.GetEngine()->GetWorld()->SetBackgroundColor(Vec3(0.75, 0.5, 0));
-	app.GetEngine()->GetWorld()->Spawn<EntityTest>("TestEntity");
+	persistantWorld->SetBackgroundColor(Vec3(0.75, 0.5, 0));
+	persistantWorld->Spawn<EntityTest>("TestEntity");
 	EntitySpawnInfo spriteinfo {.Location = {0, 0, -10}};
-	app.GetEngine()->GetWorld()->Spawn<EntSprite>("Sprite", spriteinfo);
+	persistantWorld->Spawn<EntSprite>("Sprite", spriteinfo);
 	EntitySpawnInfo sprite2info {.Location = {8, 16, -5}};
-	app.GetEngine()->GetWorld()->Spawn<EntSprite>("Sprite 2", sprite2info);
+	persistantWorld->Spawn<EntSprite>("Sprite 2", sprite2info);
 	EntitySpawnInfo sprite3info {.Location = {16, 8, -15}};
-	app.GetEngine()->GetWorld()->Spawn<EntSprite>("Sprite 3", sprite3info);
+	persistantWorld->Spawn<EntSprite>("Sprite 3", sprite3info);
 	EntitySpawnInfo sprite4info {.Location = {120, 30, -11}};
-	app.GetEngine()->GetWorld()->Spawn<EntSprite>("Sprite 4", sprite4info);
-	app.GetEngine()->GetWorld()->Spawn<EntTilemap>("Tilemap");
-	app.GetEngine()->GetWorld()->Spawn<EntCharacter>("Character");
-	EntCamera* camera = app.GetEngine()->GetWorld()->Spawn<EntCamera>("Camera");
+	persistantWorld->Spawn<EntSprite>("Sprite 4", sprite4info);
+	persistantWorld->Spawn<EntTilemap>("Tilemap");
+	persistantWorld->Spawn<EntCharacter>("Character");
+	EntCamera* camera = persistantWorld->Spawn<EntCamera>("Camera");
 	camera->SetCameraActive();
+
+	//app.GetEngine()->TravelTo(persistantWorld);
 
 	app.GetEngine()->GetCanvasWidget()->AddChild(std::make_shared<PanelWidget>());
 

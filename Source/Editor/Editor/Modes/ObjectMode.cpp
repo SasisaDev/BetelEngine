@@ -20,9 +20,9 @@ bool ObjectMode::HandleInputEvent(InputEvent &event)
         if(result.HitEntities.size() > 0)
         {
             LOGF(Log, LogObjectMode, "Selected Entity: 0x%08X", result.HitEntities[0]);
-            Editor::Get()->SetSelectedEntity(result.HitEntities[0]);
+            Editor::Get()->SetSelectedObject(result.HitEntities[0]);
         } else {
-            Editor::Get()->SetSelectedEntity(nullptr);
+            Editor::Get()->SetSelectedObject(GEngine->GetWorld());
         }
     }
 
@@ -30,9 +30,9 @@ bool ObjectMode::HandleInputEvent(InputEvent &event)
     if(event.KeyName == "Delete" && event.IsUp) {
         assert(GEngine->GetWorld() != nullptr);
 
-        if(Entity* entity = Editor::Get()->GetSelectedEntity()) {
+        if(Entity* entity = dynamic_cast<Entity*>(Editor::Get()->GetSelectedObject())) {
             GEngine->GetWorld()->DestroyEntity(entity);
-            Editor::Get()->SetSelectedEntity(nullptr);
+            Editor::Get()->SetSelectedObject(nullptr);
         }
     }
 

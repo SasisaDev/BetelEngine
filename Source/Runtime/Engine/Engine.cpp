@@ -38,6 +38,27 @@ void Engine::HandleIncomingInputEvent(InputEvent &event)
     }
 }
 
+void Engine::InternalTravel()
+{
+    // TODO: Unload old world
+    if(world){
+        EngineDelegates::OnWorldUnload.Broadcast(world);
+        //objectLibrary->UnloadObject(world->GetID());
+    }
+
+    world = travelWorld;
+    world->Preinitialize();
+
+#   ifndef EDITOR
+    world->BeginPlay();
+#   endif
+    EngineDelegates::OnWorldLoad.Broadcast(world);
+
+    LOGF(Log, LogEngine, "Traveled to world: 0x%08X.", world->GetID());
+
+    travelWorld = nullptr;
+}
+
 Engine::Engine()
 {
     GEngine = this;
@@ -105,38 +126,39 @@ Engine::~Engine()
     tickManager = nullptr;
 }
 
-void Engine::SetWorld(World* nWorld)
+void Engine::TravelTo(World* nWorld)
 {
-    world = nWorld;
-    world->Preinitialize();
-
-#   ifndef EDITOR
-    world->BeginPlay();
-#   endif
-    EngineDelegates::OnWorldLoad.Broadcast(world);
+    travelWorld = nWorld;
 }
 
 void Engine::LoadWorld(uint32_t worldID)
 {
-    LOGF(Log, LogEngine, "Trying to load world: 0x%08X.", worldID);
-
     if(!objectLibrary->IsObjectValid(worldID))
     {
         LOG(Error, LogEngine, "LoadWorld failed: passed World Reference is invalid.");
         return;
     }
 
-    if(objectLibrary->LoadObject(worldID) == nullptr)
+    World* world = dynamic_cast<World*>(objectLibrary->LoadObject(worldID));
+    if(world == nullptr)
     {
         LOG(Error, LogEngine, "LoadWorld failed: passed World Reference is seemingly valid, but loading has failed.");
         return;
     }
 
-    // TODO World Loading
+    TravelTo(world);
+
+    LOGF(Log, LogEngine, "Loaded world: 0x%08X.", worldID);
 }
 
 void Engine::Tick(float DeltaTime)
 {
+    currentDeltaTime = DeltaTime;
+
+    if(travelWorld) {
+        InternalTravel();
+    }
+
     // Tick world
     tickManager->Tick(DeltaTime);
     timerManager->Tick(DeltaTime);

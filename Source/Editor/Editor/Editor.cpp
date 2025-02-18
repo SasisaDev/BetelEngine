@@ -21,7 +21,7 @@ void Editor::HandleIncomingInputEvent(InputEvent &event)
 
     // Next blocks require cursor hovering over focused viewport
     // Do nothing if Game Viewport is not focused
-    if(!GApplication->GetEngine()->GetGameFocused() || !GetViewportHovered()) {
+    if(!GApplication->GetEngine()->GetGameFocused() || !GetViewportHovered() || !GApplication->GetEngine()->GetWorld()) {
         return;
     }
 
@@ -70,7 +70,27 @@ Editor::Editor() {
     transactions->Record<Transaction>(Transaction());
 }
 
-void Editor::SetSelectedEntity(Entity* selectedEntity)
+void Editor::InternalTravel()
+{
+    if(GEngine->GetWorld()){
+        EngineDelegates::OnWorldUnload.Broadcast(GEngine->GetWorld());
+        //objectLibrary->UnloadObject(world->GetID());
+    }
+
+    GEngine->SetWorld(travelWorld);
+    GEngine->GetWorld()->Preinitialize();
+
+#   ifndef EDITOR
+    GEngine->GetWorld()->BeginPlay();
+#   endif
+    EngineDelegates::OnWorldLoad.Broadcast(GEngine->GetWorld());
+
+    LOGF(Log, LogEngine, "Traveled to world: 0x%08X.", GEngine->GetWorld()->GetID());
+
+    travelWorld = nullptr;
+}
+
+void Editor::SetSelectedObject(Object* selectedObject)
 {
     for(size_t mode : SelectedObjectModes) {
         ModesRemoveQueue.push(mode);
@@ -78,18 +98,25 @@ void Editor::SetSelectedEntity(Entity* selectedEntity)
 
     SelectedObjectModes.clear();
 
-    SelectedEntity = selectedEntity;
+    SelectedObject = selectedObject;
     
-    if(SelectedEntity != nullptr) {
-        for(EditorMode* mode : SelectedEntity->GetEditorModes()) {
-            SelectedObjectModes.push_back(Modes.size());
-            Modes.push_back(mode);
+    if(SelectedObject != nullptr) {
+        if(Entity* entity = dynamic_cast<Entity*>(SelectedObject)){
+            for(EditorMode* mode : entity->GetEditorModes()) {
+                SelectedObjectModes.push_back(Modes.size());
+                Modes.push_back(mode);
+            }
         }
     }
 }
 
 void Editor::Tick(float deltaTime)
 {
+    // Load world on travel even in editor
+    if(travelWorld) {
+       InternalTravel();
+    }
+
     // Override world cameras with Editor camera
     if(World* world = GApplication->GetEngine()->GetWorld())
     {

@@ -52,7 +52,7 @@ public:
                 //ImGui::TableHeadersRow();
 
                 PropertyContainer properties = {};
-                if(IPropertyProvider *provider = dynamic_cast<IPropertyProvider*>(Editor::Get()->GetSelectedEntity()))
+                if(IPropertyProvider *provider = dynamic_cast<IPropertyProvider*>(Editor::Get()->GetSelectedObject()))
                 {
                     properties = provider->GetEditorReflectedProperties();
                 }

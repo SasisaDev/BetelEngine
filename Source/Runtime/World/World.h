@@ -40,6 +40,8 @@ protected:
 public:
     World();
 
+    static std::string GetStaticType() {return "WORLD";}
+
     MulticastDelegate<Entity*> OnEntitySpawned;
     MulticastDelegate<Entity*> OnEntityDestroyed;
 
@@ -134,4 +136,12 @@ public:
     virtual void Tick(float DeltaTime);
 
     virtual void PushInputEvent(InputEvent &input) {/*TODO World Input Events*/}
+};
+
+class ObjWorldType : public ObjectType
+{
+    static bool bRegistered;
+public:
+    virtual Object* CreateInstance() override { return new World; }
+    virtual std::string_view DisplayName() override {return "World";}
 };

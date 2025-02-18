@@ -236,6 +236,15 @@ void WorldRenderLayerRef::onWorldLoad(World* loadedWorld)
 
 void WorldRenderLayerRef::onWorldUnload(World* loadedWorld)
 {
+    vkDeviceWaitIdle(IRenderUtility::GetDevice());
+
+    // Remove all render proxies
+    for(int i = 0; i < renderProxies.size(); ++i) {
+        // FIXME: deleting any render proxy results in Vulkan errors
+        delete renderProxies[i];
+    }
+    renderProxies.clear();
+
     // Ensure that the old world doesn't keep reference to past render layer
     if(world && world->renderLayer == this) {
         world->renderLayer = nullptr;

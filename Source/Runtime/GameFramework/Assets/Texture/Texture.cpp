@@ -6,7 +6,7 @@
 #include <stb/stb_image.h>
 #include <Engine/Engine.h>
 
-bool ObjTextureType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjTextureType>("TEX");
+bool ObjTextureType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjTextureType>(ObjTexture::GetStaticType());
 
 void ObjTexture::LoadTexture()
 {

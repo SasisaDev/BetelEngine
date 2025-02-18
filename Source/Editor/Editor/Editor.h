@@ -11,6 +11,7 @@
 #include "Mode.h"
 
 class World;
+class Object;
 class Entity;
 class Component;
 class EditorTool;
@@ -27,6 +28,10 @@ struct EditorInputContext
 class Editor {
     Editor();
 
+    // World travel
+    void InternalTravel();
+    World* travelWorld = nullptr;
+
     EditorToolkit *edToolkit;
 
     std::unique_ptr<TransactionContext> transactions;
@@ -38,7 +43,7 @@ protected:
     std::vector<EditorTool*> Tools;
 protected:
     World* CurrentWorld = nullptr;
-    Entity* SelectedEntity = nullptr;
+    Object* SelectedObject = nullptr;
 
     bool bViewportHovered = false;
 
@@ -66,10 +71,11 @@ public:
 
     EditorToolkit* GetToolkitUI() {return edToolkit;}
 
+    void TravelToWorld(World* world){travelWorld = world;}
     World* GetWorld() {return CurrentWorld;}
 
-    Entity* GetSelectedEntity() const {return SelectedEntity;}
-    void SetSelectedEntity(Entity* selectedEntity);
+    Object* GetSelectedObject() const {return SelectedObject;}
+    void SetSelectedObject(Object* selectedObject);
 
     void SetViewportHovered(bool isHovered) {bViewportHovered = isHovered;}
     bool GetViewportHovered() {return bViewportHovered;}

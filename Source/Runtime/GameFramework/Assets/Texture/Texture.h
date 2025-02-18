@@ -13,6 +13,8 @@ class ObjTexture : public Object
     std::string path;
 public:
 
+    static std::string GetStaticType() {return "TEX";}
+
     void SetPath(const std::string& newPath) {path = newPath;}
 
     inline ISamplerTexture* GetTexture() const {return texture.get();}

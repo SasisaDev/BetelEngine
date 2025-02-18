@@ -12,5 +12,6 @@ public:
         return debugImGui;
     }
     void Toggle() {bRender = !bRender;}
+    void DrawFPSCounter();
     virtual void OnGUI(Window* window) override;
 };
