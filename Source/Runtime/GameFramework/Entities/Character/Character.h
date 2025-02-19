@@ -3,10 +3,12 @@
 #include <World/Entity.h>
 #include <Object/ObjectRef.h>
 #include <World/Entities/Camera/Camera.h>
+#include <GameFramework/Entities/Sprite/SpriteEntity.h>
 
 class EntCharacter : public Entity
 {
     ObjectRef<EntCamera> Camera;
+    ObjectRef<EntSprite> Sprite;
 
     IVec2 MovingVector = {};
 public:

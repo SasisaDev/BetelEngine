@@ -22,4 +22,6 @@ class EntityTest : public Entity
 public:
 
     virtual EntityRenderProxy* SetupRenderProxy(WorldRenderLayerRef* ref) override {return RenderProxy = new EntityRenderProxyTest(this);}
+
+    virtual void Tick(float deltaTime) override;
 };

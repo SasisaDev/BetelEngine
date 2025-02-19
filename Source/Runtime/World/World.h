@@ -64,7 +64,7 @@ public:
     template<EntityClass EntityType>
     EntityType* Spawn(const std::string& name, const EntitySpawnInfo& spawnInfo = EntitySpawnInfo::Empty)
     {
-        EntityType* spawnedEntity = GEngine->GetObjectLibrary()->CreateObject<EntityType>(name);
+        EntityType* spawnedEntity = GEngine->GetObjectLibrary()->CreateObject<EntityType>(name, spawnInfo.bTransient);
         spawnedEntity->DisplayName = name;
         spawnedEntity->Reparent(this);
         spawnedEntity->transform.Location = spawnInfo.Location;
@@ -79,7 +79,7 @@ public:
 
     Entity* SpawnFromTypeID(const std::string& typeID, const std::string& name, const EntitySpawnInfo& spawnInfo = EntitySpawnInfo::Empty)
     {
-        Entity* spawnedEntity = dynamic_cast<Entity*>(GEngine->GetObjectLibrary()->CreateObjectFromTypeID(typeID, name));
+        Entity* spawnedEntity = dynamic_cast<Entity*>(GEngine->GetObjectLibrary()->CreateObjectFromTypeID(typeID, name, spawnInfo.bTransient));
         spawnedEntity->DisplayName = name;
         spawnedEntity->Reparent(this);
         spawnedEntity->transform.Location = spawnInfo.Location;

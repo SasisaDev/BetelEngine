@@ -28,6 +28,7 @@ struct EntitySpawnInfo
 {
     static EntitySpawnInfo Empty;
     IVec3 Location = {0, 0, 0};
+    bool bTransient = true;
 };
 
 enum class EntityFlags : uint8_t {

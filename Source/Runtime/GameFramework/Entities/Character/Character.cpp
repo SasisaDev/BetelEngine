@@ -8,8 +8,13 @@ void EntCharacter::SpawnChildren(World *world)
 {
     Entity::SpawnChildren(world);
 
-    Camera = world->Spawn<EntCamera>("Camera");
+    EntitySpawnInfo persistantSpawnInfo = {.bTransient = false};
+    
+    Camera = world->Spawn<EntCamera>("Camera", persistantSpawnInfo);
     Camera->Reparent(this);
+
+    Sprite = world->Spawn<EntSprite>("Sprite", persistantSpawnInfo);
+    Sprite->Reparent(this);
 }
 
 void EntCharacter::PostInit()

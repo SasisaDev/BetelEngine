@@ -39,3 +39,12 @@ void EntityRenderProxyTest::Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRe
 
     IRenderUtility::EndDebugLabel(cmdBuffer);
 }
+
+void EntityTest::Tick(float deltaTime)
+{
+    static float param = 0;
+    param += deltaTime;
+    double sin = glm::sin(param / 1.0) * 100.0;
+    double cos = glm::cos(param / 1.5) * 100.0;
+    SetRelativeLocation({static_cast<int>(sin) , static_cast<int>(cos) , transform.Location.z});
+}
