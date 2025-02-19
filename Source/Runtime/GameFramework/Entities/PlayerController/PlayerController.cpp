@@ -44,3 +44,11 @@ void EntPlayerController::Tick(float deltaTime)
         //TODO: GetWorld()->SetWorldCameraRotation({transform.Rotator.x, transform.Rotator.y});
     }
 }
+
+void EntPlayerController::HandleInput(InputEvent &event)
+{
+    if(character != nullptr)
+    {
+        character->HandleInput(event);
+    }
+}

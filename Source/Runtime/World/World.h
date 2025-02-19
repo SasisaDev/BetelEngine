@@ -143,7 +143,7 @@ public:
 
     virtual void Tick(float DeltaTime);
 
-    virtual void PushInputEvent(InputEvent &input) {/*TODO World Input Events*/}
+    virtual void PushInputEvent(InputEvent &input);
 };
 
 class ObjWorldType : public ObjectType

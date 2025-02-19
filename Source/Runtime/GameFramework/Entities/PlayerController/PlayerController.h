@@ -20,6 +20,8 @@ public:
     virtual void Unpossess() override;
 
     virtual void Tick(float deltaTime) override;
+
+    virtual void HandleInput(InputEvent& event);
 };
 
 class EntPlayerControllerType : public ObjectType

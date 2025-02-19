@@ -12,8 +12,8 @@ Engine* GEngine = nullptr;
 
 void Engine::HandleIncomingInputEvent(InputEvent &event)
 {
-    // Should not dispatch any events if the game is out of focus
-    if(!GetGameFocused()) {
+    // Should not dispatch any events if the game is out of focus or it's in editor
+    if(!GetGameFocused() || IPlatform::IsEditor()) {
         return;
     }
 
@@ -26,12 +26,6 @@ void Engine::HandleIncomingInputEvent(InputEvent &event)
     }
 #   endif
 
-    // TODO: Remove this
-    /*if(event.KeyName.size() > 0)
-        LOGF(Log, LogInput, "Key down: %s", event.KeyName.c_str());
-    if(event.IsMouse && event.IsKey)
-        LOGF(Log, LogInput, "Mouse button: %d", event.MouseButton);
-    */
     if(world != nullptr)
     {
         world->PushInputEvent(event);

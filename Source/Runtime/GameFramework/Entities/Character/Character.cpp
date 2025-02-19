@@ -20,4 +20,22 @@ void EntCharacter::PostInit()
 void EntCharacter::Tick(float deltaTime)
 {
     Entity::Tick(deltaTime);
+
+    SetRelativeLocation({GetRelativeLocation().x + MovingVector.x, GetRelativeLocation().y + MovingVector.y, 0});
+}
+
+void EntCharacter::HandleInput(InputEvent &event)
+{
+
+    if(event.KeyName == "W") {
+        MovingVector.y = 1 * !event.IsUp;
+    } else if(event.KeyName == "S") {
+        MovingVector.y = -1 * !event.IsUp;
+    }
+    
+    if(event.KeyName == "A") {
+        MovingVector.x = -1 * !event.IsUp;
+    } else if(event.KeyName == "D") {
+        MovingVector.x = 1 * !event.IsUp;
+    }
 }

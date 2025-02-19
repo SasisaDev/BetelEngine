@@ -7,6 +7,8 @@
 class EntCharacter : public Entity
 {
     ObjectRef<EntCamera> Camera;
+
+    IVec2 MovingVector = {};
 public:
     EntCharacter() {
         DisplayName = "Character";
@@ -21,6 +23,8 @@ public:
     virtual void SpawnChildren(World* world) override;
     virtual void PostInit() override;
     virtual void Tick(float deltaTime) override;
+
+    virtual void HandleInput(InputEvent& event);
 };
 
 class EntCharacterType : public ObjectType

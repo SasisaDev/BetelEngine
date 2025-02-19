@@ -4,6 +4,7 @@
 
 class EntController : public Entity
 {
+protected:
     EntCharacter* character;
 public:
     EntController() {

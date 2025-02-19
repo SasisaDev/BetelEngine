@@ -62,3 +62,11 @@ void World::Tick(float DeltaTime)
         entities[entID].Get()->Tick(DeltaTime * TimeSpeed);
     }
 }
+
+void World::PushInputEvent(InputEvent &input)
+{
+    if(playerController)
+    {
+       playerController->HandleInput(input); 
+    }
+}
