@@ -127,7 +127,9 @@ int GuardedMain(int argc, char* argv[])
 	EntitySpawnInfo sprite4info {.Location = {120, 30, -11}};
 	persistantWorld->Spawn<EntSprite>("Sprite 4", sprite4info);
 	persistantWorld->Spawn<EntTilemap>("Tilemap");
-	persistantWorld->Spawn<EntCharacter>("Character");
+	EntCharacter* character = persistantWorld->Spawn<EntCharacter>("Character");
+	character->bAutoPossess = true;
+	character->SetRelativeLocation({120, -50, 0});
 	EntCamera* camera = persistantWorld->Spawn<EntCamera>("Camera");
 	camera->SetCameraActive();
 

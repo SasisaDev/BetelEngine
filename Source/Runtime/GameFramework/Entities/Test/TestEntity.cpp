@@ -14,8 +14,8 @@ void EntityRenderProxyTest::CreateResources(WorldRenderLayerRef* layerRef)
     {
         return;
     }
-    std::unique_ptr<IFile> VertFile = IPlatform::Get()->OpenFile("./Shaders/Test/Test.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
-    std::unique_ptr<IFile> FragFile = IPlatform::Get()->OpenFile("./Shaders/Test/Test.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+    std::unique_ptr<IFile> VertFile = IPlatform::Get()->OpenFile("./Content/Shaders/Test/Test.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+    std::unique_ptr<IFile> FragFile = IPlatform::Get()->OpenFile("./Content/Shaders/Test/Test.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
 
     ShaderDescriptorLayout descriptorsLayout;
     descriptorsLayout.GenerateBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);

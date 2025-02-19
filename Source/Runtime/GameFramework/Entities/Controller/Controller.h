@@ -1,16 +1,20 @@
 #pragma once
 
-#include <World/Entity.h>
+#include <GameFramework/Entities/Character/Character.h>
 
 class EntController : public Entity
 {
-    
+    EntCharacter* character;
 public:
     EntController() {
         DisplayName = "Controller";
     }
 
     static std::string GetStaticType() {return "CTRL";}
+
+    virtual void Possess(EntCharacter* possessCharacter);
+    virtual EntCharacter* GetPossessed() const {return character;}
+    virtual void Unpossess() { character = nullptr; }
 
     virtual void Tick(float deltaTime) override;
 };

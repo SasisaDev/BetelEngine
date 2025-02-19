@@ -12,6 +12,8 @@ public:
         DisplayName = "Character";
     }
 
+    bool bAutoPossess = false;
+
     static std::string GetStaticType() {return "CHAR";}
 
     EntCamera* GetCamera() const {return Camera.Get();}

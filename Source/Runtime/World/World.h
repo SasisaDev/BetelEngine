@@ -13,11 +13,14 @@
 #include <Engine/Engine.h>
 
 class WorldRenderLayerRef;
+class EntPlayerController;
 
 class World : public Object
 {
     friend class WorldRenderLayer;
     friend class WorldRenderLayerRef;
+
+    EntPlayerController* playerController = nullptr;
 protected:
     TimerManager timerManager;
 

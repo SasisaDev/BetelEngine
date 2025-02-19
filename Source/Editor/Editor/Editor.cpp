@@ -15,7 +15,7 @@ void Editor::HandleIncomingInputEvent(InputEvent &event)
 {
     // Perform active dragging if it's already enabled
     if(edInputCtx.IsDragging && event.IsMouse && !event.IsKey && !event.MouseWheel) {
-        EditorCameraPosition.x = edInputCtx.OriginalEditorCameraPosition.x + (event.MouseX - edInputCtx.MouseDragStartX) / ViewportZoom;
+        EditorCameraPosition.x = edInputCtx.OriginalEditorCameraPosition.x - (event.MouseX - edInputCtx.MouseDragStartX) / ViewportZoom;
         EditorCameraPosition.y = edInputCtx.OriginalEditorCameraPosition.y + (event.MouseY - edInputCtx.MouseDragStartY) / ViewportZoom;
     }    
 

@@ -47,6 +47,7 @@ void Engine::InternalTravel()
     }
 
     world = travelWorld;
+    world->SpawnDefaultEntities();
     world->PostInit();
 
 #   ifndef EDITOR

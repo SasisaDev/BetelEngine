@@ -20,8 +20,8 @@ World* Entity::GetWorld()
 
 Transform Entity::GetTransform()
 {
-    if(GetParent<Entity>()) {
-        return transform + GetParent<Entity>()->transform;
+    if(Entity* parent = GetParent<Entity>()) {
+        return transform + parent->transform;
     } else {
         return transform;
     }

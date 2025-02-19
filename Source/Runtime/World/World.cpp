@@ -1,5 +1,6 @@
 #include "World.h"
 #include <Object/ObjectTypeLibrary.h>
+#include <GameFramework/Entities/PlayerController/PlayerController.h>
 
 bool ObjWorldType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<ObjWorldType>(World::GetStaticType());
 
@@ -26,7 +27,7 @@ void World::DestroyEntity(Entity *entity)
 
 void World::SpawnDefaultEntities()
 {
-    // TODO: Spawn Default Entities
+    playerController = Spawn<EntPlayerController>("Player Controller");
 }
 
 void World::PostInit()

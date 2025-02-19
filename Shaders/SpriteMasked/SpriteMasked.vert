@@ -21,6 +21,6 @@ layout(push_constant) uniform ObjectData {
 void main() {
     int depth = 1;
 
-    gl_Position = worldData.View * worldData.Projection * vec4(inPosition * objectData.Size + vec2(worldData.Position.x, worldData.Position.y) + vec2(objectData.Position.x, -objectData.Position.y), objectData.Depth, 1);
+    gl_Position = worldData.View * worldData.Projection * vec4(inPosition * objectData.Size + vec2(-worldData.Position.x, worldData.Position.y) + vec2(objectData.Position.x, -objectData.Position.y), objectData.Depth, 1);
     texcoords = inUV;
 }
