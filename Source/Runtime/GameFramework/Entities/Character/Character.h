@@ -16,7 +16,8 @@ public:
 
     EntCamera* GetCamera() const {return Camera.Get();}
 
-    virtual void Preinitialize() override;
+    virtual void SpawnChildren(World* world) override;
+    virtual void PostInit() override;
     virtual void Tick(float deltaTime) override;
 };
 

@@ -4,13 +4,17 @@
 
 bool EntCharacterType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<EntCharacterType>(EntCharacter::GetStaticType());
 
-void EntCharacter::Preinitialize()
+void EntCharacter::SpawnChildren(World *world)
 {
-    Entity::Preinitialize();
+    Entity::SpawnChildren(world);
 
-    // TODO: Make it into one SpawnChild function somehow
-    Camera = GetWorld()->Spawn<EntCamera>("Camera");
+    Camera = world->Spawn<EntCamera>("Camera");
     Camera->Reparent(this);
+}
+
+void EntCharacter::PostInit()
+{
+    Entity::PostInit();
 }
 
 void EntCharacter::Tick(float deltaTime)

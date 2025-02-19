@@ -47,7 +47,7 @@ void Engine::InternalTravel()
     }
 
     world = travelWorld;
-    world->Preinitialize();
+    world->PostInit();
 
 #   ifndef EDITOR
     world->BeginPlay();

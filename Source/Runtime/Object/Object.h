@@ -118,6 +118,8 @@ class ObjectType
 public:
     virtual Object* CreateInstance() { return new Object; }
     virtual bool ShowInEditor() { return true; }
+    // Objects are shows in Object Explorer, while Entities are shown in Spawn Entity
+    virtual bool IsEntity() { return false; }
     virtual bool CanSpawnIntoWorld() {return false;}
     virtual Entity* CreateWorldEntity(Object* Object) {return nullptr;}
     virtual std::string_view DisplayName() {return "Object";}

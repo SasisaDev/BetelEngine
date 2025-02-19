@@ -29,13 +29,13 @@ void World::SpawnDefaultEntities()
     // TODO: Spawn Default Entities
 }
 
-void World::Preinitialize()
+void World::PostInit()
 {
     for(int i = 0; i < entities.size(); ++i)
     {
         if(entities[i].Get())
         {
-            entities[i]->Preinitialize();
+            entities[i]->PostInit();
         }
     }
 }

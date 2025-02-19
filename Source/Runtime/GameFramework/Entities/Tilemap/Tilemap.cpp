@@ -3,7 +3,7 @@
 #include <Object/ObjectTypeLibrary.h>
 #include <World/World.h>
 
-bool EntTilemapType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<EntTilemapType>("TILEMAP");
+bool EntTilemapType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<EntTilemapType>(EntTilemap::GetStaticType());
 
 void EntTilemap::RemoveLayer(size_t index)
 {

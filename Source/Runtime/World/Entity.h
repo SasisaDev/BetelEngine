@@ -68,8 +68,12 @@ public:
     virtual EntityRenderProxy* GetRenderProxy() {return RenderProxy;}
 
     virtual World* GetWorld();
+
+    // Used to spawn children alongside main entity
+    // This functions is only called on SpawnEntity or AddEntity
+    virtual void SpawnChildren(World* world){}
     
-    virtual void Preinitialize(){}
+    virtual void PostInit(){}
     virtual void BeginPlay() {}
     virtual void Tick(float deltaTime);
 
@@ -120,8 +124,20 @@ public:
     virtual ~EntityRenderProxy(){}
 
     constexpr inline bool IsBatch() const {return bIsBatch;}
+
+    static std::string GetStaticType() {return "ENT";}
     
     virtual void CreateResources(WorldRenderLayerRef* layerRef){}
     virtual void Update(WorldRenderLayerRef* layerRef) {}
     virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef) {}
+};
+
+class EntityType : public ObjectType
+{
+    static bool bRegistered;
+public:
+    virtual Object* CreateInstance() { return new Entity; }
+    virtual bool ShowInEditor() override { return true; }
+    virtual bool IsEntity() override { return true; }
+    virtual std::string_view DisplayName() override {return "Entity";}
 };

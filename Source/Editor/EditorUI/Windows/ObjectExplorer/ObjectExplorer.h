@@ -105,7 +105,7 @@ public:
         // Search through the whole types map to build hierarchy
         for (auto it = map.begin(); it != map.end(); it++)
         {
-            if (!it->second->ShowInEditor())
+            if (!it->second->ShowInEditor() || it->second->IsEntity())
             {
                 continue;
             }

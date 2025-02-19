@@ -2,6 +2,10 @@
 
 #include "World.h"
 
+#include <Object/ObjectTypeLibrary.h>
+
+bool EntityType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<EntityType>(Entity::GetStaticType());
+
 EntitySpawnInfo EntitySpawnInfo::Empty = EntitySpawnInfo();
 
 void Entity::Tick(float deltaTime)

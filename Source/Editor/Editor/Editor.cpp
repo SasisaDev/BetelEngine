@@ -72,20 +72,23 @@ Editor::Editor() {
 
 void Editor::InternalTravel()
 {
+    EditorCameraPosition = {0, 0};
+    EditorCameraRotation = {0, 0};
+    ViewportZoom = 1.f;
+
     if(GEngine->GetWorld()){
         EngineDelegates::OnWorldUnload.Broadcast(GEngine->GetWorld());
         //objectLibrary->UnloadObject(world->GetID());
     }
+    
+    // TODO: Create world's deep copy
 
     GEngine->SetWorld(travelWorld);
-    GEngine->GetWorld()->Preinitialize();
+    GEngine->GetWorld()->PostInit();
 
-#   ifndef EDITOR
-    GEngine->GetWorld()->BeginPlay();
-#   endif
     EngineDelegates::OnWorldLoad.Broadcast(GEngine->GetWorld());
 
-    LOGF(Log, LogEngine, "Traveled to world: 0x%08X.", GEngine->GetWorld()->GetID());
+    LOGF(Log, LogEngine, "Loaded world: 0x%08X.", GEngine->GetWorld()->GetID());
 
     travelWorld = nullptr;
 }

@@ -67,7 +67,8 @@ public:
         spawnedEntity->transform.Location = spawnInfo.Location;
         entities.emplace_back(spawnedEntity);
 
-        spawnedEntity->Preinitialize();
+        spawnedEntity->SpawnChildren(this);
+        spawnedEntity->PostInit();
         OnEntitySpawned.Broadcast(spawnedEntity);
 
         return spawnedEntity;
@@ -81,6 +82,8 @@ public:
         spawnedEntity->transform.Location = spawnInfo.Location;
         entities.emplace_back(spawnedEntity);
 
+        spawnedEntity->SpawnChildren(this);
+        spawnedEntity->PostInit();
         OnEntitySpawned.Broadcast(spawnedEntity);
 
         return spawnedEntity;
@@ -108,6 +111,8 @@ public:
         entity->transform.Location = spawnInfo.Location;
         entities.emplace_back(entity);
 
+        entity->SpawnChildren(this);
+        entity->PostInit();
         OnEntitySpawned.Broadcast(entity);
     }
 
@@ -128,8 +133,8 @@ public:
     virtual void SpawnDefaultEntities();
 
     // Gets called right after SpawnDefaultEntities()
-    // Allows entities to initialize their children entities
-    virtual void Preinitialize();
+    // Allows entities to initialize their data that should be ready on BeginPlay
+    virtual void PostInit();
 
     virtual void BeginPlay();
 

@@ -34,6 +34,8 @@ public:
         return layer;
     }
 
+    static std::string GetStaticType() {return "TILEMAP";}
+
     std::vector<TilemapLayer*>& GetLayers() {return layers;}
 
     void RemoveLayer(size_t index); 
@@ -41,7 +43,7 @@ public:
     ObjectRef<EntTilemapChunk>& CreateChunk(IVec2 position);
 };
 
-class EntTilemapType : public ObjectType
+class EntTilemapType : public EntityType
 {
     static bool bRegistered;
 public:
@@ -49,4 +51,3 @@ public:
     virtual bool ShowInEditor() override { return false; }
     virtual std::string_view DisplayName() override {return "Tilemap";}
 };
-
