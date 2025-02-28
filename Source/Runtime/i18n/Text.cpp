@@ -1,18 +1,15 @@
 #include "Text.h"
 #include <Engine/Engine.h>
 
-std::string Text::NOENGINE = std::string("NOENGINE");
+#include <cassert>
 
-std::string& Text::Get() 
+const std::string& Text::Get() 
 {
     if(TranslationMemoize.has_value()) {
         return TranslationMemoize.value();
     }
+    
+    assert(GEngine != nullptr && "Text fetch can't be performed before Engine class is initialized!");
 
-    if(!GEngine) {
-        LOG(Error, LogI18N, "Text fetch can't be performed before Engine class is initialized!");
-        return NOENGINE;
-    }
-
-    return TranslationMemoize.emplace(GEngine->GetTextManager()->Fetch(Domain, Subdomain, Name));
+    return TranslationMemoize.emplace(GEngine->GetTextManager()->Fetch(ID));
 }

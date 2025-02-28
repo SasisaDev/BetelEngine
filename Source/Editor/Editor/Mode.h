@@ -6,7 +6,7 @@ class EditorMode
 {
     Text Name;
 public:
-    EditorMode(std::string name) : Name("Editor", "ToolkitMode", name){}
+    EditorMode(std::string name) : Name("Editor.ToolkitMode." + name){}
 
     Text &GetName() {return Name;}
 

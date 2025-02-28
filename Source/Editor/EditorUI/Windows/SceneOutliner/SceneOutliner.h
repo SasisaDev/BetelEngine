@@ -9,7 +9,7 @@
 
 class EditorSceneOutliner : public EditorToolkitWindow
 {
-    Text TabName = Text("EditorUI", "SceneOutliner", "TabName");
+    Text TabName = Text("EditorUI.SceneOutliner.TabName");
     std::string TranslatedName;
 protected:
     virtual void EntityContainer(Entity* entity, bool indent = false) {

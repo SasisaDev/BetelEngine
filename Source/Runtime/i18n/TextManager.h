@@ -6,15 +6,16 @@
 class TextManager
 {
 protected:
-    std::vector<LocaleFile*> locales;
+    std::vector<std::unique_ptr<LocaleFile>> locales;
+    LocaleFile* targetLocale;
     std::string currentLocale = "en_US";
 public:
 
-    const std::vector<LocaleFile*>& GetLocales() const {return locales;}
+    const std::vector<std::unique_ptr<LocaleFile>>& GetLocales() const {return locales;}
     LocaleFile* GetLocale(std::string locale) {
-        for(LocaleFile* locFile : locales) {
+        for(std::unique_ptr<LocaleFile>& locFile : locales) {
             if(locFile->localeID == locale) { 
-                return locFile;
+                return locFile.get();
             }
         }
         return nullptr;
@@ -57,14 +58,14 @@ public:
                 LocaleFile* locale = new LocaleFile();
                 locale->Load(files);
                 locale->localeID = dir->GetPath().GetName();
-                locales.push_back(locale);
+                locales.emplace_back(std::move(locale));
             }
         }
     }
 
     bool SetLocale(std::string locale) {
         // Check if this locale is present
-        for(LocaleFile* file : locales) {
+        for(std::unique_ptr<LocaleFile>& file : locales) {
             if(file->localeID == locale) {
                 currentLocale = locale;
                 return true;
@@ -73,21 +74,19 @@ public:
         return false;
     }
 
-    std::string Fetch(std::string domain, std::string subdomain, std::string name) {
-        LocaleFile* targetLocale = nullptr;
-
-        for(LocaleFile* locale : locales) {
+    std::string Fetch(const std::string_view& id) {
+        for(std::unique_ptr<LocaleFile>& locale : locales) {
             if(locale->localeID == currentLocale) {
-                targetLocale = locale;
+                targetLocale = locale.get();
                 break;
             }
         }
 
         if(targetLocale == nullptr) {
-            return domain + "." + subdomain + "." + name;
+            return id.data();
         }
 
         // TODO: Add translation search logic
-        return targetLocale->Get( domain + "." + subdomain + "." + name);
+        return targetLocale->Get(id.data());
     }
 };

@@ -22,7 +22,7 @@ class EditorAssetExplorer : public EditorToolkitWindow
         "i18n"
     };
 protected:
-    Text TabName = Text("EditorUI", "AssetExplorer", "TabName");
+    Text TabName = Text("EditorUI.AssetExplorer.TabName");
     std::string TranslatedName;
 
     const char *HierarchyName = "##AssetsHierarchy";

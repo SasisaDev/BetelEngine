@@ -5,23 +5,16 @@
 
 class Text
 {
-    static std::string NOENGINE;
-    // Domain.Subdomain.Name
-    std::string Domain;
-    std::string Subdomain;
-    std::string Name;
+    std::string_view ID;
 
     std::optional<std::string> TranslationMemoize;
 public:
     Text() {}
-    Text(std::string domain, std::string subdomain, std::string name) : Domain(domain), Subdomain(subdomain), Name(name) {}
-    Text(std::string fullID) {
-        // TODO
-    }
+    Text(const std::string_view& id) : ID(id) {}
     
-    std::string& Get();
+    const std::string& Get();
 
-    std::string& operator *() {
+    const std::string& operator *() {
         return Get();
     }
 };

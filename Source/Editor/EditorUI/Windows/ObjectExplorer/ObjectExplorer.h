@@ -51,7 +51,7 @@ class EditorObjectExplorer : public EditorToolkitWindow
     ObjectDeleterTask* deleterTask;
     bool bDeletedObject = false;
 protected:
-    Text TabName = Text("EditorUI", "ObjectExplorer", "TabName");
+    Text TabName = Text("EditorUI.ObjectExplorer.TabName");
     std::string TranslatedName;
 
     ImTextureID BlankTypeIcon;

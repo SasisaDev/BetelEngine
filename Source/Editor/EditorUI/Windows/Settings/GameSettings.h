@@ -18,7 +18,7 @@ class EditorGameSettings : public EditorToolkitWindow
         bool selected = false;
     };
 
-    Text TabName = Text("EditorUI", "GameSettings", "TabName");
+    Text TabName = Text("EditorUI.GameSettings.TabName");
 
     const char* SettingsListName = "##SettingsList";
     const char* SettingsDataName = "##SettingsData";

@@ -88,7 +88,7 @@ public:
 
         //LOGF(Log, LogHitscan, "sX = %f, sY = %f, X = %f, Y = %f", ScreenPointX, ScreenPointY, OriginPosition.x, OriginPosition.y);
 
-        return {OriginPosition.x - renderData.CameraPosition.x, OriginPosition.y + renderData.CameraPosition.y};
+        return {OriginPosition.x + renderData.CameraPosition.x, OriginPosition.y + renderData.CameraPosition.y};
     }
     
     // Creates Hitscan from Screen Position to World Position
