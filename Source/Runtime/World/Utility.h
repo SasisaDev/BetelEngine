@@ -64,6 +64,20 @@ public:
 
         return result;
     }
+
+    /*
+     * Calculates and returns viewport coordinates from world coordinates
+     * 
+     * world must be an active world associated with some WorldRenderLayerRef
+     */
+    static IVec2 GetScreenSpaceFromWorldSpace(World* world, float ViewportX, float ViewportY, float ViewportW, float ViewportH)
+    {
+        WorldRenderLayerGPUStorage renderData = world->GetWorldRenderLayerRef()->GetSceneData();
+
+        
+
+        return {0, 0};
+    }
     
     /*
      * Calculates and returns world coordinates from viewport coordinates

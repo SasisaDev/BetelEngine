@@ -20,7 +20,7 @@ public:
         ScrollNow = true;
     }
 
-    virtual void OnGUI(Window* window) {
+    virtual void OnGUI(Window* window) override {
         ImGui::SetNextWindowSize(ImVec2(350, 200), ImGuiCond_Once);
         ImGui::SetNextWindowBgAlpha(1);
         if(ImGui::Begin(GetName(), 0, ImGuiWindowFlags_NoCollapse)){
@@ -43,7 +43,7 @@ public:
             if(ImGui::BeginListBox("##LogBox", {ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y})) {
                 for(std::string message : messages) {
                     // TODO: Text with selection
-                    ImGui::Text(message.c_str());
+                    ImGui::Text("%s", message.c_str());
                 }
 
                 if(AutoScroll && ScrollNow && ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {

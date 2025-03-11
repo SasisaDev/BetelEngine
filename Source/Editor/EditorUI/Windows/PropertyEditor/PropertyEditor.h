@@ -37,7 +37,7 @@ public:
         }
     }
 
-    virtual void OnGUI(Window *window)
+    virtual void OnGUI(Window *window) override
     {
         ImGui::SetNextWindowSize(ImVec2(350, 200), ImGuiCond_Once);
         ImGui::SetNextWindowBgAlpha(1);

@@ -48,7 +48,7 @@ public:
 
     virtual const char* GetName() override {return TranslatedName.c_str();}
 
-    virtual void OnGUI(Window* window){
+    virtual void OnGUI(Window* window) override {
         World* world = GApplication->GetEngine()->GetWorld();
         if(world == nullptr) {
             return;

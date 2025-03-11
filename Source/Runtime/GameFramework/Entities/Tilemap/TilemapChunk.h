@@ -9,7 +9,7 @@ class TilemapChunkRenderProxy : public EntityRenderProxy
 {
 public:
     TilemapChunkRenderProxy(Entity* DefaultParent) : EntityRenderProxy(DefaultParent) {}
-    virtual void Update(WorldRenderLayerRef* layerRef) {}
+    virtual void Update(WorldRenderLayerRef* layerRef) override {}
     virtual void Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef) override;
 };
 

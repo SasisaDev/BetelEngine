@@ -60,7 +60,7 @@ public:
         }
     }
 
-    virtual void OnGUI(Window *window)
+    virtual void OnGUI(Window *window) override
     {
         static bool first_init = true;
         if (first_init)
@@ -129,6 +129,15 @@ public:
             }
             ImGui::Combo("##EditorMode", &Editor::Get()->CurrentActiveMode, modeNames.data(), IM_ARRAYSIZE(modeNames.data()));
             ImGui::PopStyleColor(2);
+
+            // Draw Editor Mode Overlay
+            if(EditorMode* edMode = Editor::Get()->GetActiveToolkitMode())
+            {
+                edMode->Render({{workRect.GetTL().x - static_cast<float>(WindowPadding),
+                                 workRect.GetTL().y - static_cast<float>(WindowPadding)},
+                                {workRect.GetTL().x + workRect.GetWidth()  + static_cast<float>(WindowPadding * 2),
+                                 workRect.GetTL().y + workRect.GetHeight() + static_cast<float>(WindowPadding * 2)}});
+            }
 
             // Show Editor Overlay Button
             ImGui::SameLine();

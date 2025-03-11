@@ -66,12 +66,6 @@ struct WidgetUnit {
     }
 };
 
-extern WidgetUnit operator "" per(long double value);
-extern WidgetUnit operator "" px(long double value);
-
-extern WidgetUnit operator "" per(unsigned long long int value);
-extern WidgetUnit operator "" px(unsigned long long int value);
-
 class Widget
 {
     friend class UIRenderLayer;

@@ -87,6 +87,8 @@ public:
         return true;
     }
 
+    EditorMode* GetActiveToolkitMode() const {return Modes[CurrentActiveMode];}
+
     template <typename ToolkitModeT>
     bool QueueRemoveToolkitMode() {
         for(int i = 0; i < Modes.size(); i++)

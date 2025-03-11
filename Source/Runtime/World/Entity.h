@@ -24,6 +24,12 @@ class Entity;
 template<typename T>
 concept EntityClass = std::is_base_of_v<Entity, T>;
 
+enum class EntityMobilityPolicy : bool
+{
+    Static = 0,
+    Dynamic = 1
+};
+
 struct EntitySpawnInfo
 {
     static EntitySpawnInfo Empty;
@@ -43,7 +49,7 @@ class Entity : public Object
 protected:
     Transform transform;
     // Dynamic entities are testing against dynamic value, like collision
-    bool bIsDynamic = false;
+    EntityMobilityPolicy mobilityPolicy = EntityMobilityPolicy::Static;
 
     uint8_t entityFlags = 0;
 
@@ -57,7 +63,8 @@ protected:
 public:
     bool Visible = true;
 
-    inline bool IsDynamic() const {return bIsDynamic;}
+    inline EntityMobilityPolicy GetMobility() const {return mobilityPolicy;}
+    inline void SetMobility(EntityMobilityPolicy newValue) {mobilityPolicy = newValue;}
 
     /*
      * This functions is getting called by WorldRenderLayerRef on entity spawn.
@@ -137,7 +144,7 @@ class EntityType : public ObjectType
 {
     static bool bRegistered;
 public:
-    virtual Object* CreateInstance() { return new Entity; }
+    virtual Object* CreateInstance() override { return new Entity; }
     virtual bool ShowInEditor() override { return true; }
     virtual bool IsEntity() override { return true; }
     virtual std::string_view DisplayName() override {return "Entity";}

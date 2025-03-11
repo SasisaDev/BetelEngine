@@ -173,7 +173,7 @@ public:
         if (node.Children.size() == 0)
             nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
-        node.Open = ImGui::TreeNodeEx(node.ID.data(), nodeFlags, node.Name.c_str());
+        node.Open = ImGui::TreeNodeEx(node.ID.data(), nodeFlags, "%s", node.Name.c_str());
         if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
         {
             currentSelectedType = &node;
@@ -319,7 +319,7 @@ public:
         }
     }
 
-    virtual void OnGUI(Window *window)
+    virtual void OnGUI(Window *window) override
     {
         if(firstInitialization) {
             firstInitialization = false;

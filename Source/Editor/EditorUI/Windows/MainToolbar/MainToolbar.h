@@ -17,7 +17,7 @@ public:
         
     }
 
-    virtual void OnGUI(Window* window) {
+    virtual void OnGUI(Window* window) override {
         static bool first_init = true;
         if(first_init) {
            SaveImage = BImGui::GetEdImage(BImGui::Img::Save32Icon);

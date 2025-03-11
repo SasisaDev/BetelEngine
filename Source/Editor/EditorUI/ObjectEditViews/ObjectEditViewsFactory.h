@@ -20,6 +20,7 @@ public:
      */
     static bool EmplaceConstructor(std::string ID, const std::function<std::unique_ptr<EditorToolkitWindow>(Object*)>& Constructor) {
         FactoryConstructors.emplace(ID, Constructor);
+        return true;
     }
 
     static std::unique_ptr<EditorToolkitWindow> CreateEditView(const std::string& ObjectTypeID, Object* obj)

@@ -39,7 +39,7 @@ public:
         if (node.selected)
             nodeFlags |= ImGuiTreeNodeFlags_Selected;
 
-        ImGui::TreeNodeEx(node.settings->GetName().c_str(), nodeFlags, node.settings->GetName().c_str());
+        ImGui::TreeNodeEx(node.settings->GetName().c_str(), nodeFlags, "%s", node.settings->GetName().c_str());
         if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
         {
             selectedSetting = &node;

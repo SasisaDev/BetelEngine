@@ -97,7 +97,7 @@ public:
         if (node->Children.size() == 0)
             nodeFlags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
 
-        node->Open = ImGui::TreeNodeEx(node->Path.GetPath().c_str(), nodeFlags, node->Name.c_str());
+        node->Open = ImGui::TreeNodeEx(node->Path.GetPath().c_str(), nodeFlags, "%s", node->Name.c_str());
         if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
         {
             currentSelection = node;
@@ -119,7 +119,7 @@ public:
         }
     }
 
-    virtual void OnGUI(Window *window)
+    virtual void OnGUI(Window *window) override
     {
         AssetLibrary &lib = AssetLibrary::Get();
 
