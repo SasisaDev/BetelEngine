@@ -265,6 +265,10 @@ void IRenderEngine::Render()
     for(size_t compositionId = 0; compositionId < Compositions.size(); ++compositionId) {
         IRenderComposition* composition = Compositions[compositionId];
 
+        if(!composition->ShouldRender()) {
+            continue;
+        }
+
         composition->StartFrame(cmdBuffer);
         
         if(composition->GetType() == ERenderCompositionType::RENDER_COMPOSITION_TYPE_SURFACE) {
@@ -280,6 +284,11 @@ void IRenderEngine::Render()
     }
 
     vkEndCommandBuffer(cmdBuffer);
+
+    if(swapchains.size() == 0) {
+        vkFreeCommandBuffers(device, cmdPool, 1, &cmdBuffer);
+        return;
+    }
 
     VkPipelineStageFlags waitStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 

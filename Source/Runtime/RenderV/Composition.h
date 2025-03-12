@@ -88,6 +88,8 @@ public:
     void Pause() {bPauseRender = true;}
     void Unpause() {bPauseRender = false;}
 
+    bool ShouldRender() {return !bPauseRender;}
+
     bool Initialize(IRenderCompositionInitializer* initializer);
     
     bool Recreate(IRenderCompositionInitializer* initializer);

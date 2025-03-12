@@ -228,11 +228,13 @@ void Application::OnWindowEvent(Window* win, WindowEventPayload* payload)
 			reinitInfo.extent.width = ((WindowEventPayloadResize*)payload)->width;
 			reinitInfo.extent.height =  ((WindowEventPayloadResize*)payload)->height;
 			break;
-		/*case WINDOW_EVENT_HIDDEN:
+		case WINDOW_EVENT_HIDDEN:
 			Render->GetComposition(win->RendererCompositionID)->Pause();
-			break;*/
+			break;
 		case WINDOW_EVENT_EXPOSED:
 			recreateComp = true;
+			break;
+		default:
 			break;
 	};
 
