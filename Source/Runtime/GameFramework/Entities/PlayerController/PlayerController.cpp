@@ -40,7 +40,7 @@ void EntPlayerController::Tick(float deltaTime)
 
     if(camera) 
     {
-        GetWorld()->SetWorldCameraPosition({camera->GetTransform().Location.x, camera->GetTransform().Location.y});
+        GetWorld()->GetSceneView().ViewOrigin = {camera->GetTransform().Location.x, camera->GetTransform().Location.y};
         //TODO: GetWorld()->SetWorldCameraRotation({transform.Rotator.x, transform.Rotator.y});
     }
 }

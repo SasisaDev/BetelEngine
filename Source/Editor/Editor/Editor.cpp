@@ -7,6 +7,8 @@
 
 #include "Modes/ObjectMode.h"
 
+#include <glm/ext.hpp>
+
 #include <algorithm>
 
 //#include "Gizmo/EditorGizmo.h"
@@ -44,6 +46,9 @@ void Editor::HandleIncomingInputEvent(InputEvent &event)
     if(event.IsMouse && event.MouseWheel != 0)
     {
         ViewportZoom = std::clamp(ViewportZoom + (event.MouseWheel * (ViewportZoom / 5)), 0.05f, 10.f);
+        if(CurrentWorld) {
+            CurrentWorld->GetSceneView().UpdateViewMatrix(glm::scale(glm::mat4(1), glm::vec3(ViewportZoom, ViewportZoom, 1)));
+        }
     }
 }
 
@@ -123,7 +128,7 @@ void Editor::Tick(float deltaTime)
     // Override world cameras with Editor camera
     if(World* world = GApplication->GetEngine()->GetWorld())
     {
-        world->SetWorldCameraPosition(EditorCameraPosition);
+        world->GetSceneView().ViewOrigin = EditorCameraPosition;
     }
 
     // Remove all Modes in a Remove Queue

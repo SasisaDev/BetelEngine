@@ -31,6 +31,7 @@ class WorldRenderLayerRef : public IRenderLayerRef
 {
     void CalculateAspectRatioCompensationData();
     void CreatePixelPerfectResources();
+    void UpdateSceneView();
 protected:
     World* world;
     VkExtent2D viewport;
@@ -73,10 +74,12 @@ public:
     WorldRenderLayerRef* SubscribeWorldLoad(MulticastDelegate<World*>* delegate);
     WorldRenderLayerRef* SubscribeWorldUnload(MulticastDelegate<World*>* delegate);
     WorldRenderLayerRef* SetWorld(World* newWorld);
-    WorldRenderLayerRef* SetViewportSize(VkExtent2D newViewport) {viewport = newViewport; return this;}
+    WorldRenderLayerRef* SetViewportSize(VkExtent2D newViewport);
     WorldRenderLayerRef* SetCompensateAspectRatio(bool compensate) {bCompensateAspectRatio = compensate; return this;}
 
     inline World* GetWorld() const {return world;}
+
+    virtual void Prepare(VkDevice device, IRenderLayerRef* previousLayer) override;
 
     void onWorldLoad(World* loadedWorld);
     void onWorldUnload(World* loadedWorld);

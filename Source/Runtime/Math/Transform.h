@@ -20,4 +20,13 @@ struct Transform
         //ret.Rotator = Rotator + other.Rotator;
         return ret;
     }
+
+    Transform operator-(Transform const& other) {
+        Transform ret;
+        ret.Location = Location - other.Location;
+        ret.Pivot = Pivot - other.Pivot;
+        ret.Scale = Scale - other.Scale;
+        //ret.Rotator = Rotator + other.Rotator;
+        return ret;
+    }
 };

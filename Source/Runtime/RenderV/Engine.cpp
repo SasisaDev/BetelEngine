@@ -265,6 +265,8 @@ void IRenderEngine::Render()
     for(size_t compositionId = 0; compositionId < Compositions.size(); ++compositionId) {
         IRenderComposition* composition = Compositions[compositionId];
 
+        assert(composition != nullptr);
+
         if(!composition->ShouldRender()) {
             continue;
         }

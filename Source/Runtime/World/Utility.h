@@ -71,10 +71,7 @@ public:
      * world must be an active world associated with some WorldRenderLayerRef
      */
     static IVec2 GetScreenSpaceFromWorldSpace(World* world, float ViewportX, float ViewportY, float ViewportW, float ViewportH)
-    {
-        WorldRenderLayerGPUStorage renderData = world->GetWorldRenderLayerRef()->GetSceneData();
-
-        
+    {        
 
         return {0, 0};
     }
@@ -86,12 +83,11 @@ public:
      */
     static IVec2 GetWorldSpaceFromScreenSpace(World* world, float ViewportX, float ViewportY, float ViewportW, float ViewportH)
     {
-        WorldRenderLayerGPUStorage renderData = world->GetWorldRenderLayerRef()->GetSceneData();
-
         float ScreenPointX = (ViewportX / ViewportW) * 2.f - 1.f;
         float ScreenPointY = -(ViewportY / ViewportH) * 2.f + 1.f;
 
-        glm::mat4 ViewProj = renderData.ProjectionMatrix * renderData.ViewMatrix;
+        // TODO: Change it to precalculated world->GetSceneView().ViewProjectionMatrix maybe?
+        glm::mat4 ViewProj = world->GetSceneView().ProjectionMatrix * world->GetSceneView().ViewMatrix;
         glm::mat4 InverseViewProj = glm::inverse(ViewProj);
 
         glm::vec4 OriginPosition = glm::vec4(ScreenPointX, ScreenPointY, -1, 1) * InverseViewProj;
@@ -102,7 +98,7 @@ public:
 
         //LOGF(Log, LogHitscan, "sX = %f, sY = %f, X = %f, Y = %f", ScreenPointX, ScreenPointY, OriginPosition.x, OriginPosition.y);
 
-        return {OriginPosition.x + renderData.CameraPosition.x, OriginPosition.y + renderData.CameraPosition.y};
+        return {OriginPosition.x + world->GetSceneView().ViewOrigin.x, OriginPosition.y + world->GetSceneView().ViewOrigin.y};
     }
     
     // Creates Hitscan from Screen Position to World Position

@@ -1,5 +1,6 @@
 #pragma once
 #include "Entity.h"
+#include "SceneView.h"
 
 #include <vector>
 #include <unordered_set>
@@ -24,7 +25,7 @@ class World : public Object
 protected:
     TimerManager timerManager;
 
-    WorldRenderLayerRef *renderLayer = nullptr;
+    SceneView sceneView;
 
     std::vector<ObjectRef<Entity>> entities;
 
@@ -50,7 +51,7 @@ public:
 
     TimerManager& GetTimerManager() { return timerManager; }
 
-    WorldRenderLayerRef* GetWorldRenderLayerRef() const {return renderLayer;}
+    SceneView& GetSceneView() {return sceneView;}
 
     void SetBackgroundColor(const Vec3& color) {BackgroundColor = color;}
 

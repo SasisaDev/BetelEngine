@@ -212,7 +212,27 @@ void WorldRenderLayerRef::CreatePixelPerfectResources()
     }
 }
 
-void WorldRenderLayerRef::onWorldLoad(World* loadedWorld)
+void WorldRenderLayerRef::UpdateSceneView()
+{
+    if(!world) {
+        return;
+    }
+
+    const float viewportWidth = static_cast<float>(viewport.width);
+    const float viewportHeight = static_cast<float>(viewport.height);
+    world->GetSceneView().UpdateProjectionMatrix(glm::ortho(-(viewportWidth/2), (viewportWidth/2), -(viewportHeight/2), (viewportHeight/2), -100.f, 100.0f));
+    world->GetSceneView().UpdateViewMatrix(glm::mat4(1));
+    world->GetSceneView().UpdateViewProjectionMatrix();
+}
+
+void WorldRenderLayerRef::Prepare(VkDevice device, IRenderLayerRef *previousLayer)
+{
+    if(bDirty) {
+        UpdateSceneView();
+    }
+}
+
+void WorldRenderLayerRef::onWorldLoad(World *loadedWorld)
 {
     world = loadedWorld;
 
@@ -220,8 +240,6 @@ void WorldRenderLayerRef::onWorldLoad(World* loadedWorld)
     if(!world){
         return;
     }
-
-    world->renderLayer = this;
 
     world->OnEntitySpawned.BindMember(this, &WorldRenderLayerRef::onWorldEntitySpawned);
     world->OnEntityDestroyed.BindMember(this, &WorldRenderLayerRef::onWorldEntityDespawned);
@@ -232,6 +250,8 @@ void WorldRenderLayerRef::onWorldLoad(World* loadedWorld)
             renderProxies.push_back(renderProxy);
         }
     }
+
+    UpdateSceneView();
 }
 
 void WorldRenderLayerRef::onWorldUnload(World* loadedWorld)
@@ -243,12 +263,8 @@ void WorldRenderLayerRef::onWorldUnload(World* loadedWorld)
         // FIXME: deleting any render proxy results in Vulkan errors
         delete renderProxies[i];
     }
-    renderProxies.clear();
 
-    // Ensure that the old world doesn't keep reference to past render layer
-    if(world && world->renderLayer == this) {
-        world->renderLayer = nullptr;
-    }
+    renderProxies.clear();
 }
 
 void WorldRenderLayerRef::onWorldEntitySpawned(Entity* entity)
@@ -379,9 +395,20 @@ bool WorldRenderLayerRef::Recreate()
 WorldRenderLayerRef* WorldRenderLayerRef::SetWorld(World* newWorld)
 {
     world = newWorld;
-    if(world) {
-        world->renderLayer = this;
+    return this;
+}
+
+WorldRenderLayerRef *WorldRenderLayerRef::SetViewportSize(VkExtent2D newViewport)
+{
+    viewport = newViewport; 
+
+    // Update Projection matrix
+    if(world){
+        const float viewportWidth = static_cast<float>(viewport.width);
+        const float viewportHeight = static_cast<float>(viewport.height);
+        world->GetSceneView().UpdateProjectionMatrix(glm::ortho(-(viewportWidth/2), (viewportWidth/2), -(viewportHeight/2), (viewportHeight/2), -100.f, 100.0f));
     }
+
     return this;
 }
 
@@ -652,6 +679,8 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
 {
     WorldRenderLayerRef* ref = ((WorldRenderLayerRef*)(layerRef));
 
+    ref->Prepare(IRenderUtility::GetDevice(), previousLayer);
+
     for(EntityRenderProxy* proxy : ref->renderProxies) {
         proxy->Update(ref);
     }
@@ -660,15 +689,9 @@ void WorldRenderLayer::Prepare(VkCommandBuffer cmdBuffer, IRenderLayerRef* layer
 
     // TODO: Maybe we don't need to update this data each frame
     if(World* world = ref->GetWorld()) {
-        const float viewportWidth = static_cast<float>(ref->viewport.width);
-        const float viewportHeight = static_cast<float>(ref->viewport.height);
-        ref->SceneDataStorages[imageID].ProjectionMatrix = glm::ortho(-(viewportWidth/2), (viewportWidth/2), -(viewportHeight/2), (viewportHeight/2), -100.f, 100.0f);
-#       ifdef EDITOR
-        ref->SceneDataStorages[imageID].ViewMatrix = glm::scale(glm::mat4(1), glm::vec3(Editor::Get()->ViewportZoom, Editor::Get()->ViewportZoom, 1));
-#       else
-        ref->SceneDataStorages[imageID].ViewMatrix = glm::mat4(1);
-#       endif
-        ref->SceneDataStorages[imageID].CameraPosition = glm::vec2(world->CameraPosition.x, world->CameraPosition.y);
+        ref->SceneDataStorages[imageID].ProjectionMatrix = world->GetSceneView().ProjectionMatrix;
+        ref->SceneDataStorages[imageID].ViewMatrix = world->GetSceneView().ViewMatrix;
+        ref->SceneDataStorages[imageID].CameraPosition = world->GetSceneView().ViewOrigin;
     }
     
     /*for(int i = 0; i < ref->SceneDataSSBOs.size(); ++i)

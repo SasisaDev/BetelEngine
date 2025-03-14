@@ -86,7 +86,7 @@ set(SrcObject "Source/Runtime/Object/Object.cpp" "Source/Runtime/Object/ObjectRe
 set(SrcAudio "Source/Runtime/Audio/Audio.cpp") 
 
 set(SrcWorld "Source/Runtime/World/RenderLayer/WorldRenderLayer.cpp" "Source/Runtime/World/World.cpp" "Source/Runtime/World/Entity.cpp" 
-             "Source/Runtime/World/Entities/Camera/Camera.cpp") 
+             "Source/Runtime/World/Entities/Camera/Camera.cpp" "Source/Runtime/World/SceneView.cpp") 
 
 set(SrcUI "Source/Runtime/UI/RenderLayer/WidgetRenderLayer.cpp" "Source/Runtime/UI/Widget.cpp" "Source/Runtime/UI/Widgets/Panel/Panel.cpp")
 
