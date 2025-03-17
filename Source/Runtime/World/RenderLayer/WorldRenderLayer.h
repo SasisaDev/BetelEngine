@@ -38,8 +38,6 @@ protected:
     VkFormat imageFormat;
 
     std::vector<EntityRenderProxy*> renderProxies;
-    std::vector<EntityRenderProxy*> postRenderProxies;
-    bool bRenderPostRenderProxies = true;
     bool bCompensateAspectRatio = true;
 
     VkImage pixelPerfectDepthImage;
@@ -85,8 +83,6 @@ public:
     void onWorldUnload(World* loadedWorld);
     void onWorldEntitySpawned(Entity* entity);
     void onWorldEntityDespawned(Entity* entity);
-
-    void SetRenderPostRenderProxies(bool render) { bRenderPostRenderProxies = render; }
 };
 
 class WorldRenderLayer : public IRenderLayer

@@ -21,6 +21,13 @@ void Editor::HandleIncomingInputEvent(InputEvent &event)
         EditorCameraPosition.y = edInputCtx.OriginalEditorCameraPosition.y + (event.MouseY - edInputCtx.MouseDragStartY) / ViewportZoom;
     }    
 
+    // Ignore input if it's consumed
+    if(GetInputConsumed())
+    {
+        SetInputConsumed(false);
+        return;
+    }
+
     // Next blocks require cursor hovering over focused viewport
     // Do nothing if Game Viewport is not focused
     if(!GApplication->GetEngine()->GetGameFocused() || !GetViewportHovered() || !GApplication->GetEngine()->GetWorld()) {
@@ -152,7 +159,9 @@ void Editor::Tick(float deltaTime)
             }
 
             // Remove Mode
-            Modes.erase(Modes.begin() + idToRemove);
+            if(idToRemove < Modes.size()) {
+                Modes.erase(Modes.begin() + idToRemove);
+            }
             
             ModesRemoveQueue.pop();
         }

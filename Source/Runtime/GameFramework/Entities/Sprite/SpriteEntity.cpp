@@ -3,6 +3,11 @@
 #include <stb/stb_image.h>
 #include <Math/Models.h>
 #include <Engine/Engine.h>
+#include <Object/ObjectTypeLibrary.h>
+
+#include "SpriteDrawMode.h"
+
+bool EntSpriteType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<EntSpriteType>(EntSprite::GetStaticType());
 
 void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
 {
@@ -17,8 +22,8 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
     {
         return;
     }
-    Resource *VertShader = GEngine->GetAssetLoader()->LoadResource("Shaders/SpriteMasked/SpriteMasked.vert.spv");
-    Resource *FragShader = GEngine->GetAssetLoader()->LoadResource("Shaders/SpriteMasked/SpriteMasked.frag.spv");
+    std::shared_ptr<Resource> VertShader = GEngine->GetAssetLoader()->LoadResource("Shaders/SpriteMasked/SpriteMasked.vert.spv");
+    std::shared_ptr<Resource> FragShader = GEngine->GetAssetLoader()->LoadResource("Shaders/SpriteMasked/SpriteMasked.frag.spv");
 
     if(VertShader == nullptr || FragShader == nullptr)
     {
@@ -55,12 +60,10 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
 
     shader = std::make_unique<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertShader->GetBuffer(), FragShader->GetBuffer(), descriptorsLayout, sCreateInfo);
 
-    Resource *SpriteImage = GEngine->GetAssetLoader()->LoadResource("Sprites/TestSemi.png");
+    std::shared_ptr<Resource> SpriteImage = GEngine->GetAssetLoader()->LoadResource("Sprites/TestSemi.png");
 
     int texWidth, texHeight, texChannels;
     unsigned char* pixels = stbi_load_from_memory(reinterpret_cast<stbi_uc*>(SpriteImage->GetBuffer().data()), SpriteImage->GetBuffer().size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-
-    delete SpriteImage;
 
     // TODO: Finish it and refine
     texture = std::make_unique<ISamplerTexture>(texWidth, texHeight, pixels);
@@ -70,9 +73,6 @@ void SpriteRenderProxy::CreateResources(WorldRenderLayerRef* layerRef)
     material = std::make_unique<IMaterial>(shader.get());
 
     material->SetSampler(1, texture->GetImageView(), texture->GetSampler());
-
-    delete VertShader;
-    delete FragShader;
 }
 
 void SpriteRenderProxy::Render(VkCommandBuffer cmdBuffer, WorldRenderLayerRef* layerRef)
@@ -118,8 +118,15 @@ void EntSprite::Tick(float deltaTime)
 }
 
 #ifdef EDITOR
+std::vector<EditorMode *> EntSprite::GetEditorModes()
+{
+    return {new SpriteDrawMode};
+}
+
 PropertyContainer EntSprite::GetEditorReflectedProperties()
 {
-    return Entity::GetEditorReflectedProperties().PushPropertyObject("Material", material);
+    return Entity::GetEditorReflectedProperties()
+           .PushPropertyObject("Material", material)
+           .PushPropertyObject("Sprite", sprite);
 }
 #endif

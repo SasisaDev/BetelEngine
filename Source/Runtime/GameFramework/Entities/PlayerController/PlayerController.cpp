@@ -34,6 +34,19 @@ void EntPlayerController::Unpossess()
     camera = nullptr;
 }
 
+void EntPlayerController::OverrideCamera(EntCamera *overrideCamera)
+{
+    camera = overrideCamera;
+}
+
+void EntPlayerController::StopCameraOverride()
+{
+    if(character != nullptr)
+    {
+        camera = character->GetCamera();
+    }
+}
+
 void EntPlayerController::Tick(float deltaTime)
 {
     EntController::Tick(deltaTime);

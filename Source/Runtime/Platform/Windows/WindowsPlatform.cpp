@@ -118,7 +118,8 @@ std::string WindowsPlatform::OpenOpenFileDialog(const FileDialogInfo &info)
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
-	ofn.lpstrInitialDir = GetExecutableFolder().c_str();
+	std::string execPath = GetExecutableFolder();
+	ofn.lpstrInitialDir = execPath.c_str();
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
 	if (GetOpenFileName(&ofn) == TRUE)

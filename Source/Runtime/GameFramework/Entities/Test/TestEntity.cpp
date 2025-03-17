@@ -3,6 +3,8 @@
 #include <Platform/Platform.h>
 #include <World/RenderLayer/WorldRenderLayer.h>
 
+#include <Engine/Engine.h>
+
 EntityRenderProxyTest::EntityRenderProxyTest(Entity* DefaultParent)
     : EntityRenderProxy(DefaultParent)
 {
@@ -14,13 +16,13 @@ void EntityRenderProxyTest::CreateResources(WorldRenderLayerRef* layerRef)
     {
         return;
     }
-    std::unique_ptr<IFile> VertFile = IPlatform::Get()->OpenFile("./Content/Shaders/Test/Test.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
-    std::unique_ptr<IFile> FragFile = IPlatform::Get()->OpenFile("./Content/Shaders/Test/Test.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
+    std::shared_ptr<Resource> VertFile = GEngine->GetAssetLoader()->LoadResource("Shaders/Test/Test.vert.spv");
+    std::shared_ptr<Resource> FragFile = GEngine->GetAssetLoader()->LoadResource("Shaders/Test/Test.frag.spv");
 
     ShaderDescriptorLayout descriptorsLayout;
     descriptorsLayout.GenerateBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER);
 
-    shader = std::make_shared<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertFile->FetchAllBinary(), FragFile->FetchAllBinary(), descriptorsLayout);
+    shader = std::make_shared<IShader>(layerRef->GetParentLayer()->GetRenderPass(), VertFile->GetBuffer(), FragFile->GetBuffer(), descriptorsLayout);
 
     material = std::make_shared<IMaterial>(shader.get());
 }

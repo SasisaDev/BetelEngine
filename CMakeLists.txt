@@ -62,7 +62,7 @@ set(SrcLZ4 "Source/ThirdParty/lz4/lz4.c" "Source/ThirdParty/lz4/lz4file.c" "Sour
 
 # Modules Sources
 set(SrcGameFramework "Source/Runtime/GameFramework/Entities/Test/TestEntity.cpp" "Source/Runtime/GameFramework/Entities/Sprite/SpriteEntity.cpp"
-     "Source/Runtime/GameFramework/Assets/Sprite/Sprite.cpp"
+    "Source/Runtime/GameFramework/Assets/Sprite/Sprite.cpp" "Source/Runtime/GameFramework/Entities/Sprite/SpriteDrawMode.cpp"
     "Source/Runtime/Materials/Assets/Material.cpp" "Source/Runtime/Materials/Assets/Shader.cpp"
     "Source/Runtime/GameFramework/Assets/Atlas/Atlas.cpp" "Source/Runtime/GameFramework/Assets/Texture/Texture.cpp"
     "Source/Runtime/GameFramework/Assets/Animation/Animation.cpp"
@@ -135,7 +135,7 @@ set(ArgumentEventsSrc "Source/Editor/ArgumentEvents/UseAssetFactoryEvent.cpp")
 set(TransactionQueueSrc "Source/Editor/TransactionQueue/Context.cpp" "Source/Editor/TransactionQueue/Queue/Queue.cpp")
 
 set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc} ${TransactionQueueSrc}
-    "Source/Editor/ToolkitRenderLayer/ToolkitRenderLayer.cpp" "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" "Source/Editor/Editor/EditorDelegates.cpp"
+    "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" "Source/Editor/Editor/EditorDelegates.cpp"
     "Source/Editor/Editor/Editor.cpp" "Source/Editor/Editor/Modes/ObjectMode.cpp" "Source/Editor/EditorUI/ObjectEditViews/ObjectEditViewsFactory.cpp") 
 
 add_executable(Editor ${Sources} ${EditorSources})

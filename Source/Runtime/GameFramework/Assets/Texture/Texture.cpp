@@ -14,7 +14,7 @@ void ObjTexture::LoadTexture()
         return;
     }
 
-    Resource *Image = GEngine->GetAssetLoader()->LoadResource(path);
+    std::shared_ptr<Resource> Image = GEngine->GetAssetLoader()->LoadResource(path);
 
     if(Image == nullptr) {
         LOGF(Error, LogTexture, "Failed loading texture for object \"%s\", resource couldn't be found.", Name.c_str());
@@ -30,7 +30,6 @@ void ObjTexture::LoadTexture()
     texture = std::make_unique<ISamplerTexture>(texWidth, texHeight, pixels);
 
     stbi_image_free(pixels);
-    delete Image;
 }
 
 void ObjTexture::Serialize(FieldContainer& cont)

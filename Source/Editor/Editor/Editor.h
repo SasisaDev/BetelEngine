@@ -46,6 +46,7 @@ protected:
     Object* SelectedObject = nullptr;
 
     bool bViewportHovered = false;
+    bool bInputConsumed = false;
 
     IVec2 EditorCameraPosition = {};
     IVec2 EditorCameraRotation = {};
@@ -79,6 +80,9 @@ public:
 
     void SetViewportHovered(bool isHovered) {bViewportHovered = isHovered;}
     bool GetViewportHovered() {return bViewportHovered;}
+
+    void SetInputConsumed(bool isConsumed) {bInputConsumed = isConsumed;}
+    bool GetInputConsumed() {return bInputConsumed;}
 
     // Can be used for Defered Registration
     template <typename ToolkitModeT>

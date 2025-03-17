@@ -24,7 +24,7 @@ protected:
             ImGui::Button(" ");
         }
         ImGui::SameLine();
-        ImGui::Checkbox(("##Visible" + entity->GetDisplayName()).c_str(), &entity->Visible);
+        ImGui::Checkbox(("##Visible" + entity->GetDisplayName()).c_str(), &entity->bVisible);
 
         ImGui::SameLine();
         ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, {0, 0.5});

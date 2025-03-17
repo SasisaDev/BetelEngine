@@ -32,11 +32,6 @@ protected:
     bool BackgroundGradient = false;
     Vec3 BackgroundColor;
     std::pair<Vec3, Vec3> BackgroundGradientColor;
-    
-    IVec2 CameraPosition = {};
-    IVec2 CameraRotation = {};
-    float CameraNearPlane = -100;
-    float CameraFarPlane = 100;
 
     std::string Name = "Persistent World";
 
@@ -126,11 +121,6 @@ public:
     void DestroyEntity(Entity* entity);
 
     inline const std::vector<ObjectRef<Entity>>& GetEntities() const {return entities;}
-
-    void SetWorldCameraPosition(IVec2 pos) {CameraPosition = pos;}
-    void SetWorldCameraRotation(IVec2 rot) {CameraRotation = rot;}
-    IVec2& GetWorldCameraPosition() {return CameraPosition;}
-    IVec2& GetWorldCameraRotation() {return CameraRotation;}
 
     // Gets called first when world's loaded.
     // Creates Player Controller and other default entities

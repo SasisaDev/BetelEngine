@@ -12,7 +12,6 @@
 #ifdef EDITOR
 #	include <ImGui/RenderLayer/ImGuiLayer.h>
 #	include <Editor/Editor.h>
-#	include <ToolkitRenderLayer/ToolkitRenderLayer.h>
 # elif !defined(NDEBUG) 
 #	include <ImGui/RenderLayer/ImGuiLayer.h>
 #	include <Debug/Debug.h>
@@ -89,7 +88,8 @@ int GuardedMain(int argc, char* argv[])
 			->SetCompensateAspectRatio(settings->CompensateAspectRatio)
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldLoad)
 			->SubscribeWorldLoad(&EngineDelegates::OnWorldUnload),
-		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
+		IRenderFactory::CreateLayerRef<UIRenderLayer, UIRenderLayerRef>(render)
+			->SetCanvasWidget(app.GetEngine()->GetCanvasWidget()),
 #	ifndef NDEBUG
 			IRenderFactory::CreateLayerRef<ImGuiRenderLayer, ImGuiRenderLayerRef>(render)
 			->SetRenderable(DebugImGui::Get())
@@ -141,7 +141,7 @@ int GuardedMain(int argc, char* argv[])
 	std::unique_ptr<IDirectory> localDirectory = IPlatform::Get()->OpenLocalDirectory("./");
 	std::unique_ptr<IDirectory> contentDirectory = IPlatform::Get()->OpenContentDirectory("./");
 
-	Resource* testResourceShader = GEngine->GetAssetLoader()->LoadResource("Shaders/Test/Test.vert.spv");
+	std::shared_ptr<Resource> testResourceShader = GEngine->GetAssetLoader()->LoadResource("Shaders/Test/Test.vert.spv");
 
 	// Testing Sprite System
 	ObjectRef<ObjTexture> texture = app.GetEngine()->GetObjectLibrary()->CreateObject<ObjTexture>("Test Texture");

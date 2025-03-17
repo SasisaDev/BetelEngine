@@ -19,6 +19,9 @@ public:
     virtual void Possess(EntCharacter* possessCharacter) override;
     virtual void Unpossess() override;
 
+    virtual void OverrideCamera(EntCamera* overrideCamera);
+    virtual void StopCameraOverride();
+
     virtual void Tick(float deltaTime) override;
 
     virtual void HandleInput(InputEvent& event);

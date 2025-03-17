@@ -122,12 +122,17 @@ public:
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.15, 0.15, 0.15, 0.5));
             ImGui::SetNextItemWidth(175);
             static std::vector<const char *> modeNames;
+            modeNames.resize(Editor::Get()->Modes.size());
             modeNames.clear();
             for (EditorMode *mode : Editor::Get()->Modes)
             {
                 modeNames.push_back(mode->GetName().Get().c_str());
             }
-            ImGui::Combo("##EditorMode", &Editor::Get()->CurrentActiveMode, modeNames.data(), IM_ARRAYSIZE(modeNames.data()));
+            ImGui::Combo("##EditorMode", &Editor::Get()->CurrentActiveMode, modeNames.data(), modeNames.size());
+            if(ImGui::IsItemHovered())
+            {
+                Editor::Get()->SetInputConsumed(true);
+            }
             ImGui::PopStyleColor(2);
 
             // Draw Editor Mode Overlay
@@ -144,21 +149,26 @@ public:
             if (Editor::Get()->bShowOverlay)
             {
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0.647, 1, 0.9));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0.5, 0.9, 0.9));
             }
             else
             {
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0.6));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.4, 0.4, 0.4, 0.6));
             }
             if (ImGui::ImageButton("##ShowOverlay", ShowOverlayImageW, ImVec2(14, 14)))
             {
                 Editor::Get()->bShowOverlay = !Editor::Get()->bShowOverlay;
             }
-            ImGui::PopStyleColor(1);
+            if(ImGui::IsItemHovered())
+            {
+                Editor::Get()->SetInputConsumed(true);
+            }
+            ImGui::PopStyleColor(2);
 
             // Viewport Hovered setup
             Editor::Get()->SetViewportHovered(ImGui::IsWindowHovered());
 
-            // TODO: Drag functionality
             // Get an ID of an object currently being dragged
             uint32_t dragObjectID = BImGui::Drag::GetObject();
             if (ImGui::IsWindowHovered() && dragObjectID != 0)

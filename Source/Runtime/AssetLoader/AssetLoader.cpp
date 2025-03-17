@@ -365,13 +365,13 @@ LoadedObjectMetadata AssetLoader::LoadObjectMetadata(uint32_t ObjectID)
     return metadata;
 }
 
-Resource* AssetLoader::LoadResource(std::string path)
+std::shared_ptr<Resource> AssetLoader::LoadResource(std::string path)
 {
     std::unique_ptr<IFile> file = IPlatform::Get()->OpenContentFile(path, FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
     if(file->IsOpen())
     {
         LOGF(Log, LogAssetLoader, "Loaded Resource \"%s\".", path.c_str());
-        return new Resource(file->FetchAllBinary());
+        return std::make_shared<Resource>(file->FetchAllBinary());
     }
 
     // If requested resource is not found in local filesystem, search in archive files

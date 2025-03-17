@@ -76,5 +76,5 @@ public:
      *
      * Returns nullptr if resource doesn't exist
     */
-    Resource* LoadResource(std::string path);
+    std::shared_ptr<Resource> LoadResource(std::string path);
 };

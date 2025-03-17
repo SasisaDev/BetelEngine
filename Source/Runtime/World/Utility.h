@@ -70,10 +70,27 @@ public:
      * 
      * world must be an active world associated with some WorldRenderLayerRef
      */
-    static IVec2 GetScreenSpaceFromWorldSpace(World* world, float ViewportX, float ViewportY, float ViewportW, float ViewportH)
-    {        
+    static glm::vec2 GetScreenSpaceFromWorldSpace(World* world, float ViewportX, float ViewportY, float ViewportW, float ViewportH, float X, float Y)
+    {
+        assert(world != nullptr);
 
-        return {0, 0};
+        glm::vec4 clipSpacePos = world->GetSceneView().ProjectionMatrix * 
+                                (world->GetSceneView().ViewMatrix * 
+                                 glm::vec4(X - world->GetSceneView().ViewOrigin.x, 
+                                           -Y + world->GetSceneView().ViewOrigin.y, 0.0f, 1.0f));
+
+        if(clipSpacePos.w != 0)
+        {
+            clipSpacePos.x /= clipSpacePos.w;
+            clipSpacePos.y /= clipSpacePos.w;
+            clipSpacePos.z /= clipSpacePos.w;
+        }
+
+        glm::vec2 windowSpacePos = glm::vec2( ((clipSpacePos.x + 1.0f) / 2.0f) * ViewportW + ViewportX, ((clipSpacePos.y + 1.0f) / 2.0f) * ViewportH + ViewportY );
+
+        //LOGF(Warning, LogWorldUtils, "world: %f, %f; clip: %f, %f; window: %f, %f", X, Y, clipSpacePos.x, clipSpacePos.y, windowSpacePos.x, windowSpacePos.y);
+
+        return windowSpacePos;
     }
     
     /*
@@ -83,6 +100,8 @@ public:
      */
     static IVec2 GetWorldSpaceFromScreenSpace(World* world, float ViewportX, float ViewportY, float ViewportW, float ViewportH)
     {
+        assert(world != nullptr);
+
         float ScreenPointX = (ViewportX / ViewportW) * 2.f - 1.f;
         float ScreenPointY = -(ViewportY / ViewportH) * 2.f + 1.f;
 

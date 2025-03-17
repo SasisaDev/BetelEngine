@@ -74,6 +74,8 @@ public:
         MakeSizeMatchTexture();
     }
 
+    static std::string GetStaticType() {return "ENTSPRITE";}
+
     virtual void Tick(float deltaTime) override;
 
     virtual EntityRenderProxy* SetupRenderProxy(WorldRenderLayerRef* ref) override {return RenderProxy = new SpriteRenderProxy(this);}
@@ -83,9 +85,16 @@ public:
 
         // Editor API
 #   ifdef EDITOR
-    void PushEditorModes(Editor* editor) {}
-    void PopEditorModes(Editor* editor) {}
+    virtual std::vector<EditorMode*> GetEditorModes() override;
 
     virtual PropertyContainer GetEditorReflectedProperties() override;
 #   endif
+};
+
+class EntSpriteType : public EntityType
+{
+    static bool bRegistered;
+public:
+    virtual Object* CreateInstance() override { return new EntSprite; }
+    virtual std::string_view DisplayName() override {return "Sprite Entity";}
 };

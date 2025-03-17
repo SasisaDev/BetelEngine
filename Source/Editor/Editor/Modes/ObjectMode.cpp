@@ -4,55 +4,69 @@
 #include <RenderV/Engine.h>
 #include <Core/Application/Application.h>
 #include <World/Utility.h>
+#include <Math/Math.h>
 
-void ObjectMode::Render(const ImRect& clipScreen)
+void ObjectMode::DrawCircleControl(ImVec2 center, float radius, glm::vec2 cursor_pos, ImGuiMouseCursor cursor_type)
+{
+    ImGui::GetWindowDrawList()->AddCircleFilled(center, radius, ImColor(0.5f, 0.5f, 1.0f, 1.0f));
+    if(MathUtility::BoxPointCollide(glm::vec4(center.x - radius, center.y - radius, 
+                                              center.x + radius, center.y + radius),
+                                    cursor_pos)
+        && ImGui::IsWindowFocused())
+    {
+        ImGui::SetMouseCursor( cursor_type );
+    }
+}
+
+void ObjectMode::Render(const ImRect &clipScreen)
 {
     if(Entity* ent = dynamic_cast<Entity*>(Editor::Get()->GetSelectedObject())) {
         IVec4 SelectionWorldBounds ={  ent->GetLocation().x, ent->GetLocation().y, 
                                         ent->GetLocation().x + ent->GetBoundingBox().x, ent->GetLocation().y + ent->GetBoundingBox().y}; 
 
-        Vec2 CameraPosition = {static_cast<float>(ent->GetWorld()->GetWorldCameraPosition().x), static_cast<float>(ent->GetWorld()->GetWorldCameraPosition().y)};
+        Vec2 CameraPosition = {static_cast<float>(ent->GetWorld()->GetSceneView().ViewOrigin.x), static_cast<float>(ent->GetWorld()->GetSceneView().ViewOrigin.y)};
 
-        // TODO: Remove Viewport Zoom multiplication
-        Vec4 ObjectBounds = {ent->GetLocation().x - CameraPosition.x, 
-                                ent->GetLocation().y + CameraPosition.y, 
-                                ent->GetLocation().x + (ent->GetBoundingBox().x * Editor::Get()->ViewportZoom) - CameraPosition.x, 
-                                ent->GetLocation().y + (ent->GetBoundingBox().y * Editor::Get()->ViewportZoom) + CameraPosition.y};
+        glm::vec2 CursorPos = glm::vec2(ImGui::GetMousePos().x, ImGui::GetMousePos().y);
 
-        IVec2 SelectionBoundsMin = WorldUtility::GetScreenSpaceFromWorldSpace(GEngine->GetWorld(), 0, 0, 0, 0);
-        IVec2 SelectionBoundsMax = WorldUtility::GetScreenSpaceFromWorldSpace(GEngine->GetWorld(), 0, 0, 0, 0);
+        Vec4 ObjectBounds = {ent->GetLocation().x, 
+                                ent->GetLocation().y, 
+                                ent->GetLocation().x + (ent->GetBoundingBox().x), 
+                                ent->GetLocation().y + (ent->GetBoundingBox().y)};
 
-        // Test purposes
-        SelectionBoundsMin = {ObjectBounds.x, ObjectBounds.y};
-        SelectionBoundsMax = {ObjectBounds.z, ObjectBounds.w};
+        const IRenderComposition* comp = GApplication->GetRender()->GetComposition(0);
+        VkRect2D ViewportLocation = comp->GetGameViewport();
+
+        glm::vec2 SelectionBoundsMin = WorldUtility::GetScreenSpaceFromWorldSpace(GEngine->GetWorld(), ViewportLocation.offset.x, ViewportLocation.offset.y, ViewportLocation.extent.width, ViewportLocation.extent.height, ObjectBounds.x, ObjectBounds.y);
+        glm::vec2 SelectionBoundsMax = WorldUtility::GetScreenSpaceFromWorldSpace(GEngine->GetWorld(), ViewportLocation.offset.x, ViewportLocation.offset.y, ViewportLocation.extent.width, ViewportLocation.extent.height, ObjectBounds.z, ObjectBounds.w);
 
         // Draw Selection bounds
-        ImGui::GetWindowDrawList()->AddRect(ImVec2(clipScreen.Min.x + static_cast<float>(SelectionBoundsMin.x), 
-                                                   clipScreen.Min.y + static_cast<float>(SelectionBoundsMin.y)), 
-                                            ImVec2(clipScreen.Min.x + static_cast<float>(SelectionBoundsMax.x), 
-                                                   clipScreen.Min.y + static_cast<float>(SelectionBoundsMax.y)),
+        ImGui::GetWindowDrawList()->AddRect(ImVec2(clipScreen.Min.x + SelectionBoundsMin.x, 
+                                                   clipScreen.Min.y + SelectionBoundsMin.y), 
+                                            ImVec2(clipScreen.Min.x + SelectionBoundsMax.x, 
+                                                   clipScreen.Min.y + SelectionBoundsMax.y),
                                             ImColor(1.0f, 1.0f, 1.0f, 1.0f));
 
         // Draw Gizmos
         {
             // Draw Gizmo Corner Controls
             const float ControlCircleRadius = 4.f;
+            ImVec2 ControlCenter; 
             // TL
-            ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2( clipScreen.Min.x + static_cast<float>(SelectionBoundsMin.x), 
-                                                                clipScreen.Min.y + static_cast<float>(SelectionBoundsMin.y)),
-                                                                ControlCircleRadius, ImColor(0.5f, 0.5f, 1.0f, 1.0f));
+            ControlCenter = ImVec2( clipScreen.Min.x + SelectionBoundsMin.x, 
+                                    clipScreen.Min.y + SelectionBoundsMin.y);
+            DrawCircleControl(ControlCenter, ControlCircleRadius, CursorPos, ImGuiMouseCursor_ResizeNESW);
             // TR
-            ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2( clipScreen.Min.x + static_cast<float>(SelectionBoundsMax.x), 
-                                                                clipScreen.Min.y + static_cast<float>(SelectionBoundsMin.y)),
-                                                                ControlCircleRadius, ImColor(0.5f, 0.5f, 1.0f, 1.0f));
+            ControlCenter = ImVec2( clipScreen.Min.x + SelectionBoundsMax.x, 
+                                    clipScreen.Min.y + SelectionBoundsMin.y);
+            DrawCircleControl(ControlCenter, ControlCircleRadius, CursorPos, ImGuiMouseCursor_ResizeNWSE);
             // BL
-            ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2( clipScreen.Min.x + static_cast<float>(SelectionBoundsMin.x), 
-                                                                clipScreen.Min.y + static_cast<float>(SelectionBoundsMax.y)),
-                                                                ControlCircleRadius, ImColor(0.5f, 0.5f, 1.0f, 1.0f));
+            ControlCenter = ImVec2( clipScreen.Min.x + SelectionBoundsMin.x, 
+                                    clipScreen.Min.y + SelectionBoundsMax.y);
+            DrawCircleControl(ControlCenter, ControlCircleRadius, CursorPos, ImGuiMouseCursor_ResizeNWSE);
             // BR
-            ImGui::GetWindowDrawList()->AddCircleFilled(ImVec2( clipScreen.Min.x + static_cast<float>(SelectionBoundsMax.x), 
-                                                                clipScreen.Min.y + static_cast<float>(SelectionBoundsMax.y)),
-                                                                ControlCircleRadius, ImColor(0.5f, 0.5f, 1.0f, 1.0f));
+            ControlCenter = ImVec2( clipScreen.Min.x + SelectionBoundsMax.x, 
+                                    clipScreen.Min.y + SelectionBoundsMax.y);
+            DrawCircleControl(ControlCenter, ControlCircleRadius, CursorPos, ImGuiMouseCursor_ResizeNESW);
         }
     }
 }

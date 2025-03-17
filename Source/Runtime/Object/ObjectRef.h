@@ -51,6 +51,7 @@ public:
     _ObjectT* Load();
 
     inline _ObjectT* operator ->() const {return ref;}  
+    inline operator _ObjectT*() const {return ref;}
     bool operator ==(const ObjectRef<_ObjectT>& other) {return other.ref == ref && other.objectID == objectID;}  
 
     // Move operator

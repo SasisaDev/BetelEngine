@@ -7,6 +7,7 @@
 class Entity;
 
 class ObjectMode : public EditorMode {
+    inline void DrawCircleControl(ImVec2 center, float radius, glm::vec2 cursor_pos, ImGuiMouseCursor cursor_type);
 public:
     ObjectMode() : EditorMode("Editor.ToolkitMode.ObjectMode") {}
 

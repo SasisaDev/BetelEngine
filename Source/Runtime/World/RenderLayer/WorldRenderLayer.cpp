@@ -546,8 +546,8 @@ void WorldRenderLayer::CreateUpscaleMaterial()
     //IFile* VertFile = IPlatform::Get()->OpenLocalFile("Shaders/TriangleUpscale/TriangleUpscale.vert.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
     //IFile* FragFile = IPlatform::Get()->OpenLocalFile("Shaders/TriangleUpscale/TriangleUpscale.frag.spv", FILE_ACCESS_FLAG_READ | FILE_ACCESS_FLAG_BINARY | FILE_ACCESS_FLAG_ATE);
 
-    Resource *VertShader = GEngine->GetAssetLoader()->LoadResource("Shaders/TriangleUpscale/TriangleUpscale.vert.spv");
-    Resource *FragShader = GEngine->GetAssetLoader()->LoadResource("Shaders/TriangleUpscale/TriangleUpscale.frag.spv");
+    std::shared_ptr<Resource> VertShader = GEngine->GetAssetLoader()->LoadResource("Shaders/TriangleUpscale/TriangleUpscale.vert.spv");
+    std::shared_ptr<Resource> FragShader = GEngine->GetAssetLoader()->LoadResource("Shaders/TriangleUpscale/TriangleUpscale.frag.spv");
 
     if(VertShader == nullptr || FragShader == nullptr)
     {
@@ -570,9 +570,6 @@ void WorldRenderLayer::CreateUpscaleMaterial()
     }
 
     upscaleMaterial = std::make_unique<IMaterial>(upscaleShader.get());
-
-    delete VertShader;
-    delete FragShader;
 }
 
 bool WorldRenderLayer::Initialize(VkDevice device)
@@ -758,17 +755,9 @@ void WorldRenderLayer::Render(VkCommandBuffer cmdBuffer, IRenderLayerRef* layerR
 
         for(EntityRenderProxy* proxy : ((WorldRenderLayerRef*)layerRef)->renderProxies)
         {
-            if(proxy->Parent->Visible) 
+            if(proxy->Parent->bVisible) 
             {
                 proxy->Render(cmdBuffer, (WorldRenderLayerRef*)layerRef);
-            }
-        }
-
-        // Render Post Render Proxies. These are mostly non-pixel perfect overlays of Editor Tools
-        if(((WorldRenderLayerRef*)layerRef)->bRenderPostRenderProxies) {
-            for(EntityRenderProxy* postProxy : ((WorldRenderLayerRef*)layerRef)->postRenderProxies)
-            {
-                postProxy->Render(cmdBuffer, (WorldRenderLayerRef*)layerRef);
             }
         }
 

@@ -61,10 +61,13 @@ protected:
     EntityRenderProxy* EdRenderProxy;
 #   endif
 public:
-    bool Visible = true;
+    bool bVisible = true;
+    bool bTickable = true;
 
     inline EntityMobilityPolicy GetMobility() const {return mobilityPolicy;}
     inline void SetMobility(EntityMobilityPolicy newValue) {mobilityPolicy = newValue;}
+
+    inline bool IsTickable() const {return bTickable;}
 
     /*
      * This functions is getting called by WorldRenderLayerRef on entity spawn.
@@ -114,9 +117,7 @@ public:
 
     // Editor API
 #   ifdef EDITOR
-    std::vector<EditorMode*> GetEditorModes() {return {};}
-    virtual EntityRenderProxy* SetupEditorRenderProxy(WorldRenderLayerRef* ref){return EdRenderProxy = nullptr;}
-    virtual EntityRenderProxy* GetEditorRenderProxy() {return EdRenderProxy;}
+    virtual std::vector<EditorMode*> GetEditorModes() {return {};}
 #   endif
 };
 

@@ -12,6 +12,8 @@
 #include <ImGui/Betel/BetelDrag.h>
 #include <EditorUI/ObjectEditViews/ObjectEditViewsFactory.h>
 
+#pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"// warning: bitwise operation between different enumeration types ('XXXFlags_' and 'XXXFlagsPrivate_') is deprecated
+
 class EditorObjectExplorer : public EditorToolkitWindow
 {
     bool firstInitialization = true;

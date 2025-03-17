@@ -6,6 +6,8 @@
 #include <ImGui/Betel/BetelImageButton.h>
 #include <ImGui/Betel/BetelImages.h>
 
+#pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"// warning: bitwise operation between different enumeration types ('XXXFlags_' and 'XXXFlagsPrivate_') is deprecated
+
 class EditorMainToolbar : public EditorToolkitWindow
 {
     ImTextureID SaveImage;

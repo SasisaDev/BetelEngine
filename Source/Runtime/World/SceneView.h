@@ -16,7 +16,7 @@ struct SceneView
     // Camera position
     glm::vec2 ViewOrigin;
 
-    float Scale = 0;
+    float Scale = 1;
 
     // Updates VP Matrix using external precalculated matrix
     void UpdateViewProjectionMatrix(glm::mat4 vpm);

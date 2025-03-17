@@ -13,6 +13,8 @@
 #include <optional>
 #include <algorithm>
 
+#pragma clang diagnostic ignored "-Wdeprecated-enum-enum-conversion"// warning: bitwise operation between different enumeration types ('XXXFlags_' and 'XXXFlagsPrivate_') is deprecated
+
 namespace BImGui
 {
     extern bool ImageButton(const char *ID, ImTextureID ImgID, ImVec2 ImgSize, ImVec2 Uv0, ImVec2 Uv1);
