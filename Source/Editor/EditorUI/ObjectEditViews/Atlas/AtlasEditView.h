@@ -9,6 +9,7 @@
 #include <ImGui/Betel/BetelImages.h>
 #include <ImGui/Betel/BetelDeferred.h>
 #include <ImGui/Betel/BetelInputs.h>
+#include <ImGui/Betel/BetelColors.h>
 
 #include <optional>
 #include <algorithm>
@@ -98,6 +99,7 @@ private:
 
     std::map<uint16_t, IVec4> sprites;
     std::map<uint16_t, ImU32> spriteRectsColors;
+    uint16_t currentSpriteRectEdit = -1;
 
     // Texture Editor variables
     float TexEd_Zoom = 1;
@@ -212,9 +214,54 @@ public:
             ImGui::GetWindowDrawList()->AddRect(ImVec2(WindowSpace.Min.x + TexEd_Offset.x - TexEd_DragOffset.x, WindowSpace.Min.y + TexEd_Offset.y - TexEd_DragOffset.y), 
                                                 ImVec2(WindowSpace.Min.x + TexEd_Offset.x - TexEd_DragOffset.x + (tex->GetWidth() * TexEd_Zoom), WindowSpace.Min.y + TexEd_Offset.y - TexEd_DragOffset.y + (tex->GetHeight() * TexEd_Zoom)),
                                                 -1);
+
+            // Draw image rects
+            for(auto it = sprites.begin(); it != sprites.end(); ++it)
+            {
+                glm::vec4 bounds = it->second;
+
+                ImGui::GetWindowDrawList()->AddRect(ImVec2(WindowSpace.Min.x + TexEd_Offset.x - TexEd_DragOffset.x + (bounds.x * TexEd_Zoom), WindowSpace.Min.y + TexEd_Offset.y - TexEd_DragOffset.y + (bounds.y * TexEd_Zoom)), 
+                                                    ImVec2(WindowSpace.Min.x + TexEd_Offset.x - TexEd_DragOffset.x + (bounds.z * TexEd_Zoom), WindowSpace.Min.y + TexEd_Offset.y - TexEd_DragOffset.y + (bounds.w * TexEd_Zoom)),
+                                                    ImColor(BImGui::Colors::RandomBrightColor(it->first)));
+            }
         }
         ImGui::PopStyleVar();
         ImGui::End();
+    }
+
+    void DrawBoundsList()
+    {
+        if (ImGui::Begin(rectName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove))
+        {
+            if(BImGui::ImageButton("add_bounds", BImGui::GetEdImage(BImGui::Img::Plus32Icon), {16, 16}))
+            {
+                uint16_t newBoundID = 0;
+                while(sprites.contains(newBoundID)) ++newBoundID;
+                sprites[newBoundID] = {0, 0, 1, 1};
+            }
+
+            if(ImGui::BeginListBox("##Bounds", ImGui::GetContentRegionAvail()))
+            {
+                uint16_t BoundIDForRemoving = -1;
+
+                for(auto it = sprites.begin(); it != sprites.end(); ++it)
+                {
+                    ImGui::PushStyleColor(ImGuiCol_Header, BImGui::Colors::RandomBrightColor(it->first));
+                    if(ImGui::CollapsingHeader(std::to_string(it->first).c_str()))
+                    {
+                        ImGui::InputInt4((std::string("Coordinates##") + std::to_string(it->first)).c_str(), (int*)(&it->second));
+                        if(ImGui::Button((std::string("Delete##") + std::to_string(it->first)).c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 24)))
+                        {
+                            BoundIDForRemoving = it->first;
+                        }
+                    }
+                    ImGui::PopStyleColor();
+                }
+
+                sprites.erase(BoundIDForRemoving);
+            }
+            ImGui::EndListBox();
+        }
     }
 
     virtual void OnEditViewGUI(Window *window) override
@@ -255,10 +302,8 @@ public:
 
         DrawTextureEditor();
 
-        if (ImGui::Begin(rectName, 0, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove))
-        {
-            
-        }
+        DrawBoundsList();
+
         ImGui::End();
     }
 

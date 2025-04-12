@@ -3,6 +3,7 @@
 #include <Editor/Mode.h>
 
 class SpriteDrawMode : public EditorMode {
+    void RenderToolbar();
 public:
     SpriteDrawMode() : EditorMode("Editor.ToolkitMode.SpriteDrawMode") {}
 

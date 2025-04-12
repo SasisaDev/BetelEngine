@@ -55,14 +55,14 @@ set(ImguiSrc "Source/ThirdParty/imgui/imgui_demo.cpp" "Source/ThirdParty/imgui/i
              "Source/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp")
 set(ImguiBetelSrc "Source/Runtime/ImGui/RenderLayer/ImGuiLayer.cpp" "Source/Runtime/ImGui/BetelImGui.cpp" "Source/Runtime/ImGui/Betel/BetelImages.cpp"
                   "Source/Runtime/ImGui/Betel/BetelDeferred.cpp" "Source/Runtime/ImGui/Betel/BetelInputs.cpp"
-                  "Source/Runtime/ImGui/Betel/BetelDrag.cpp")
+                  "Source/Runtime/ImGui/Betel/BetelDrag.cpp" "Source/Runtime/ImGui/Betel/BetelColors.cpp")
 
 # LZ4 Source
 set(SrcLZ4 "Source/ThirdParty/lz4/lz4.c" "Source/ThirdParty/lz4/lz4file.c" "Source/ThirdParty/lz4/xxhash.c" "Source/ThirdParty/lz4/lz4hc.c" "Source/ThirdParty/lz4/lz4frame.c")
 
 # Modules Sources
 set(SrcGameFramework "Source/Runtime/GameFramework/Entities/Test/TestEntity.cpp" "Source/Runtime/GameFramework/Entities/Sprite/SpriteEntity.cpp"
-    "Source/Runtime/GameFramework/Assets/Sprite/Sprite.cpp" "Source/Runtime/GameFramework/Entities/Sprite/SpriteDrawMode.cpp"
+    "Source/Runtime/GameFramework/Assets/Sprite/Sprite.cpp"
     "Source/Runtime/Materials/Assets/Material.cpp" "Source/Runtime/Materials/Assets/Shader.cpp"
     "Source/Runtime/GameFramework/Assets/Atlas/Atlas.cpp" "Source/Runtime/GameFramework/Assets/Texture/Texture.cpp"
     "Source/Runtime/GameFramework/Assets/Animation/Animation.cpp"
@@ -134,7 +134,9 @@ set(ArgumentEventsSrc "Source/Editor/ArgumentEvents/UseAssetFactoryEvent.cpp")
 
 set(TransactionQueueSrc "Source/Editor/TransactionQueue/Context.cpp" "Source/Editor/TransactionQueue/Queue/Queue.cpp")
 
-set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc} ${TransactionQueueSrc}
+set(EditModesSrc "Source/Runtime/GameFramework/Entities/Sprite/SpriteDrawMode.cpp")
+
+set(EditorSources ${AssetFactoriesSrc} ${ArgumentEventsSrc} ${ImguiSrc} ${ImguiBetelSrc} ${TransactionQueueSrc} ${EditModesSrc}
     "Source/Editor/AssetFactory/AssetFactoryLibrary.cpp" "Source/Editor/Editor/EditorDelegates.cpp"
     "Source/Editor/Editor/Editor.cpp" "Source/Editor/Editor/Modes/ObjectMode.cpp" "Source/Editor/EditorUI/ObjectEditViews/ObjectEditViewsFactory.cpp") 
 

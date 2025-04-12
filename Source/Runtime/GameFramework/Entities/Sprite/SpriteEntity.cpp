@@ -5,7 +5,9 @@
 #include <Engine/Engine.h>
 #include <Object/ObjectTypeLibrary.h>
 
-#include "SpriteDrawMode.h"
+#ifdef EDITOR
+#   include "SpriteDrawMode.h"
+#endif
 
 bool EntSpriteType::bRegistered = ObjectTypeLibrary::Get().RegisterObjectType<EntSpriteType>(EntSprite::GetStaticType());
 

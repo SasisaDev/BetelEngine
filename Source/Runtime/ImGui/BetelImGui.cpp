@@ -1,5 +1,12 @@
 #include "BetelImGui.h"
 #include <Core/Window/WindowManager.h>
+#include <cassert>
+
+#include <imgui/imgui_internal.h>
+#include <imgui/imconfig.h>
+
+#include <Engine/Engine.h>
+#include <World/World.h>
 
 BetelImGuiEngine::BetelImGuiEngine()
 {
@@ -30,6 +37,34 @@ void BetelImGuiEngine::ApplyTheme()
     style.Colors[ImGuiCol_TitleBgActive]        = ImVec4(0.082f, 0.082f, 0.082f, 1.00f);
 }
 
+void *BetelImGuiEngine::WorldViewSettingsHandler_ReadOpen(ImGuiContext *, ImGuiSettingsHandler *, const char *name)
+{
+    ImGuiID id = ImHashStr(name);
+
+    return nullptr;
+}
+
+void BetelImGuiEngine::WorldViewSettingsHandler_ReadLine(ImGuiContext *, ImGuiSettingsHandler *, void *entry, const char *line)
+{
+
+}
+
+void BetelImGuiEngine::WorldViewSettingsHandler_WriteAll(ImGuiContext *ctx, ImGuiSettingsHandler *handler, ImGuiTextBuffer *buf)
+{
+    buf->appendf("[%s] [%s]\n", handler->TypeName, "Placeholder");
+    // FIXME
+    /*assert(GEngine != nullptr);
+    
+    for(Object* object : GEngine->GetObjectLibrary()->GetObjectsOfTypeID(World::GetStaticType()))
+    {
+        if(World* world = dynamic_cast<World*>(object))
+        {
+            buf->appendf("[%s] [%s]\n", handler->TypeName, world->GetName().c_str());
+            buf->appendf("EditorCameraPosition=%i,%i\n", static_cast<int>(world->GetSceneView().ViewOrigin.x), static_cast<int>(world->GetSceneView().ViewOrigin.y));
+        }
+    }*/
+}
+
 void BetelImGuiEngine::Initialize(SDL_Window* window, ImGui_ImplVulkan_InitInfo& initInfo, VkCommandBuffer singleTimeBuffer)
 {
     // TODO: I18N integration
@@ -51,4 +86,12 @@ void BetelImGuiEngine::Initialize(SDL_Window* window, ImGui_ImplVulkan_InitInfo&
     ImGui_ImplVulkan_Init(&initInfo);
     
     ImGui_ImplVulkan_CreateFontsTexture();
+
+    ImGuiSettingsHandler world_view_ini_handler;
+    world_view_ini_handler.TypeName = "WorldView";
+    world_view_ini_handler.TypeHash = ImHashStr("WorldView");
+    world_view_ini_handler.ReadOpenFn = WorldViewSettingsHandler_ReadOpen;
+    world_view_ini_handler.ReadLineFn = WorldViewSettingsHandler_ReadLine;
+    world_view_ini_handler.WriteAllFn = WorldViewSettingsHandler_WriteAll;
+    ImGui::AddSettingsHandler(&world_view_ini_handler);
 }

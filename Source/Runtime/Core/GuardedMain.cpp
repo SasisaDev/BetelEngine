@@ -148,7 +148,7 @@ int GuardedMain(int argc, char* argv[])
 	texture->SetPath("Textures/test.png");
 	texture->LoadTexture();
 
-	ObjectRef<ObjAtlas> atlas = app.GetEngine()->GetObjectLibrary()->CreateObject<ObjAtlas>("Test Atlas");
+	ObjectRef<ObjAtlas> atlas = app.GetEngine()->GetObjectLibrary()->CreateObject<ObjAtlas>("Test Atlas", false);
 	atlas->SetTexture(texture);
 	atlas->SetSpriteRect(0, {0, 0, 540/2, 540/2});
 	atlas->SetSpriteRect(1, {540/2, 540/2, 540, 540});

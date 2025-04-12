@@ -12,6 +12,9 @@ namespace BImGui
         Reload32Icon,
         None256Icon,
         Cross32Icon,
+        Pencil32Icon,
+        Eraser32Icon,
+        Plus32Icon,
         MAX
     };
 
